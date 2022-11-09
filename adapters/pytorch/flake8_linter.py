@@ -90,6 +90,14 @@ DOCUMENTED_IN_BUGBEAR: Set[str] = {
     "B301", "B302", "B303", "B304", "B305", "B306",
     "B901", "B902", "B903", "B950",
 }
+
+# https://github.com/dlint-py/dlint/tree/master/docs
+DOCUMENTED_IN_DLINT: Set[str] = {
+    "DUO101", "DUO102", "DUO103", "DUO104", "DUO105", "DUO106", "DUO107", "DUO108", "DUO109",
+    "DUO110", "DUO111", "DUO112", "DUO113", "DUO114", "DUO115", "DUO116", "DUO117", "DUO118", "DUO119",
+    "DUO120", "DUO121", "DUO122", "DUO123", "DUO124", "DUO125", "DUO126", "DUO127", "DUO128", "DUO129",
+    "DUO130", "DUO131", "DUO132", "DUO133", "DUO134", "DUO135", "DUO136", "DUO137", "DUO138",
+}
 # fmt: on
 
 
@@ -238,6 +246,9 @@ def get_issue_documentation_url(code: str) -> str:
 
     if code in DOCUMENTED_IN_BUGBEAR:
         return "https://github.com/PyCQA/flake8-bugbear#list-of-warnings"
+    
+    if code in DOCUMENTED_IN_DLINT:
+        return f"https://github.com/dlint-py/dlint/blob/master/docs/linters/{code}.md"
 
     return ""
 
