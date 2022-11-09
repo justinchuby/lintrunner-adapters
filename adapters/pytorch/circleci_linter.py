@@ -1,6 +1,4 @@
-"""
-Checks that the configuration in .circleci/config.yml has been properly regenerated.
-"""
+"""Checks that the configuration in .circleci/config.yml has been properly regenerated."""
 
 import argparse
 import json

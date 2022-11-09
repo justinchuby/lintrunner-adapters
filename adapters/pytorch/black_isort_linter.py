@@ -52,7 +52,7 @@ def _run_command(
     start_time = time.monotonic()
     try:
         if input is not None:
-            return subprocess.run(
+            return subprocess.run(  # noqa: DUO116
                 args,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

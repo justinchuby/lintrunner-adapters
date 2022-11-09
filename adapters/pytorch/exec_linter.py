@@ -1,6 +1,4 @@
-"""
-EXEC: Ensure that source files are not executable.
-"""
+"""EXEC: Ensure that source files are not executable."""
 import argparse
 import json
 import logging

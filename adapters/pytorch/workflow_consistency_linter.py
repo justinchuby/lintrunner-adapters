@@ -10,7 +10,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Iterable, NamedTuple, Optional
 
-from yaml import CSafeLoader, dump, load
+import yaml
 
 
 class LintSeverity(str, Enum):
@@ -38,7 +38,7 @@ def glob_yamls(path: Path) -> Iterable[Path]:
 
 def load_yaml(path: Path) -> Any:
     with open(path) as f:
-        return load(f, CSafeLoader)
+        return yaml.load(f, yaml.CSafeLoader)  # noqa: DUO109
 
 
 def is_workflow(yaml: Any) -> bool:
@@ -101,12 +101,12 @@ if __name__ == "__main__":
     # For each sync tag, check that all the jobs have the same code.
     for sync_tag, path_and_jobs in tag_to_jobs.items():
         baseline_path, baseline_dict = path_and_jobs.pop()
-        baseline_str = dump(baseline_dict)
+        baseline_str = yaml.safe_dump(baseline_dict)
 
         printed_baseline = False
 
         for path, job_dict in path_and_jobs:
-            job_str = dump(job_dict)
+            job_str = yaml.safe_dump(job_dict)
             if baseline_str != job_str:
                 print_lint_message(path, job_dict, sync_tag)
 
