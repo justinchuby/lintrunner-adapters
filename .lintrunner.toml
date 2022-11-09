@@ -96,7 +96,7 @@ command = [
 code = 'TABS'
 include_patterns = ['**']
 exclude_patterns = [
-    'adapters/pytorch.toml',
+    '.lintrunner.toml',
 ]
 command = [
     'python3',
