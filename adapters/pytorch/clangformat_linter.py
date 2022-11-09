@@ -10,7 +10,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, List, NamedTuple, Optional
 
-
 IS_WINDOWS: bool = os.name == "nt"
 
 

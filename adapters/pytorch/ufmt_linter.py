@@ -11,7 +11,6 @@ from typing import Any, List, NamedTuple, Optional
 from ufmt.core import make_black_config, ufmt_string
 from usort import Config as UsortConfig
 
-
 IS_WINDOWS: bool = os.name == "nt"
 
 

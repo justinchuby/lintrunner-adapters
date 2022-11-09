@@ -12,7 +12,6 @@ import time
 from enum import Enum
 from typing import List, NamedTuple, Optional
 
-
 CHECKED_IN_FILE = "config.yml"
 REGENERATION_SCRIPT = "regenerate.sh"
 

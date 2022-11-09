@@ -9,7 +9,6 @@ import time
 from enum import Enum
 from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Set
 
-
 IS_WINDOWS: bool = os.name == "nt"
 
 

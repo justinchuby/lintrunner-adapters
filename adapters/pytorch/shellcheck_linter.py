@@ -7,7 +7,6 @@ import time
 from enum import Enum
 from typing import List, NamedTuple, Optional
 
-
 LINTER_CODE = "SHELLCHECK"
 
 
