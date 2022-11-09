@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# flake8: noqa
 """
 Test ownership was introduced in https://github.com/pytorch/pytorch/issues/66232.
 
