@@ -1,2 +1,3 @@
 # lintrunner-adapters
-Adapters for lintrunner
+
+Adapters for [lintrunner](https://github.com/suo/lintrunner)
