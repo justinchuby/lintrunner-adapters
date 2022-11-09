@@ -246,7 +246,7 @@ def get_issue_documentation_url(code: str) -> str:
 
     if code in DOCUMENTED_IN_BUGBEAR:
         return "https://github.com/PyCQA/flake8-bugbear#list-of-warnings"
-    
+
     if code in DOCUMENTED_IN_DLINT:
         return f"https://github.com/dlint-py/dlint/blob/master/docs/linters/{code}.md"
 
