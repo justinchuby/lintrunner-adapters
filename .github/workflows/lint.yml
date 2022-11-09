@@ -1,0 +1,38 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    name: lintrunner
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v4.1.0
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          pip install lintrunner
+          lintrunner init
+      - name: Run lintrunner on all files
+        run: |
+          set +e
+          if ! lintrunner --force-color --all-files --tee-json=lint.json; then
+              echo ""
+              echo -e "\e[1m\e[36mYou can reproduce these results locally by using \`lintrunner\`.\e[0m"
+              exit 1
+          fi
+      - name: Store annotations
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          # Use jq to massage the JSON lint output into GitHub Actions workflow commands.
+          jq --raw-output \
+            '"::\(if .severity == "advice" or .severity == "disabled" then "warning" else .severity end) file=\(.path),line=\(.line),col=\(.char),title=\(.code) \(.name)::" + (.description | gsub("\\n"; "%0A"))' \
+            lint.json
