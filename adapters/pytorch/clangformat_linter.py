@@ -10,7 +10,6 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, List, NamedTuple, Optional
 
-
 IS_WINDOWS: bool = os.name == "nt"
 
 
@@ -49,7 +48,7 @@ def _run_command(
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
-        return subprocess.run(
+        return subprocess.run(  # noqa: DUO116
             args,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,

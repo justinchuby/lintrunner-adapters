@@ -14,7 +14,6 @@ from enum import Enum
 from typing import Any, List, NamedTuple, Optional
 from urllib.request import urlopen
 
-
 LINTER_CODE = "TESTOWNERS"
 
 

@@ -1,6 +1,4 @@
-"""
-Generic linter that greps for a pattern and optionally suggests replacements.
-"""
+"""Generic linter that greps for a pattern and optionally suggests replacements."""
 
 import argparse
 import json
@@ -11,7 +9,6 @@ import sys
 import time
 from enum import Enum
 from typing import Any, List, NamedTuple, Optional
-
 
 IS_WINDOWS: bool = os.name == "nt"
 

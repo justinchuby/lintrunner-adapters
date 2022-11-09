@@ -9,7 +9,6 @@ import time
 from enum import Enum
 from typing import List, NamedTuple, Optional, Pattern
 
-
 LINTER_CODE = "ACTIONLINT"
 
 

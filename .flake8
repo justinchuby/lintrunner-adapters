@@ -1,0 +1,8 @@
+[flake8]
+max-line-length = 120
+
+extend-ignore = E203, W503, D1, D202, D205, D400, D401, D415
+exclude =
+  .git,
+  __pycache__,
+  .eggs,
