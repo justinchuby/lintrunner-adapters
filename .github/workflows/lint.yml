@@ -36,3 +36,16 @@ jobs:
           jq --raw-output \
             '"::\(if .severity == "advice" or .severity == "disabled" then "warning" else .severity end) file=\(.path),line=\(.line),col=\(.char),title=\(.code) \(.name)::" + (.description | gsub("\\n"; "%0A"))' \
             lint.json
+      - name: Produce SARIF
+        if: always()
+        run: |
+          python tools/convert_to_sarif.py --input lint.json --output lintrunner.sarif
+      - name: Upload SARIF file
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: lintrunner.sarif
+          category: lintrunner
+          checkout_path: ${{ github.workspace }}
