@@ -64,7 +64,9 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
                 + lintrunner_result["description"].split("\n")[0],
             },
             "fullDescription": {
-                "text": f'{format_rule_name(lintrunner_result)}\n\n{lintrunner_result["description"]}',
+                "text": format_rule_name(lintrunner_result)
+                + "\n\n"
+                + lintrunner_result["description"],
             },
             "defaultConfiguration": {
                 "level": severity_to_github_level(lintrunner_result["severity"]),
