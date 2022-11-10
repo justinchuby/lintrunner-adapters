@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+from typing import Iterable
 
 
 def format_rule_name(lintrunner_result: dict) -> str:
@@ -76,17 +77,15 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
     return result, rule
 
 
-def main(args):
+def produce_sarif(lintrunner_results: Iterable[dict]) -> dict:
     """Convert the output of lintrunner json to SARIF."""
 
     rules = {}
     results = []
-    with open(args.input, "r") as f:
-        for line in f:
-            lintrunner_json = json.loads(line)
-            result, rule = parse_single_lintrunner_result(lintrunner_json)
-            results.append(result)
-            rules[rule["id"]] = rule["rule"]
+    for lintrunner_json in lintrunner_results:
+        result, rule = parse_single_lintrunner_result(lintrunner_json)
+        results.append(result)
+        rules[rule["id"]] = rule["rule"]
 
     sarif = {
         "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
@@ -103,6 +102,17 @@ def main(args):
             },
         ],
     }
+
+    return sarif
+
+
+def main(args):
+    """Convert the output of lintrunner json to SARIF."""
+
+    with open(args.input, "r", encoding="utf-8") as f:
+        lintrunner_jsons = [json.loads(line) for line in f]
+
+    sarif = produce_sarif(lintrunner_jsons)
 
     output_dir = os.path.dirname(args.output)
     if output_dir:
