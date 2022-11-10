@@ -41,8 +41,7 @@ jobs:
         continue-on-error: true
         run: |
           python tools/convert_to_sarif.py --input lint.json --output lintrunner.sarif
-            - name: Upload SARIF file
-      - name: Upload SARIF
+      - name: Upload SARIF file
         if: always()
         continue-on-error: true
         uses: github/codeql-action/upload-sarif@v2
