@@ -23,6 +23,15 @@ class TestConvertToSarif(unittest.TestCase):
                 "description": "test description",
                 "name": "test-code-2",
             },
+            {
+                "path": "test2.py",
+                "line": 3,
+                "char": 4,
+                "code": "FLAKE8",
+                "severity": "advice",
+                "description": "test description",
+                "name": "test-code",
+            },
         ]
         actual = convert_to_sarif.produce_sarif(lintrunner_results)
         expected = {
@@ -43,7 +52,7 @@ class TestConvertToSarif(unittest.TestCase):
                                     "fullDescription": {
                                         "text": "FLAKE8/test-code\ntest description"
                                     },
-                                    "defaultConfiguration": {"level": "error"},
+                                    "defaultConfiguration": {"level": "recommendation"},
                                 },
                                 {
                                     "id": "FLAKE8/test-code-2",
@@ -86,11 +95,23 @@ class TestConvertToSarif(unittest.TestCase):
                                 }
                             ],
                         },
+                        {
+                            "ruleId": "FLAKE8/test-code",
+                            "level": "recommendation",
+                            "message": {"text": "FLAKE8/test-code\ntest description"},
+                            "locations": [
+                                {
+                                    "physicalLocation": {
+                                        "artifactLocation": {"uri": "file://test2.py"},
+                                        "region": {"startLine": 3, "startColumn": 4},
+                                    }
+                                }
+                            ],
+                        },
                     ],
                 }
             ],
         }
-
         self.assertEqual(actual, expected)
 
 
