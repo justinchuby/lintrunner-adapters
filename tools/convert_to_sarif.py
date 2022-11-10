@@ -7,7 +7,7 @@ import hashlib
 
 
 def hash_rule_id(rule_id: str) -> str:
-    """Hash the rule id to make it opaque (SARIF1001)."""""
+    """Hash the rule id to make it opaque (SARIF1001).""" ""
     return hashlib.sha1(rule_id.encode("utf-8")).hexdigest()
 
 
@@ -74,24 +74,6 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
     }
 
     return result, rule
-
-
-def delete_default(dict_: dict):
-    """Delete default (None, -1) values recursively from all of the dictionaries.
-
-    https://stackoverflow.com/questions/33797126/proper-way-to-remove-keys-in-dictionary-with-none-values-in-python
-    """
-    for key, value in list(dict_.items()):
-        if isinstance(value, dict):
-            delete_default(value)
-        elif value is None or value == -1 or (key=="kind" and value=="fail"):
-            del dict_[key]
-        elif isinstance(value, list):
-            for v_i in value:
-                if isinstance(v_i, dict):
-                    delete_default(v_i)
-
-    return dict_
 
 
 def main(args):
