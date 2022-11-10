@@ -3,7 +3,6 @@
 import argparse
 import json
 import os
-import hashlib
 
 
 def format_rule_name(lintrunner_result: dict) -> str:
@@ -17,7 +16,7 @@ def severity_to_github_level(severity: str) -> str:
 
 
 def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
-    """Parse a single lintrunner result.
+    r"""Parse a single lintrunner result.
 
     A result looks like this:
     {
