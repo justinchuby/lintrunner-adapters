@@ -1,0 +1,7 @@
+lintrunner
+pytest
+
+# Linter dependencies for testing
+ruamel.yaml
+ufmt
+boto3
