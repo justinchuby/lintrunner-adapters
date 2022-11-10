@@ -122,7 +122,9 @@ def main(args):
         ],
     }
 
-    os.makedirs(os.path.dirname(args.output), exist_ok=True)
+    output_dir = os.path.dirname(args.output)
+    if output_dir:
+        os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
     with open(args.output, "w") as f:
         f.write(json.dumps(sarif))
