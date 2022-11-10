@@ -6,11 +6,6 @@ import os
 import hashlib
 
 
-def hash_rule_id(rule_id: str) -> str:
-    """Hash the rule id to make it opaque (SARIF1001).""" ""
-    return hashlib.sha1(rule_id.encode("utf-8")).hexdigest()
-
-
 def format_rule_name(lintrunner_result: dict) -> str:
     return f"{lintrunner_result['code']}/{lintrunner_result['name']}"
 
@@ -36,7 +31,7 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
     }
     """
     result = {
-        "ruleId": hash_rule_id(format_rule_name(lintrunner_result)),
+        "ruleId": format_rule_name(lintrunner_result),
         "level": severity_to_github_level(lintrunner_result["severity"]),
         "message": {
             "text": lintrunner_result["description"],
@@ -59,10 +54,10 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
     rule = {
         "id": format_rule_name(lintrunner_result),
         "rule": {
-            "id": hash_rule_id(format_rule_name(lintrunner_result)),
+            "id": format_rule_name(lintrunner_result),
             "name": format_rule_name(lintrunner_result),
             "shortDescription": {
-                "text": lintrunner_result["description"],
+                "text": lintrunner_result["description"].split("\n")[0],
             },
             "fullDescription": {
                 "text": lintrunner_result["description"],
