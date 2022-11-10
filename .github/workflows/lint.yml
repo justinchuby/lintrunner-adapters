@@ -40,8 +40,6 @@ jobs:
         if: always()
         run: |
           python tools/convert_to_sarif.py --input lint.json --output lintrunner.sarif
-          cat lintrunner.sarif
-          cat ${{ github.workspace }}
       - name: Upload SARIF file
         if: always()
         continue-on-error: true
