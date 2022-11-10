@@ -127,7 +127,7 @@ def main(args):
         os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
     with open(args.output, "w") as f:
-        f.write(json.dumps(sarif))
+        json.dump(sarif, f)
 
 
 if __name__ == "__main__":
