@@ -1,4 +1,7 @@
 """NEWLINE: Checks files to make sure there are no trailing newlines."""
+
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 import argparse
 import json
 import logging

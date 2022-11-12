@@ -2,6 +2,9 @@
 
 Any job with a specific `sync-tag` must match all other jobs with the same `sync-tag`.
 """
+
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 import argparse
 import itertools
 import json

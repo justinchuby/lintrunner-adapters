@@ -1,4 +1,7 @@
 """Initializer script that installs stuff to pip."""
+
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 import argparse
 import logging
 import os

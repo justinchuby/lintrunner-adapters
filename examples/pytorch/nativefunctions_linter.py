@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 """
 Verify that it is possible to round-trip native_functions.yaml via ruamel under some
 configuration.  Keeping native_functions.yaml consistent in this way allows us to

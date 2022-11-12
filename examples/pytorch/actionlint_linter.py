@@ -1,14 +1,18 @@
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 import argparse
+import concurrent.futures
 import json
 import logging
-import shutil
+import os
+import re
 import subprocess
 import sys
 import time
 from enum import Enum
-from typing import List, NamedTuple, Optional
+from typing import List, NamedTuple, Optional, Pattern
 
-LINTER_CODE = "SHELLCHECK"
+LINTER_CODE = "ACTIONLINT"
 
 
 class LintSeverity(str, Enum):
@@ -30,6 +34,19 @@ class LintMessage(NamedTuple):
     description: Optional[str]
 
 
+RESULTS_RE: Pattern[str] = re.compile(
+    r"""(?mx)
+    ^
+    (?P<file>.*?):
+    (?P<line>\d+):
+    (?P<char>\d+):
+    \s(?P<message>.*)
+    \s(?P<code>\[.*\])
+    $
+    """
+)
+
+
 def run_command(
     args: List[str],
 ) -> "subprocess.CompletedProcess[bytes]":
@@ -46,13 +63,12 @@ def run_command(
         logging.debug("took %dms", (end_time - start_time) * 1000)
 
 
-def check_files(
-    files: List[str],
+def check_file(
+    binary: str,
+    file: str,
 ) -> List[LintMessage]:
     try:
-        proc = run_command(
-            ["shellcheck", "--external-sources", "--format=json1"] + files
-        )
+        proc = run_command([binary, file])
     except OSError as err:
         return [
             LintMessage(
@@ -68,27 +84,31 @@ def check_files(
             )
         ]
     stdout = str(proc.stdout, "utf-8").strip()
-    results = json.loads(stdout)["comments"]
     return [
         LintMessage(
-            path=result["file"],
-            name=f"SC{result['code']}",
-            description=result["message"],
-            line=result["line"],
-            char=result["column"],
+            path=match["file"],
+            name=match["code"],
+            description=match["message"],
+            line=int(match["line"]),
+            char=int(match["char"]),
             code=LINTER_CODE,
             severity=LintSeverity.ERROR,
             original=None,
             replacement=None,
         )
-        for result in results
+        for match in RESULTS_RE.finditer(stdout)
     ]
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="shellcheck runner",
+        description="actionlint runner",
         fromfile_prefix_chars="@",
+    )
+    parser.add_argument(
+        "--binary",
+        required=True,
+        help="actionlint binary path",
     )
     parser.add_argument(
         "filenames",
@@ -96,7 +116,9 @@ if __name__ == "__main__":
         help="paths to lint",
     )
 
-    if shutil.which("shellcheck") is None:
+    args = parser.parse_args()
+
+    if not os.path.exists(args.binary):
         err_msg = LintMessage(
             path="<none>",
             line=None,
@@ -106,13 +128,30 @@ if __name__ == "__main__":
             name="command-failed",
             original=None,
             replacement=None,
-            description="shellcheck is not installed, did you forget to run `lintrunner init`?",
+            description=(
+                f"Could not find actionlint binary at {args.binary},"
+                " you may need to run `lintrunner init`."
+            ),
         )
         print(json.dumps(err_msg._asdict()), flush=True)
         sys.exit(0)
 
-    args = parser.parse_args()
-
-    lint_messages = check_files(args.filenames)
-    for lint_message in lint_messages:
-        print(json.dumps(lint_message._asdict()), flush=True)
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=os.cpu_count(),
+        thread_name_prefix="Thread",
+    ) as executor:
+        futures = {
+            executor.submit(
+                check_file,
+                args.binary,
+                filename,
+            ): filename
+            for filename in args.filenames
+        }
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                for lint_message in future.result():
+                    print(json.dumps(lint_message._asdict()), flush=True)
+            except Exception:
+                logging.critical('Failed at "%s".', futures[future])
+                raise

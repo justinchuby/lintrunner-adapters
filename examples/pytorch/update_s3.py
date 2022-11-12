@@ -5,6 +5,9 @@ https://boto3.amazonaws.com/v1/documentation/api/latest/guide/quickstart.html#co
 for how to configure them.
 """
 
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
+
 import argparse
 import hashlib
 import json

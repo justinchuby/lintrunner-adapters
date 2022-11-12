@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 """
 Test ownership was introduced in https://github.com/pytorch/pytorch/issues/66232.
 

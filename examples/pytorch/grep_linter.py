@@ -1,5 +1,7 @@
 """Generic linter that greps for a pattern and optionally suggests replacements."""
 
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 import argparse
 import json
 import logging

@@ -1,5 +1,7 @@
 """Checks that the configuration in .circleci/config.yml has been properly regenerated."""
 
+# PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
+
 import argparse
 import json
 import logging
