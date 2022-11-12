@@ -56,7 +56,7 @@ def report_download_progress(
     """Pretty printer for file download progress."""
     if file_size != -1:
         percent = min(1, (chunk_number * chunk_size) / file_size)
-        bar = "#" * int(64 * percent)
+        bar = "#" * int(64 * percent)  # pylint: disable=C0104
         sys.stdout.write("\r0% |{:<64}| {}%".format(bar, int(percent * 100)))
 
 
@@ -194,13 +194,14 @@ if __name__ == "__main__":
         stream=sys.stderr,
     )
 
-    config = json.load(open(args.config_json))
+    with open(args.config_json, encoding="utf-8") as f:
+        config = json.load(f)
     config = config[args.linter]
 
     # If the host platform is not in platform_to_hash, it is unsupported.
     if HOST_PLATFORM not in config:
         logging.error(f"Unsupported platform: {HOST_PLATFORM}")
-        exit(1)
+        sys.exit(1)
 
     url = config[HOST_PLATFORM]["download_url"]
     hash = config[HOST_PLATFORM]["hash"]

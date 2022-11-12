@@ -37,7 +37,7 @@ def glob_yamls(path: Path) -> Iterable[Path]:
 
 
 def load_yaml(path: Path) -> Any:
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.load(f, yaml.CSafeLoader)  # noqa: DUO109
 
 
@@ -47,7 +47,7 @@ def is_workflow(yaml: Any) -> bool:
 
 def print_lint_message(path: Path, job: Dict[str, Any], sync_tag: str) -> None:
     job_id = list(job.keys())[0]
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         lines = f.readlines()
     for i, line in enumerate(lines):
         if f"{job_id}:" in line:

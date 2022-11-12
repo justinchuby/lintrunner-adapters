@@ -11,7 +11,7 @@ def format_rule_name(lintrunner_result: dict) -> str:
 
 
 def severity_to_github_level(severity: str) -> str:
-    if severity == "advice" or severity == "disabled":
+    if severity in {"advice", "disabled"}:
         return "recommendation"
     return severity
 
@@ -118,7 +118,7 @@ def main(args):
     if output_dir:
         os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
-    with open(args.output, "w") as f:
+    with open(args.output, "w", encoding="utf-8") as f:
         json.dump(sarif, f)
 
 

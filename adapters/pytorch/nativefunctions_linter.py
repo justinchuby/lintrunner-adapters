@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    with open(args.native_functions_yml) as f:
+    with open(args.native_functions_yml, encoding="utf-8") as f:
         contents = f.read()
 
     yaml = ruamel.yaml.YAML()  # type: ignore[attr-defined]

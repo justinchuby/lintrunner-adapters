@@ -165,12 +165,12 @@ def check_file(
             )
         ]
     lint_messages = []
-    try:
-        # Change the current working directory to the build directory, since
-        # clang-tidy will report files relative to the build directory.
-        saved_cwd = os.getcwd()
-        os.chdir(build_dir)
 
+    # Change the current working directory to the build directory, since
+    # clang-tidy will report files relative to the build directory.
+    saved_cwd = os.getcwd()
+    os.chdir(build_dir)
+    try:
         for match in RESULTS_RE.finditer(proc.stdout.decode()):
             # Convert the reported path to an absolute path.
             abs_path = str(Path(match["file"]).resolve())
@@ -250,7 +250,7 @@ def main() -> None:
             ),
         )
         print(json.dumps(err_msg._asdict()), flush=True)
-        exit(0)
+        sys.exit(0)
 
     abs_build_dir = Path(args.build_dir).resolve()
 

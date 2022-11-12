@@ -19,6 +19,9 @@ disable = [
     "no-else-continue",
     "redefined-builtin",
     "redefined-outer-name",
+    "subprocess-run-check",
+    "too-many-return-statements",
+    "unnecessary-pass",
     "unused-argument",
     "unused-import",
 ]
