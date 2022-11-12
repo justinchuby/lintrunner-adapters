@@ -5,3 +5,4 @@ pytest
 ruamel.yaml
 ufmt
 boto3
+types-PyYAML

@@ -25,24 +25,27 @@ init_command = [
     'flake8-docstrings==1.6.0',
 ]
 
-# [[linter]]
-# code = 'MYPY'
-# include_patterns = [
-# ]
-# exclude_patterns = [
-# ]
-# command = [
-#     'python3',
-#     'adapters/pytorch/mypy_linter.py',
-#     '--config=pyproject.toml',
-#     '--',
-#     '@{{PATHSFILE}}'
-# ]
-# init_command = [
-#     'python3',
-#     'adapters/pytorch/pip_init.py',
-#     '--dry-run={{DRYRUN}}',
-# ]
+[[linter]]
+code = 'MYPY'
+include_patterns = [
+    '**/*.py',
+    '**/*.pyi',
+]
+exclude_patterns = [
+]
+command = [
+    'python3',
+    'adapters/pytorch/mypy_linter.py',
+    '--config=pyproject.toml',
+    '--',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python3',
+    'adapters/pytorch/pip_init.py',
+    '--dry-run={{DRYRUN}}',
+    'mypy==0.990',
+]
 
 [[linter]]
 code = 'NOQA'
