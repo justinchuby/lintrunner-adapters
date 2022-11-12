@@ -7,7 +7,6 @@ import subprocess
 import sys
 import time
 from enum import Enum
-from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional, Pattern
 
 IS_WINDOWS: bool = os.name == "nt"
