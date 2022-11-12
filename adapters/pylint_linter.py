@@ -47,11 +47,32 @@ RESULTS_RE: Pattern[str] = re.compile(
     (?P<file>.*?):
     (?P<line>\d+):
     (?:(?P<column>-?\d+):)?
-    \s(?P<severity>\S+?):?
+    \s(?P<code>\S+?):?
     \s(?P<message>.*)
     $
     """
 )
+
+def _test_results_re() -> None:
+    """
+    >>> def t(s): return RESULTS_RE.search(s).groupdict()
+
+    >>> t(r"file.py:40:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)")
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'file.py', 'line': '40', 'column': '9', 'code': 'W1514',
+     'message': 'Using open without explicitly specifying an encoding (unspecified-encoding)'}
+
+    >>> t(r"file.py:14:7: R1714: Consider merging these comparisons with 'in' by using 'severity in ('advice', 'disabled')'. Use a set instead if elements are hashable. (consider-using-in)")
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'file.py', 'line': '14', 'column': '7', 'code': 'R1714',
+     'message': "Consider merging these comparisons with 'in' by using 'severity in ('advice', 'disabled')'. Use a set instead if elements are hashable. (consider-using-in)"}
+
+    >>> t(r"file.py:67:15: W1510: Using subprocess.run without explicitly set `check` is not recommended. (subprocess-run-check)")
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'file.py', 'line': '67', 'column': '15', 'code': 'W1510',
+     'message': 'Using subprocess.run without explicitly set `check` is not recommended. (subprocess-run-check)'}
+    """
+    pass
 
 
 def run_command(
@@ -116,14 +137,14 @@ def check_files(
     return [
         LintMessage(
             path=match["file"],
-            name=match["severity"],
+            name=match["code"],
             description=match["message"],
             line=int(match["line"]),
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
             else None,
             code="PYLINT",
-            severity=severities.get(match["severity"][0], LintSeverity.ERROR),
+            severity=severities.get(match["code"][0], LintSeverity.ERROR),
             original=None,
             replacement=None,
         )
