@@ -11,8 +11,8 @@ def format_rule_name(lintrunner_result: dict) -> str:
 
 
 def severity_to_github_level(severity: str) -> str:
-    if severity == "advice" or severity == "disabled":
-        return "recommendation"
+    if severity in {"advice", "disabled"}:
+        return "note"
     return severity
 
 
@@ -30,6 +30,14 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
         "description":"line too long (81 > 79 characters)\nSee https://www.flake8rules.com/rules/E501.html"
     }
     """
+    if lintrunner_result["path"] is None:
+        artifact_uri = None
+    else:
+        artifact_uri = (
+            ("file://" + lintrunner_result["path"])
+            if lintrunner_result["path"].startswith("/")
+            else lintrunner_result["path"]
+        )
     result = {
         "ruleId": format_rule_name(lintrunner_result),
         "level": severity_to_github_level(lintrunner_result["severity"]),
@@ -42,7 +50,7 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
             {
                 "physicalLocation": {
                     "artifactLocation": {
-                        "uri": "file://" + lintrunner_result["path"],
+                        "uri": artifact_uri,
                     },
                     "region": {
                         "startLine": lintrunner_result["line"] or 1,
@@ -118,7 +126,7 @@ def main(args):
     if output_dir:
         os.makedirs(os.path.dirname(args.output), exist_ok=True)
 
-    with open(args.output, "w") as f:
+    with open(args.output, "w", encoding="utf-8") as f:
         json.dump(sarif, f)
 
 

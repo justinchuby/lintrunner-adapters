@@ -42,11 +42,11 @@ OWNERS_PREFIX = "# Owner(s): "
 
 
 def get_pytorch_labels() -> Any:
-    labels = (
-        urlopen("https://ossci-metrics.s3.amazonaws.com/pytorch_labels.json")
-        .read()
-        .decode("utf-8")
-    )
+    with urlopen(
+        "https://ossci-metrics.s3.amazonaws.com/pytorch_labels.json"
+    ) as response:
+        labels = response.read().decode("utf-8")
+
     return json.loads(labels)
 
 
@@ -111,7 +111,7 @@ def check_file(filename: str) -> List[LintMessage]:
     lint_messages = []
     has_ownership_info = False
 
-    with open(filename) as f:
+    with open(filename, encoding="utf-8") as f:
         for idx, line in enumerate(f):
             if not line.startswith(OWNERS_PREFIX):
                 continue

@@ -1,0 +1,27 @@
+[tool.pylint.messages_control]
+
+disable = [
+    "duplicate-code",
+    "fixme",
+    "format",
+    "import-error",
+    "invalid-name",
+    "line-too-long",
+    "missing-docstring",
+    "no-member",
+    "too-few-public-methods",
+    "too-many-arguments",
+    # Repo specific ones
+    "broad-except",
+    "broad-except",
+    "consider-using-f-string",
+    "logging-fstring-interpolation",
+    "no-else-continue",
+    "redefined-builtin",
+    "redefined-outer-name",
+    "subprocess-run-check",
+    "too-many-return-statements",
+    "unnecessary-pass",
+    "unused-argument",
+    "unused-import",
+]
