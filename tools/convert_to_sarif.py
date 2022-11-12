@@ -12,7 +12,7 @@ def format_rule_name(lintrunner_result: dict) -> str:
 
 def severity_to_github_level(severity: str) -> str:
     if severity in {"advice", "disabled"}:
-        return "recommendation"
+        return "note"
     return severity
 
 
