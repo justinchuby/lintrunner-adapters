@@ -49,9 +49,11 @@ RESULTS_RE: Pattern[str] = re.compile(
     (?:(?P<column>-?\d+):)?
     \s(?P<code>\S+?):?
     \s(?P<message>.*)
+    \s(?:\((?P<string_code>.*)\))
     $
     """
 )
+
 
 def _test_results_re() -> None:
     """
@@ -60,17 +62,20 @@ def _test_results_re() -> None:
     >>> t(r"file.py:40:9: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)")
     ... # doctest: +NORMALIZE_WHITESPACE
     {'file': 'file.py', 'line': '40', 'column': '9', 'code': 'W1514',
-     'message': 'Using open without explicitly specifying an encoding (unspecified-encoding)'}
+     'message': 'Using open without explicitly specifying an encoding',
+     'string_code': 'unspecified-encoding'}
 
     >>> t(r"file.py:14:7: R1714: Consider merging these comparisons with 'in' by using 'severity in ('advice', 'disabled')'. Use a set instead if elements are hashable. (consider-using-in)")
     ... # doctest: +NORMALIZE_WHITESPACE
     {'file': 'file.py', 'line': '14', 'column': '7', 'code': 'R1714',
-     'message': "Consider merging these comparisons with 'in' by using 'severity in ('advice', 'disabled')'. Use a set instead if elements are hashable. (consider-using-in)"}
+     'message': "Consider merging these comparisons with 'in' by using 'severity in ('advice', 'disabled')'. Use a set instead if elements are hashable.",
+     'string_code': 'consider-using-in'}
 
     >>> t(r"file.py:67:15: W1510: Using subprocess.run without explicitly set `check` is not recommended. (subprocess-run-check)")
     ... # doctest: +NORMALIZE_WHITESPACE
     {'file': 'file.py', 'line': '67', 'column': '15', 'code': 'W1510',
-     'message': 'Using subprocess.run without explicitly set `check` is not recommended. (subprocess-run-check)'}
+     'message': 'Using subprocess.run without explicitly set `check` is not recommended.',
+     'string_code': 'subprocess-run-check'}
     """
     pass
 
@@ -106,6 +111,26 @@ severities = {
 }
 
 
+# https://pylint.pycqa.org/en/latest/user_guide/messages/fatal/method-check-failed.html
+def pylint_doc_url(code: str, string_code: str) -> str:
+    if code.startswith("I"):
+        category = "informational"
+    elif code.startswith("C"):
+        category = "convention"
+    elif code.startswith("R"):
+        category = "refactor"
+    elif code.startswith("W"):
+        category = "warning"
+    elif code.startswith("E"):
+        category = "error"
+    elif code.startswith("F"):
+        category = "fatal"
+    else:
+        return ""
+
+    return f"https://pylint.pycqa.org/en/latest/user_guide/messages/{category}/{string_code}.html"
+
+
 def check_files(
     filenames: List[str],
     rcfile: Optional[str],
@@ -138,7 +163,9 @@ def check_files(
         LintMessage(
             path=match["file"],
             name=match["code"],
-            description=match["message"],
+            description=match["message"]
+            + f" ({match['string_code']})"
+            + f"\nSee {pylint_doc_url(match['code'], match['string_code'])}",
             line=int(match["line"]),
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
