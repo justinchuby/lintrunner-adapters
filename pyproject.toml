@@ -1,3 +1,23 @@
+[tool.poetry]
+name = "lintrunner-adapters"
+version = "0.1.0"
+description = "Adapters and tools for lintrunner"
+authors = ["Justin Chu <justinchu@microsoft.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "lintrunner_adapters"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.group.dev.dependencies]
+lintrunner = "^0.9.3"
+pytest = "^7.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.mypy]
 strict_optional = true
 warn_return_any = true
