@@ -12,10 +12,8 @@ to list available adapters.
 """
 
 import json
-import pathlib
 import subprocess
 import sys
-from typing import List
 
 import click
 
@@ -34,9 +32,23 @@ def cli():
         allow_extra_args=True,
     ),
 )
-def run():
+@click.argument(
+    "adapter", type=click.Choice(list(lintrunner_adapters.available_adapters().keys()))
+)
+def run(adapter: str) -> None:
     """Run an adapter."""
-    run_adapter(sys.argv[2:])
+    adapters = lintrunner_adapters.available_adapters()
+    try:
+        subprocess.run(
+            [
+                sys.executable,
+                adapters[adapter],
+                *sys.argv[3:],
+            ],
+            check=True,
+        )
+    except subprocess.CalledProcessError as e:
+        sys.exit(e.returncode)
 
 
 @cli.command()
@@ -50,36 +62,6 @@ def to_sarif(input, output):
     sarif = convert_to_sarif.produce_sarif(lintrunner_jsons)
 
     json.dump(sarif, output)
-
-
-def run_adapter(args: List[str]) -> None:
-
-    module_path = pathlib.Path(lintrunner_adapters.__file__).parent
-    adapter_paths = (module_path / "adapters").glob("*.py")
-    adapters = {path.stem: path for path in adapter_paths}
-
-    if not len(args):
-        print("Usage: python -m lintrunner_adapters <adapter_name> <args>")
-        print(f"Available adapters: {sorted(adapters.keys())}")
-        sys.exit(1)
-
-    adapter_name = args[0]
-    if adapter_name not in adapters:
-        print(f"Unknown executable name: {adapter_name}")
-        print(f"Available adapters: {sorted(adapters.keys())}")
-        sys.exit(1)
-
-    try:
-        subprocess.run(
-            [
-                sys.executable,
-                adapters[adapter_name],
-                *args[1:],
-            ],
-            check=True,
-        )
-    except subprocess.CalledProcessError as e:
-        sys.exit(e.returncode)
 
 
 if __name__ == "__main__":
