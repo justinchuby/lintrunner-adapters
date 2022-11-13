@@ -4,11 +4,7 @@ import re
 import sys
 from typing import List, Optional, Pattern
 
-from lintrunner_adapters import (
-    LintMessage,
-    LintSeverity,
-    run_command,
-)
+from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
 # adapters/pylint_linter.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 RESULTS_RE: Pattern[str] = re.compile(

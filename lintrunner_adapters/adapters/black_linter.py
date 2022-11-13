@@ -9,7 +9,7 @@ import subprocess
 import sys
 from typing import List
 
-from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 
 def check_file(

@@ -9,11 +9,7 @@ import os
 import sys
 from typing import Optional
 
-
-from lintrunner_adapters import (
-    LintMessage,
-    LintSeverity,
-)
+from lintrunner_adapters import LintMessage, LintSeverity
 
 LINTER_CODE = "EXEC"
 

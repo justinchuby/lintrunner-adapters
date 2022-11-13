@@ -10,7 +10,14 @@ import sys
 from pathlib import Path
 from typing import List
 
-from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix, IS_WINDOWS
+from lintrunner_adapters import (
+    IS_WINDOWS,
+    LintMessage,
+    LintSeverity,
+    as_posix,
+    run_command,
+)
+
 
 def check_file(
     filename: str,

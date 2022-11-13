@@ -1,11 +1,11 @@
 import dataclasses
+import enum
 import json
 import logging
 import os
 import subprocess
 import sys
 import time
-import enum
 from typing import Any, BinaryIO, List, Optional
 
 IS_WINDOWS: bool = os.name == "nt"
@@ -28,6 +28,7 @@ class LintSeverity(str, enum.Enum):
 @dataclasses.dataclass(frozen=True)
 class LintMessage:
     """A lint message defined by https://docs.rs/lintrunner/latest/lintrunner/lint_message/struct.LintMessage.html."""
+
     path: Optional[str]
     line: Optional[int]
     char: Optional[int]
@@ -89,7 +90,7 @@ def _run_command(
 def run_command(
     args: List[str],
     *,
-    retries: int=0,
+    retries: int = 0,
     timeout: Optional[int] = None,
     stdin: Optional[BinaryIO] = None,
     input: Optional[bytes] = None,
@@ -98,7 +99,9 @@ def run_command(
     remaining_retries = retries
     while True:
         try:
-            return _run_command(args, timeout=timeout, stdin=stdin, input=input, check=check)
+            return _run_command(
+                args, timeout=timeout, stdin=stdin, input=input, check=check
+            )
         except subprocess.TimeoutExpired as err:
             if remaining_retries == 0:
                 raise err

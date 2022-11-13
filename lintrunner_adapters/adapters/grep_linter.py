@@ -9,12 +9,7 @@ import subprocess
 import sys
 from typing import Optional
 
-from lintrunner_adapters import (
-    LintMessage,
-    LintSeverity,
-    run_command,
-    as_posix,
-)
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 
 def lint_file(

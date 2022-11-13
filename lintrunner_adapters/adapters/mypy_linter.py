@@ -12,7 +12,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional, Pattern
 
-from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 # tools/linter/flake8_linter.py:15:13: error: Incompatibl...int")  [assignment]
 RESULTS_RE: Pattern[str] = re.compile(

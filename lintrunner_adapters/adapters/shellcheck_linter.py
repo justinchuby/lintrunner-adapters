@@ -10,11 +10,7 @@ import time
 from enum import Enum
 from typing import List, NamedTuple, Optional
 
-from lintrunner_adapters import (
-    LintMessage,
-    LintSeverity,
-    run_command,
-)
+from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
 LINTER_CODE = "SHELLCHECK"
 

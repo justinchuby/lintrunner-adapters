@@ -11,11 +11,7 @@ from typing import List
 from ufmt.core import make_black_config, ufmt_string
 from usort import Config as UsortConfig
 
-
-from lintrunner_adapters import (
-    LintMessage,
-    LintSeverity,
-)
+from lintrunner_adapters import LintMessage, LintSeverity
 
 
 def format_error_message(filename: str, err: Exception) -> LintMessage:

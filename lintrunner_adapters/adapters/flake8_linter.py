@@ -2,16 +2,12 @@
 
 import argparse
 import logging
+import re
 import subprocess
 import sys
 from typing import Dict, List, Pattern, Set
 
-from lintrunner_adapters import (
-    LintMessage,
-    LintSeverity,
-    run_command,
-    as_posix,
-)
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 # fmt: off
 # https://www.flake8rules.com/

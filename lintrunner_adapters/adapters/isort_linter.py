@@ -11,7 +11,7 @@ import time
 from enum import Enum
 from typing import Any, BinaryIO, List, NamedTuple, Optional
 
-from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 
 def check_file(
