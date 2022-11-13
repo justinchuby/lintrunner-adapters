@@ -14,7 +14,6 @@ from lintrunner_adapters import (
     LintSeverity,
     run_command,
     as_posix,
-    IS_WINDOWS,
 )
 
 

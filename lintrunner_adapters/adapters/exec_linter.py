@@ -7,29 +7,15 @@ import json
 import logging
 import os
 import sys
-from enum import Enum
-from typing import NamedTuple, Optional
+from typing import Optional
+
+
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+)
 
 LINTER_CODE = "EXEC"
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
 
 
 def check_file(filename: str) -> Optional[LintMessage]:
@@ -49,7 +35,7 @@ def check_file(filename: str) -> Optional[LintMessage]:
     return None
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="exec linter",
         fromfile_prefix_chars="@",
@@ -84,3 +70,7 @@ if __name__ == "__main__":
 
     for lint_message in lint_messages:
         print(json.dumps(lint_message._asdict()), flush=True)
+
+
+if __name__ == "__main__":
+    main()

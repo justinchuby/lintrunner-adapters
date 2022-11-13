@@ -3,43 +3,16 @@
 import argparse
 import json
 import logging
-import os
-import re
 import subprocess
 import sys
-import time
-from enum import Enum
-from typing import Any, Dict, List, NamedTuple, Optional, Pattern, Set
+from typing import Dict, List, Pattern, Set
 
-IS_WINDOWS: bool = os.name == "nt"
-
-
-def eprint(*args: Any, **kwargs: Any) -> None:
-    print(*args, file=sys.stderr, flush=True, **kwargs)
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
-
-
-def as_posix(name: str) -> str:
-    return name.replace("\\", "/") if IS_WINDOWS else name
-
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+    run_command,
+    as_posix,
+)
 
 # fmt: off
 # https://www.flake8rules.com/
@@ -142,57 +115,6 @@ def _test_results_re() -> None:
     pass
 
 
-def _run_command(
-    args: List[str],
-    *,
-    extra_env: Optional[Dict[str, str]],
-) -> "subprocess.CompletedProcess[str]":
-    logging.debug(
-        "$ %s",
-        " ".join(
-            ([f"{k}={v}" for (k, v) in extra_env.items()] if extra_env else []) + args
-        ),
-    )
-    start_time = time.monotonic()
-    try:
-        return subprocess.run(
-            args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=True,
-            encoding="utf-8",
-        )
-    finally:
-        end_time = time.monotonic()
-        logging.debug("took %dms", (end_time - start_time) * 1000)
-
-
-def run_command(
-    args: List[str],
-    *,
-    extra_env: Optional[Dict[str, str]],
-    retries: int,
-) -> "subprocess.CompletedProcess[str]":
-    remaining_retries = retries
-    while True:
-        try:
-            return _run_command(args, extra_env=extra_env)
-        except subprocess.CalledProcessError as err:
-            if remaining_retries == 0 or not re.match(
-                r"^ERROR:1:1: X000 linting with .+ timed out after \d+ seconds",
-                err.stdout,
-            ):
-                raise err
-            remaining_retries -= 1
-            logging.warning(
-                "(%s/%s) Retrying because command failed with: %r",
-                retries - remaining_retries,
-                retries,
-                err,
-            )
-            time.sleep(1)
-
-
 def get_issue_severity(code: str) -> LintSeverity:
     # "B901": `return x` inside a generator
     # "B902": Invalid first argument to a method
@@ -203,9 +125,6 @@ def get_issue_severity(code: str) -> LintSeverity:
     # "E2": PEP8 horizontal whitespace "errors"
     # "E3": PEP8 blank line "errors"
     # "E5": PEP8 line length "errors"
-    # "F401": Name imported but unused
-    # "F403": Star imports used
-    # "F405": Name possibly from star imports
     # "T400": type checking Notes
     # "T49": internal type checker errors or unmatched messages
     if any(
@@ -217,9 +136,6 @@ def get_issue_severity(code: str) -> LintSeverity:
             "E2",
             "E3",
             "E5",
-            "F401",
-            "F403",
-            "F405",
             "T400",
             "T49",
         ]
@@ -257,16 +173,12 @@ def get_issue_documentation_url(code: str) -> str:
 
 def check_files(
     filenames: List[str],
-    flake8_plugins_path: Optional[str],
     severities: Dict[str, LintSeverity],
     retries: int,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
             [sys.executable, "-mflake8", "--exit-zero"] + filenames,
-            extra_env={"FLAKE8_PLUGINS_PATH": flake8_plugins_path}
-            if flake8_plugins_path
-            else None,
             retries=retries,
         )
     except (OSError, subprocess.CalledProcessError) as err:
@@ -315,7 +227,7 @@ def check_files(
             original=None,
             replacement=None,
         )
-        for match in RESULTS_RE.finditer(proc.stdout)
+        for match in RESULTS_RE.finditer(proc.stdout.decode("utf-8"))
     ]
 
 
@@ -323,10 +235,6 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Flake8 wrapper linter.",
         fromfile_prefix_chars="@",
-    )
-    parser.add_argument(
-        "--flake8-plugins-path",
-        help="FLAKE8_PLUGINS_PATH env value",
     )
     parser.add_argument(
         "--severity",
@@ -361,12 +269,6 @@ def main() -> None:
         stream=sys.stderr,
     )
 
-    flake8_plugins_path = (
-        None
-        if args.flake8_plugins_path is None
-        else os.path.realpath(args.flake8_plugins_path)
-    )
-
     severities: Dict[str, LintSeverity] = {}
     if args.severity:
         for severity in args.severity:
@@ -374,11 +276,9 @@ def main() -> None:
             assert len(parts) == 2, f"invalid severity `{severity}`"
             severities[parts[0]] = LintSeverity(parts[1])
 
-    lint_messages = check_files(
-        args.filenames, flake8_plugins_path, severities, args.retries
-    )
+    lint_messages = check_files(args.filenames, severities, args.retries)
     for lint_message in lint_messages:
-        print(json.dumps(lint_message._asdict()), flush=True)
+        print(json.dumps(lint_message.asdict()), flush=True)
 
 
 if __name__ == "__main__":
