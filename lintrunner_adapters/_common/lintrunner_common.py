@@ -48,7 +48,7 @@ def as_posix(name: str) -> str:
 def _run_command(
     args: List[str],
     *,
-    timeout: int,
+    timeout: Optional[int],
     stdin: Optional[BinaryIO],
     input: Optional[bytes],
     check: bool,
@@ -84,8 +84,8 @@ def _run_command(
 def run_command(
     args: List[str],
     *,
-    retries: int,
-    timeout: int,
+    retries: int=0,
+    timeout: Optional[int] = None,
     stdin: Optional[BinaryIO] = None,
     input: Optional[bytes] = None,
     check: bool = False,

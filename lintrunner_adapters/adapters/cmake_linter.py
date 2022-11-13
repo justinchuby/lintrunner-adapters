@@ -36,20 +36,33 @@ def check_file(
     try:
         proc = run_command(
             ["cmakelint", f"--config={config}", filename],
-            reties=0, timeout=90
         )
-    except OSError as err:
+    except (OSError, subprocess.CalledProcessError) as err:
         return [
             LintMessage(
-                path=None,
+                path=filename,
                 line=None,
                 char=None,
-                code=LINTER_CODE,
-                severity=LintSeverity.ERROR,
+                code="CLANGFORMAT",
+                severity=LintSeverity.ADVICE,
                 name="command-failed",
                 original=None,
                 replacement=None,
-                description=(f"Failed due to {err.__class__.__name__}:\n{err}"),
+                description=(
+                    f"Failed due to {err.__class__.__name__}:\n{err}"
+                    if not isinstance(err, subprocess.CalledProcessError)
+                    else (
+                        "COMMAND (exit code {returncode})\n"
+                        "{command}\n\n"
+                        "STDERR\n{stderr}\n\n"
+                        "STDOUT\n{stdout}"
+                    ).format(
+                        returncode=err.returncode,
+                        command=" ".join(as_posix(x) for x in err.cmd),
+                        stderr=err.stderr.decode("utf-8").strip() or "(empty)",
+                        stdout=err.stdout.decode("utf-8").strip() or "(empty)",
+                    )
+                ),
             )
         ]
     stdout = str(proc.stdout, "utf-8").strip()
