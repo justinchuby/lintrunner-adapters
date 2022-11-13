@@ -33,6 +33,7 @@ def check_file(
             [binary, filename],
             retries=retries,
             timeout=timeout,
+            check=True,
         )
     except subprocess.TimeoutExpired:
         return [

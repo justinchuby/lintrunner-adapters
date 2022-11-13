@@ -29,6 +29,7 @@ def check_file(
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
+                check=True,
             )
             formatted = proc.stdout
             # Pipe black's result to isort

@@ -27,6 +27,7 @@ def check_file(
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
+                check=True,
             )
     except subprocess.TimeoutExpired:
         return [
