@@ -220,7 +220,7 @@ command = [
     'run',
     'clangformat_linter',
     '--binary=.lintbin/clang-format',
-    # '--binary=clang-format',  # Uncomment this line to use system clang-format
+    '--fallback',  # Use system clang-format as a fallback
     '--',
     '@{{PATHSFILE}}'
 ]
