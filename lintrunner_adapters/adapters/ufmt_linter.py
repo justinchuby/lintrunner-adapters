@@ -2,45 +2,20 @@
 
 import argparse
 import concurrent.futures
-import json
 import logging
 import os
 import sys
-from enum import Enum
 from pathlib import Path
-from typing import Any, List, NamedTuple, Optional
+from typing import List
 
 from ufmt.core import make_black_config, ufmt_string
 from usort import Config as UsortConfig
 
-IS_WINDOWS: bool = os.name == "nt"
 
-
-def eprint(*args: Any, **kwargs: Any) -> None:
-    print(*args, file=sys.stderr, flush=True, **kwargs)
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
-
-
-def as_posix(name: str) -> str:
-    return name.replace("\\", "/") if IS_WINDOWS else name
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+)
 
 
 def format_error_message(filename: str, err: Exception) -> LintMessage:
@@ -132,7 +107,7 @@ def main() -> None:
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
-                    print(json.dumps(lint_message._asdict()), flush=True)
+                    lint_message.display()
             except Exception:
                 logging.critical('Failed at "%s".', futures[future])
                 raise

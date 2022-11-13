@@ -10,42 +10,13 @@ import time
 from enum import Enum
 from typing import List, NamedTuple, Optional
 
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+    run_command,
+)
+
 LINTER_CODE = "SHELLCHECK"
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
-
-
-def run_command(
-    args: List[str],
-) -> "subprocess.CompletedProcess[bytes]":
-    logging.debug("$ %s", " ".join(args))
-    start_time = time.monotonic()
-    try:
-        return subprocess.run(
-            args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    finally:
-        end_time = time.monotonic()
-        logging.debug("took %dms", (end_time - start_time) * 1000)
 
 
 def check_files(
@@ -87,7 +58,7 @@ def check_files(
     ]
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="shellcheck runner",
         fromfile_prefix_chars="@",
@@ -110,7 +81,7 @@ if __name__ == "__main__":
             replacement=None,
             description="shellcheck is not installed, did you forget to run `lintrunner init`?",
         )
-        print(json.dumps(err_msg._asdict()), flush=True)
+        err_msg.display()
         sys.exit(0)
 
     args = parser.parse_args()
@@ -118,3 +89,7 @@ if __name__ == "__main__":
     lint_messages = check_files(args.filenames)
     for lint_message in lint_messages:
         lint_message.display()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,19 +1,13 @@
 import argparse
-import json
 import logging
-import os
 import re
-import subprocess
 import sys
-import time
-from enum import Enum
-from typing import Any, Dict, List, NamedTuple, Optional, Pattern
+from typing import List, Optional, Pattern
 
 from lintrunner_adapters import (
     LintMessage,
     LintSeverity,
     run_command,
-    as_posix,
 )
 
 # adapters/pylint_linter.py:1:0: C0114: Missing module docstring (missing-module-docstring)
