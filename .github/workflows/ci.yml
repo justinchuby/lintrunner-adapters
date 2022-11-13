@@ -73,7 +73,7 @@ jobs:
           poetry run lintrunner init
       - name: Run pytest
         run: |
-          PY_IGNORE_IMPORTMISMATCH=1 poetry run pytest --doctest-modules lintrunner-adapters
+          PY_IGNORE_IMPORTMISMATCH=1 poetry run pytest --doctest-modules lintrunner_adapters
       - name: Build package with poetry
         run: |
           poetry build
