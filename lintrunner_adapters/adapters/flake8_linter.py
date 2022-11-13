@@ -5,7 +5,7 @@ import logging
 import re
 import subprocess
 import sys
-from typing import Dict, List, Pattern, Set
+from typing import Dict, List, Optional, Pattern, Set
 
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
@@ -62,15 +62,19 @@ DOCUMENTED_IN_BUGBEAR: Set[str] = {
     "B301", "B302", "B303", "B304", "B305", "B306",
     "B901", "B902", "B903", "B950",
 }
+# fmt: on
+
 
 # https://github.com/dlint-py/dlint/tree/master/docs
-DOCUMENTED_IN_DLINT: Set[str] = {
-    "DUO101", "DUO102", "DUO103", "DUO104", "DUO105", "DUO106", "DUO107", "DUO108", "DUO109",
-    "DUO110", "DUO111", "DUO112", "DUO113", "DUO114", "DUO115", "DUO116", "DUO117", "DUO118", "DUO119",
-    "DUO120", "DUO121", "DUO122", "DUO123", "DUO124", "DUO125", "DUO126", "DUO127", "DUO128", "DUO129",
-    "DUO130", "DUO131", "DUO132", "DUO133", "DUO134", "DUO135", "DUO136", "DUO137", "DUO138",
-}
-# fmt: on
+def documented_in_dlint(code: str) -> bool:
+    """Returns whether the given code is documented in dlint."""
+    return code.startswith("DUO")
+
+
+# https://www.pydocstyle.org/en/stable/error_codes.html
+def documented_in_pydocstyle(code: str) -> bool:
+    """Returns whether the given code is documented in pydocstyle."""
+    return re.match(r"D[0-9]{3}", code) is not None
 
 
 # stdin:2: W802 undefined name 'foo'
@@ -91,7 +95,8 @@ RESULTS_RE: Pattern[str] = re.compile(
 
 
 def _test_results_re() -> None:
-    """
+    """Doctests.
+
     >>> def t(s): return RESULTS_RE.search(s).groupdict()
 
     >>> t(r"file.py:80:1: E302 expected 2 blank lines, found 1")
@@ -162,8 +167,11 @@ def get_issue_documentation_url(code: str) -> str:
     if code in DOCUMENTED_IN_BUGBEAR:
         return "https://github.com/PyCQA/flake8-bugbear#list-of-warnings"
 
-    if code in DOCUMENTED_IN_DLINT:
+    if documented_in_dlint(code):
         return f"https://github.com/dlint-py/dlint/blob/master/docs/linters/{code}.md"
+
+    if documented_in_pydocstyle(code):
+        return "https://www.pydocstyle.org/en/stable/error_codes.html"
 
     return ""
 
@@ -172,10 +180,17 @@ def check_files(
     filenames: List[str],
     severities: Dict[str, LintSeverity],
     retries: int,
+    docstring_convention: Optional[str],
 ) -> List[LintMessage]:
     try:
         proc = run_command(
-            [sys.executable, "-mflake8", "--exit-zero"] + filenames,
+            [sys.executable, "-mflake8", "--exit-zero"]
+            + (
+                ["--docstring-convention", docstring_convention]
+                if docstring_convention
+                else []
+            )
+            + filenames,
             retries=retries,
         )
     except (OSError, subprocess.CalledProcessError) as err:
@@ -250,6 +265,12 @@ def main() -> None:
         help="verbose logging",
     )
     parser.add_argument(
+        "--docstring-convention",
+        default=None,
+        type=str,
+        help="docstring convention to use. E.g. 'google', 'numpy'",
+    )
+    parser.add_argument(
         "filenames",
         nargs="+",
         help="paths to lint",
@@ -273,7 +294,12 @@ def main() -> None:
             assert len(parts) == 2, f"invalid severity `{severity}`"
             severities[parts[0]] = LintSeverity(parts[1])
 
-    lint_messages = check_files(args.filenames, severities, args.retries)
+    lint_messages = check_files(
+        args.filenames,
+        severities,
+        args.retries,
+        args.docstring_convention,
+    )
     for lint_message in lint_messages:
         lint_message.display()
 
