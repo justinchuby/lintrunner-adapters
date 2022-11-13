@@ -11,6 +11,7 @@ Use
 to list available adapters.
 """
 
+import json
 import pathlib
 import subprocess
 import sys
@@ -19,6 +20,7 @@ from typing import List
 import click
 
 import lintrunner_adapters
+from lintrunner_adapters.tools import convert_to_sarif
 
 
 @click.group()
@@ -27,14 +29,27 @@ def cli():
 
 
 @cli.command(
-    help="Run an adapter.",
     context_settings=dict(
         ignore_unknown_options=True,
         allow_extra_args=True,
     ),
 )
 def run():
+    """Run an adapter."""
     run_adapter(sys.argv[2:])
+
+
+@cli.command()
+@click.argument("input", type=click.File("r"))
+@click.argument("output", type=click.File("w"))
+def to_sarif(input, output):
+    """Convert the output of lintrunner json (INPUT) to SARIF (OUTPUT)."""
+
+    lintrunner_jsons = [json.loads(line) for line in input]
+
+    sarif = convert_to_sarif.produce_sarif(lintrunner_jsons)
+
+    json.dump(sarif, output)
 
 
 def run_adapter(args: List[str]) -> None:
