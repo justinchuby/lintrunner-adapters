@@ -5,10 +5,17 @@ description = "Adapters and tools for lintrunner"
 authors = ["Justin Chu <justinchu@microsoft.com>"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "lintrunner_adapters"}]
-include = [
-    "LICENSE",
+repository = "https://github.com/justinchuby/lintrunner-adapters"
+keywords = ["lintrunner", "lint", "cli"]
+classifiers = [
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Quality Assurance",
 ]
+packages = [{ include = "lintrunner_adapters" }]
+include = ["LICENSE"]
+
+[tool.poetry.scripts]
+lintrunner_adapters = 'lintrunner_adapters.__main__:cli'
 
 [tool.poetry.dependencies]
 python = "^3.7"
