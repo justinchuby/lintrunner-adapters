@@ -64,6 +64,7 @@ DOCUMENTED_IN_BUGBEAR: Set[str] = {
 }
 # fmt: on
 
+
 # https://github.com/dlint-py/dlint/tree/master/docs
 def documented_in_dlint(code: str) -> bool:
     """Returns whether the given code is documented in dlint."""
@@ -170,7 +171,7 @@ def get_issue_documentation_url(code: str) -> str:
         return f"https://github.com/dlint-py/dlint/blob/master/docs/linters/{code}.md"
 
     if documented_in_pydocstyle(code):
-        return f"https://www.pydocstyle.org/en/stable/error_codes.html"
+        return "https://www.pydocstyle.org/en/stable/error_codes.html"
 
     return ""
 
