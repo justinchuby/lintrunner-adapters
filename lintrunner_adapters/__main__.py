@@ -1,6 +1,18 @@
+"""cli for running lintrunner adapters.
+Usage:
+
+    python -m lintrunner_adapters <adapter_name> <args>
+
+Use
+
+    python -m lintrunner_adapters
+
+to list available adapters.
+"""
+
 import pathlib
-import sys
 import subprocess
+import sys
 
 import lintrunner_adapters
 

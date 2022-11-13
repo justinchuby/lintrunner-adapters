@@ -8,12 +8,16 @@ include_patterns = [
 ]
 exclude_patterns = []
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'flake8_linter',
     '--',
     '@{{PATHSFILE}}'
 ]
 init_command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'pip_init',
     '--dry-run={{DRYRUN}}',
@@ -34,6 +38,8 @@ include_patterns = [
 exclude_patterns = [
 ]
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'mypy_linter',
     '--config=pyproject.toml',
@@ -41,6 +47,8 @@ command = [
     '@{{PATHSFILE}}'
 ]
 init_command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'pip_init',
     '--dry-run={{DRYRUN}}',
@@ -52,6 +60,8 @@ code = 'NOQA'
 include_patterns = ['**/*.py', '**/*.pyi']
 exclude_patterns = []
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'grep_linter',
     '--pattern=# noqa([^:]|$)',
@@ -70,6 +80,8 @@ code = 'NEWLINE'
 include_patterns=['**']
 exclude_patterns=[]
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'newlines_linter',
     '--',
@@ -82,6 +94,8 @@ code = 'SPACES'
 include_patterns = ['**']
 exclude_patterns = []
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'grep_linter',
     '--pattern=[[:blank:]]$',
@@ -102,6 +116,8 @@ exclude_patterns = [
     '.lintrunner.toml',
 ]
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'grep_linter',
     # @lint-ignore TXT2
@@ -123,12 +139,16 @@ include_patterns = [
 ]
 exclude_patterns = []
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'black_isort_linter',
     '--',
     '@{{PATHSFILE}}'
 ]
 init_command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'pip_init',
     '--dry-run={{DRYRUN}}',
@@ -145,6 +165,8 @@ include_patterns = [
 exclude_patterns = [
 ]
 command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'pylint_linter',
     '--rcfile=pyproject.toml',
@@ -152,6 +174,8 @@ command = [
     '@{{PATHSFILE}}'
 ]
 init_command = [
+    'python3',
+    '-m',
     'lintrunner_adapters',
     'pip_init',
     '--dry-run={{DRYRUN}}',
