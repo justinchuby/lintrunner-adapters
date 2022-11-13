@@ -5,6 +5,12 @@
 
 Adapters for [lintrunner](https://github.com/suo/lintrunner)
 
+## Install
+
+```sh
+pip install lintrunner-adapters
+```
+
 ## Usage
 
 ```text
