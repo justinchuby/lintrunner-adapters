@@ -108,7 +108,7 @@ def check_file(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Format files with black-isort.",
+        description=f"Format files with black-isort. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

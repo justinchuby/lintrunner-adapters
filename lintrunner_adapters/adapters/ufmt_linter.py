@@ -72,7 +72,7 @@ def check_file(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Format files with ufmt (black + usort).",
+        description=f"Format files with ufmt (black + usort). Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

@@ -52,7 +52,7 @@ def check_files(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="shellcheck runner",
+        description=f"shellcheck runner. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

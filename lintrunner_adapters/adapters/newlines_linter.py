@@ -108,13 +108,13 @@ def check_file(filename: str) -> Optional[LintMessage]:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="native functions linter",
+        description=f"Checks files to make sure there are no trailing newlines. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
         "--verbose",
         action="store_true",
-        help="location of native_functions.yaml",
+        help="verbose logging",
     )
     parser.add_argument(
         "filenames",
