@@ -40,7 +40,7 @@ jobs:
       - name: Produce SARIF
         if: always()
         run: |
-          poetry run python -m lintrunner_adapter to-sarif lint.json lintrunner.sarif
+          poetry run python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
       - name: Upload SARIF file
         if: always()
         continue-on-error: true
