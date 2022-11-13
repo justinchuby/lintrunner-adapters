@@ -2,12 +2,8 @@
 
 namespace caffe2 {
 
-OPERATOR_SCHEMA(MPICreateCommonWorld).
-
-NumInputs(0).NumOutputs(1);
+OPERATOR_SCHEMA(MPICreateCommonWorld).NumInputs(0).NumOutputs(1);
 OPERATOR_SCHEMA(MPIBroadcast)
-
-
     .NumInputs(2)
     .NumOutputs(1)
     .EnforceInplace({{1, 0}});

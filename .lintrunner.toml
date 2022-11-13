@@ -219,7 +219,8 @@ command = [
     'lintrunner_adapters',
     'run',
     'clangformat_linter',
-    '--binary=clang-format',
+    '--binary=.lintbin/clang-format',
+    # '--binary=clang-format',  # Uncomment this line to use system clang-format
     '--',
     '@{{PATHSFILE}}'
 ]
