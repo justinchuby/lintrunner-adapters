@@ -7,9 +7,7 @@ import logging
 import os
 import subprocess
 import sys
-import time
-from enum import Enum
-from typing import Any, BinaryIO, List, NamedTuple, Optional
+from typing import List
 
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 

@@ -1,18 +1,13 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
 import argparse
-import json
 import logging
-import os
 import re
-import subprocess
 import sys
-import time
-from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, NamedTuple, Optional, Pattern
+from typing import Dict, List, Pattern
 
-from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
+from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
 # tools/linter/flake8_linter.py:15:13: error: Incompatibl...int")  [assignment]
 RESULTS_RE: Pattern[str] = re.compile(

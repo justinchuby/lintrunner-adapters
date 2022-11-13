@@ -1,4 +1,4 @@
-from ._common.lintrunner_common import (
+from ._common.lintrunner_common import (  # noqa: F401
     IS_WINDOWS,
     LintMessage,
     LintSeverity,

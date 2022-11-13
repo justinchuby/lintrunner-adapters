@@ -2,13 +2,9 @@
 
 import argparse
 import json
-import logging
 import shutil
-import subprocess
 import sys
-import time
-from enum import Enum
-from typing import List, NamedTuple, Optional
+from typing import List
 
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
