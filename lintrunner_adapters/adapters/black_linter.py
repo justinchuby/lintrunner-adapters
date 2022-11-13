@@ -2,7 +2,6 @@
 
 import argparse
 import concurrent.futures
-import json
 import logging
 import os
 import subprocess
@@ -143,7 +142,7 @@ def main() -> None:
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
-                    print(json.dumps(lint_message.asdict()), flush=True)
+                    lint_message.display()
             except Exception:
                 logging.critical('Failed at "%s".', futures[future])
                 raise

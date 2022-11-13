@@ -3,7 +3,6 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
 import argparse
-import json
 import logging
 import subprocess
 import sys
@@ -205,7 +204,7 @@ def main() -> None:
                 )
             ),
         )
-        print(json.dumps(err_msg.asdict()), flush=True)
+        err_msg.display()
         sys.exit(0)
 
     lines = proc.stdout.decode().splitlines()
@@ -219,7 +218,7 @@ def main() -> None:
             args.error_description,
         )
         if lint_message is not None:
-            print(json.dumps(lint_message.asdict()), flush=True)
+            lint_message.display()
 
 
 if __name__ == "__main__":
