@@ -1,5 +1,7 @@
 # lintrunner-adapters
 
+[![Test](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/test.yml/badge.svg)](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/test.yml) [![Lint](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/lint.yml/badge.svg)](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/lint.yml) [![PyPI version](https://badge.fury.io/py/lintrunner-adapters.svg)](https://badge.fury.io/py/lintrunner-adapters)
+
 Adapters for [lintrunner](https://github.com/suo/lintrunner)
 
 ## Usage
