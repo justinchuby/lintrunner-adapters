@@ -8,14 +8,14 @@ include_patterns = [
 ]
 exclude_patterns = []
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/flake8_linter.py',
+    'lintrunner_adapters',
+    'flake8_linter',
     '--',
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
-    'lintrunner_adapters/adapters/pip_init.py',
+    'lintrunner_adapters',
+    'pip_init',
     '--dry-run={{DRYRUN}}',
     'flake8==5.0.4',
     'flake8-bugbear==22.10.27',
@@ -34,15 +34,15 @@ include_patterns = [
 exclude_patterns = [
 ]
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/mypy_linter.py',
+    'lintrunner_adapters',
+    'mypy_linter',
     '--config=pyproject.toml',
     '--',
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
-    'lintrunner_adapters/adapters/pip_init.py',
+    'lintrunner_adapters',
+    'pip_init',
     '--dry-run={{DRYRUN}}',
     'mypy==0.990',
 ]
@@ -52,8 +52,8 @@ code = 'NOQA'
 include_patterns = ['**/*.py', '**/*.pyi']
 exclude_patterns = []
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/grep_linter.py',
+    'lintrunner_adapters',
+    'grep_linter',
     '--pattern=# noqa([^:]|$)',
     '--linter-name=NOQA',
     '--error-name=unqualified noqa',
@@ -70,8 +70,8 @@ code = 'NEWLINE'
 include_patterns=['**']
 exclude_patterns=[]
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/newlines_linter.py',
+    'lintrunner_adapters',
+    'newlines_linter',
     '--',
     '@{{PATHSFILE}}',
 ]
@@ -82,8 +82,8 @@ code = 'SPACES'
 include_patterns = ['**']
 exclude_patterns = []
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/grep_linter.py',
+    'lintrunner_adapters',
+    'grep_linter',
     '--pattern=[[:blank:]]$',
     '--linter-name=SPACES',
     '--error-name=trailing spaces',
@@ -102,8 +102,8 @@ exclude_patterns = [
     '.lintrunner.toml',
 ]
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/grep_linter.py',
+    'lintrunner_adapters',
+    'grep_linter',
     # @lint-ignore TXT2
     '--pattern=	',
     '--linter-name=TABS',
@@ -123,14 +123,14 @@ include_patterns = [
 ]
 exclude_patterns = []
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/black_isort_linter.py',
+    'lintrunner_adapters',
+    'black_isort_linter',
     '--',
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
-    'lintrunner_adapters/adapters/pip_init.py',
+    'lintrunner_adapters',
+    'pip_init',
     '--dry-run={{DRYRUN}}',
     'black==22.10.0',
     'isort==5.10.1',
@@ -145,15 +145,15 @@ include_patterns = [
 exclude_patterns = [
 ]
 command = [
-    'python3',
-    'lintrunner_adapters/adapters/pylint_linter.py',
+    'lintrunner_adapters',
+    'pylint_linter',
     '--rcfile=pyproject.toml',
     '--',
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
-    'lintrunner_adapters/adapters/pip_init.py',
+    'lintrunner_adapters',
+    'pip_init',
     '--dry-run={{DRYRUN}}',
     'pylint==2.15.5',
 ]
