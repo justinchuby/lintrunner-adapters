@@ -193,3 +193,35 @@ init_command = [
     '--dry-run={{DRYRUN}}',
     'pylint==2.15.5',
 ]
+
+[[linter]]
+code = 'CLANGFORMAT'
+include_patterns = [
+    '**/*.c',
+    '**/*.cc',
+    '**/*.cpp',
+    '**/*.h',
+]
+exclude_patterns = [
+]
+init_command = [
+    'python3',
+    'examples/pytorch/s3_init.py',
+    '--config-json=examples/pytorch/s3_init_config.json',
+    '--linter=clang-format',
+    '--dry-run={{DRYRUN}}',
+    '--output-dir=.lintbin',
+    '--output-name=clang-format',
+]
+command = [
+    'python3',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'clangformat_linter',
+    '--binary=.lintbin/clang-format',
+    # '--binary=clang-format',  # Uncomment this line to use system clang-format
+    '--',
+    '@{{PATHSFILE}}'
+]
+is_formatter = true
