@@ -12,6 +12,8 @@ from typing import List
 
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
+LINTER_CODE = "BLACK-ISORT"
+
 
 def check_file(
     filename: str,
@@ -43,7 +45,7 @@ def check_file(
                 path=filename,
                 line=None,
                 char=None,
-                code="BLACK-ISORT",
+                code=LINTER_CODE,
                 severity=LintSeverity.ERROR,
                 name="timeout",
                 original=None,
@@ -61,7 +63,7 @@ def check_file(
                 path=filename,
                 line=None,
                 char=None,
-                code="BLACK-ISORT",
+                code=LINTER_CODE,
                 severity=LintSeverity.ADVICE,
                 name="command-failed",
                 original=None,
@@ -93,7 +95,7 @@ def check_file(
             path=filename,
             line=None,
             char=None,
-            code="BLACK-ISORT",
+            code=LINTER_CODE,
             severity=LintSeverity.WARNING,
             name="format",
             original=original.decode("utf-8"),

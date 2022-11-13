@@ -13,13 +13,15 @@ from usort import Config as UsortConfig
 
 from lintrunner_adapters import LintMessage, LintSeverity
 
+LINTER_CODE = "UFMT"
+
 
 def format_error_message(filename: str, err: Exception) -> LintMessage:
     return LintMessage(
         path=filename,
         line=None,
         char=None,
-        code="UFMT",
+        code=LINTER_CODE,
         severity=LintSeverity.ADVICE,
         name="command-failed",
         original=None,
@@ -56,7 +58,7 @@ def check_file(
                 path=filename,
                 line=None,
                 char=None,
-                code="UFMT",
+                code=LINTER_CODE,
                 severity=LintSeverity.WARNING,
                 name="format",
                 original=original,

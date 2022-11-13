@@ -9,6 +9,8 @@ from typing import Dict, List, Pattern, Set
 
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
+LINTER_CODE = "FLAKE8"
+
 # fmt: off
 # https://www.flake8rules.com/
 DOCUMENTED_IN_FLAKE8RULES: Set[str] = {
@@ -182,7 +184,7 @@ def check_files(
                 path=None,
                 line=None,
                 char=None,
-                code="FLAKE8",
+                code=LINTER_CODE,
                 severity=LintSeverity.ERROR,
                 name="command-failed",
                 original=None,
@@ -217,7 +219,7 @@ def check_files(
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
             else None,
-            code="FLAKE8",
+            code=LINTER_CODE,
             severity=severities.get(match["code"]) or get_issue_severity(match["code"]),
             original=None,
             replacement=None,

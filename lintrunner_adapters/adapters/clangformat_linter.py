@@ -17,6 +17,8 @@ from lintrunner_adapters import (
     run_command,
 )
 
+LINTER_CODE = "CLANGFORMAT"
+
 
 def check_file(
     filename: str,
@@ -38,7 +40,7 @@ def check_file(
                 path=filename,
                 line=None,
                 char=None,
-                code="CLANGFORMAT",
+                code=LINTER_CODE,
                 severity=LintSeverity.ERROR,
                 name="timeout",
                 original=None,
@@ -56,7 +58,7 @@ def check_file(
                 path=filename,
                 line=None,
                 char=None,
-                code="CLANGFORMAT",
+                code=LINTER_CODE,
                 severity=LintSeverity.ADVICE,
                 name="command-failed",
                 original=None,
@@ -88,7 +90,7 @@ def check_file(
             path=filename,
             line=None,
             char=None,
-            code="CLANGFORMAT",
+            code=LINTER_CODE,
             severity=LintSeverity.WARNING,
             name="format",
             original=original.decode("utf-8"),
@@ -148,7 +150,7 @@ def main() -> None:
             path=None,
             line=None,
             char=None,
-            code="CLANGFORMAT",
+            code=LINTER_CODE,
             severity=LintSeverity.ERROR,
             name="init-error",
             original=None,

@@ -6,6 +6,8 @@ from typing import List, Optional, Pattern
 
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
+LINTER_CODE = "PYLINT"
+
 # adapters/pylint_linter.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 RESULTS_RE: Pattern[str] = re.compile(
     r"""(?mx)
@@ -96,7 +98,7 @@ def check_files(
                 path=None,
                 line=None,
                 char=None,
-                code="PYLINT",
+                code=LINTER_CODE,
                 severity=LintSeverity.ERROR,
                 name="command-failed",
                 original=None,
@@ -116,7 +118,7 @@ def check_files(
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
             else None,
-            code="PYLINT",
+            code=LINTER_CODE,
             severity=SEVERITIES.get(match["code"][0], LintSeverity.ERROR),
             original=None,
             replacement=None,
