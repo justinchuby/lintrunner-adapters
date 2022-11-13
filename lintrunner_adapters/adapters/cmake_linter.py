@@ -81,7 +81,7 @@ def check_file(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="cmakelint runner",
+        description=f"cmakelint runner. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

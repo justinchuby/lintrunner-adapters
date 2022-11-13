@@ -9,6 +9,8 @@ from typing import Dict, List, Pattern
 
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
+LINTER_CODE = "MYPY"
+
 # tools/linter/flake8_linter.py:15:13: error: Incompatibl...int")  [assignment]
 RESULTS_RE: Pattern[str] = re.compile(
     r"""(?mx)
@@ -47,7 +49,7 @@ def check_files(
                 path=None,
                 line=None,
                 char=None,
-                code="MYPY",
+                code=LINTER_CODE,
                 severity=LintSeverity.ERROR,
                 name="command-failed",
                 original=None,
@@ -65,7 +67,7 @@ def check_files(
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
             else None,
-            code="MYPY",
+            code=LINTER_CODE,
             severity=SEVERITIES.get(match["severity"], LintSeverity.ERROR),
             original=None,
             replacement=None,
@@ -76,7 +78,7 @@ def check_files(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="mypy wrapper linter.",
+        description=f"mypy wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

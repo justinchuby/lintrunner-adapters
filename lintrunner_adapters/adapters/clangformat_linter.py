@@ -103,7 +103,7 @@ def check_file(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Format files with clang-format.",
+        description=f"Format files with clang-format. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

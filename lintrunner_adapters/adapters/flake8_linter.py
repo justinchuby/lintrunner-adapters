@@ -245,7 +245,7 @@ def check_files(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Flake8 wrapper linter.",
+        description=f"Flake8 wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

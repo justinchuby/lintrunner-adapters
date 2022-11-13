@@ -32,7 +32,7 @@ def check_file(filename: str) -> Optional[LintMessage]:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="exec linter",
+        description=f"exec linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

@@ -129,7 +129,7 @@ def check_files(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="pylint wrapper linter.",
+        description=f"pylint wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
