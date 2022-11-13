@@ -88,7 +88,7 @@ def run_command(
     timeout: int,
     stdin: Optional[BinaryIO] = None,
     input: Optional[bytes] = None,
-    check: bool = True,
+    check: bool = False,
 ) -> "subprocess.CompletedProcess[bytes]":
     remaining_retries = retries
     while True:

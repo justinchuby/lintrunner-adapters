@@ -11,26 +11,10 @@ import time
 from enum import Enum
 from typing import List, NamedTuple, Optional, Pattern
 
+from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix, IS_WINDOWS
+
+
 LINTER_CODE = "CMAKE"
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
 
 
 # CMakeLists.txt:901: Lines should be <= 80 characters long [linelength]
@@ -45,23 +29,6 @@ RESULTS_RE: Pattern[str] = re.compile(
     """
 )
 
-
-def run_command(
-    args: List[str],
-) -> "subprocess.CompletedProcess[bytes]":
-    logging.debug("$ %s", " ".join(args))
-    start_time = time.monotonic()
-    try:
-        return subprocess.run(
-            args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    finally:
-        end_time = time.monotonic()
-        logging.debug("took %dms", (end_time - start_time) * 1000)
-
-
 def check_file(
     filename: str,
     config: str,
@@ -69,6 +36,7 @@ def check_file(
     try:
         proc = run_command(
             ["cmakelint", f"--config={config}", filename],
+            reties=0, timeout=90
         )
     except OSError as err:
         return [

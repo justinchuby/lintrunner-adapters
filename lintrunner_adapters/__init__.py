@@ -1,1 +1,1 @@
-from ._common.lintrunner_common import LintMessage, LintSeverity, as_posix, run_command
+from ._common.lintrunner_common import LintMessage, LintSeverity, as_posix, run_command, IS_WINDOWS
