@@ -1,7 +1,6 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
 import argparse
-import json
 import logging
 import subprocess
 import sys
@@ -278,7 +277,7 @@ def main() -> None:
 
     lint_messages = check_files(args.filenames, severities, args.retries)
     for lint_message in lint_messages:
-        print(json.dumps(lint_message.asdict()), flush=True)
+        lint_message.display()
 
 
 if __name__ == "__main__":

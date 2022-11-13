@@ -117,4 +117,4 @@ if __name__ == "__main__":
 
     lint_messages = check_files(args.filenames)
     for lint_message in lint_messages:
-        print(json.dumps(lint_message._asdict()), flush=True)
+        lint_message.display()

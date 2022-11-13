@@ -5,30 +5,16 @@
 import argparse
 import json
 import logging
-import os
 import subprocess
 import sys
-import time
-from enum import Enum
-from typing import Any, List, NamedTuple, Optional
+from typing import Optional
 
-import lintrunner_adapters
-
-
-def run_command(
-    args: List[str],
-) -> "subprocess.CompletedProcess[bytes]":
-    logging.debug("$ %s", " ".join(args))
-    start_time = time.monotonic()
-    try:
-        return subprocess.run(
-            args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    finally:
-        end_time = time.monotonic()
-        logging.debug("took %dms", (end_time - start_time) * 1000)
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+    run_command,
+    as_posix,
+)
 
 
 def lint_file(
@@ -224,7 +210,7 @@ def main() -> None:
                 )
             ),
         )
-        print(json.dumps(err_msg._asdict()), flush=True)
+        print(json.dumps(err_msg.asdict()), flush=True)
         sys.exit(0)
 
     lines = proc.stdout.decode().splitlines()
@@ -238,7 +224,7 @@ def main() -> None:
             args.error_description,
         )
         if lint_message is not None:
-            print(json.dumps(lint_message._asdict()), flush=True)
+            print(json.dumps(lint_message.asdict()), flush=True)
 
 
 if __name__ == "__main__":

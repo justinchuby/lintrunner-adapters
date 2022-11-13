@@ -1,4 +1,5 @@
 import dataclasses
+import json
 import logging
 import os
 import subprocess
@@ -39,6 +40,10 @@ class LintMessage:
 
     def asdict(self) -> dict:
         return dataclasses.asdict(self)
+
+    def display(self):
+        """Print to stdout for lintrunner to consume."""
+        print(json.dumps(self.asdict()), flush=True)
 
 
 def as_posix(name: str) -> str:

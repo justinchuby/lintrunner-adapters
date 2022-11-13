@@ -6,31 +6,13 @@ import argparse
 import json
 import logging
 import sys
-from enum import Enum
-from typing import List, NamedTuple, Optional
+from typing import List, Optional
+
+from lintrunner_adapters import LintMessage, LintSeverity
 
 NEWLINE = 10  # ASCII "\n"
 CARRIAGE_RETURN = 13  # ASCII "\r"
 LINTER_CODE = "NEWLINE"
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
 
 
 def check_file(filename: str) -> Optional[LintMessage]:
@@ -160,4 +142,4 @@ if __name__ == "__main__":
             lint_messages.append(lint_message)
 
     for lint_message in lint_messages:
-        print(json.dumps(lint_message._asdict()), flush=True)
+        lint_message.display()

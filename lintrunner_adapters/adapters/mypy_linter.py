@@ -12,35 +12,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, NamedTuple, Optional, Pattern
 
-IS_WINDOWS: bool = os.name == "nt"
-
-
-def eprint(*args: Any, **kwargs: Any) -> None:
-    print(*args, file=sys.stderr, flush=True, **kwargs)
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
-
-
-def as_posix(name: str) -> str:
-    return name.replace("\\", "/") if IS_WINDOWS else name
-
+from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix
 
 # tools/linter/flake8_linter.py:15:13: error: Incompatibl...int")  [assignment]
 RESULTS_RE: Pattern[str] = re.compile(
@@ -56,29 +28,9 @@ RESULTS_RE: Pattern[str] = re.compile(
     """
 )
 
-
-def run_command(
-    args: List[str],
-    *,
-    extra_env: Optional[Dict[str, str]],
-    retries: int,
-) -> "subprocess.CompletedProcess[bytes]":
-    logging.debug("$ %s", " ".join(args))
-    start_time = time.monotonic()
-    try:
-        return subprocess.run(
-            args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    finally:
-        end_time = time.monotonic()
-        logging.debug("took %dms", (end_time - start_time) * 1000)
-
-
 # Severity is either "error" or "note":
 # https://github.com/python/mypy/blob/8b47a032e1317fb8e3f9a818005a6b63e9bf0311/mypy/errors.py#L46-L47
-severities = {
+SEVERITIES = {
     "error": LintSeverity.ERROR,
     "note": LintSeverity.ADVICE,
 }
@@ -92,7 +44,6 @@ def check_files(
     try:
         proc = run_command(
             [sys.executable, "-mmypy", f"--config={config}"] + filenames,
-            extra_env={},
             retries=retries,
         )
     except OSError as err:
@@ -120,7 +71,7 @@ def check_files(
             if match["column"] is not None and not match["column"].startswith("-")
             else None,
             code="MYPY",
-            severity=severities.get(match["severity"], LintSeverity.ERROR),
+            severity=SEVERITIES.get(match["severity"], LintSeverity.ERROR),
             original=None,
             replacement=None,
         )
@@ -185,7 +136,7 @@ def main() -> None:
 
     lint_messages = check_files(list(filenames), args.config, args.retries)
     for lint_message in lint_messages:
-        print(json.dumps(lint_message._asdict()), flush=True)
+        lint_message.display()
 
 
 if __name__ == "__main__":

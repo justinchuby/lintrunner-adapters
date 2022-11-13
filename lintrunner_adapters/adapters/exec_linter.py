@@ -69,7 +69,7 @@ def main():
             lint_messages.append(lint_message)
 
     for lint_message in lint_messages:
-        print(json.dumps(lint_message._asdict()), flush=True)
+        lint_message.display()
 
 
 if __name__ == "__main__":
