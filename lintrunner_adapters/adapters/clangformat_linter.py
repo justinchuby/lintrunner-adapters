@@ -4,6 +4,7 @@ import argparse
 import concurrent.futures
 import logging
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -146,7 +147,7 @@ def main() -> None:
     )
 
     binary = os.path.normpath(args.binary) if IS_WINDOWS else args.binary
-    if not Path(binary).exists():
+    if not Path(binary).exists() and shutil.which(binary) is None:
         lint_message = LintMessage(
             path=None,
             line=None,
