@@ -23,4 +23,4 @@ jobs:
           poetry run lintrunner init
       - name: Run pytest
         run: |
-          poetry run pytest --doctest-modules
+          PY_IGNORE_IMPORTMISMATCH=1 poetry run pytest --doctest-modules
