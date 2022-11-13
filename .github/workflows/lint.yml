@@ -18,12 +18,13 @@ jobs:
           python-version: "3.10"
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          lintrunner init
+          pipx install poetry
+          poetry install
+          poetry run lintrunner init
       - name: Run lintrunner on all files
         run: |
           set +e
-          if ! lintrunner --force-color --all-files --tee-json=lint.json; then
+          if ! poetry run lintrunner --force-color --all-files --tee-json=lint.json; then
               echo ""
               echo -e "\e[1m\e[36mYou can reproduce these results locally by using \`lintrunner\`.\e[0m"
               exit 1
@@ -39,7 +40,7 @@ jobs:
       - name: Produce SARIF
         if: always()
         run: |
-          python tools/convert_to_sarif.py --input lint.json --output lintrunner.sarif
+          poetry run python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
       - name: Upload SARIF file
         if: always()
         continue-on-error: true
