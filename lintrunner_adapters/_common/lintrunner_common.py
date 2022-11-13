@@ -37,6 +37,9 @@ class LintMessage:
     replacement: Optional[str]
     description: Optional[str]
 
+    def asdict(self) -> dict:
+        return dataclasses.asdict(self)
+
 
 def as_posix(name: str) -> str:
     return name.replace("\\", "/") if IS_WINDOWS else name

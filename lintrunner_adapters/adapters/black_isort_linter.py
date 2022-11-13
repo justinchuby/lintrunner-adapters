@@ -9,10 +9,10 @@ import logging
 import os
 import subprocess
 import sys
-import time
-from enum import Enum
-from typing import Any, BinaryIO, List, NamedTuple, Optional
+from typing import List
 
+
+from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix
 
 
 def check_file(
@@ -155,7 +155,7 @@ def main() -> None:
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
-                    print(json.dumps(lint_message._asdict()), flush=True)
+                    print(json.dumps(lint_message.asdict()), flush=True)
             except Exception:
                 logging.critical('Failed at "%s".', futures[future])
                 raise

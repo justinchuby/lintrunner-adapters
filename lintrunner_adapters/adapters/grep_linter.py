@@ -12,34 +12,7 @@ import time
 from enum import Enum
 from typing import Any, List, NamedTuple, Optional
 
-IS_WINDOWS: bool = os.name == "nt"
-
-
-def eprint(*args: Any, **kwargs: Any) -> None:
-    print(*args, file=sys.stderr, flush=True, **kwargs)
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
-
-
-def as_posix(name: str) -> str:
-    return name.replace("\\", "/") if IS_WINDOWS else name
+import lintrunner_adapters
 
 
 def run_command(
