@@ -48,9 +48,10 @@ def as_posix(name: str) -> str:
 def _run_command(
     args: List[str],
     *,
-    stdin: Optional[BinaryIO],
     timeout: int,
-    input: Optional[bytes] = None,
+    stdin: Optional[BinaryIO],
+    input: Optional[bytes],
+    check: bool,
 ) -> "subprocess.CompletedProcess[bytes]":
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
@@ -63,10 +64,9 @@ def _run_command(
                 shell=IS_WINDOWS,  # So batch scripts are found.
                 input=input,
                 timeout=timeout,
-                check=True,
+                check=check,
             )
 
-        assert stdin is not None
         return subprocess.run(  # noqa: DUO116
             args,
             stdin=stdin,
@@ -74,7 +74,7 @@ def _run_command(
             stderr=subprocess.PIPE,
             shell=IS_WINDOWS,  # So batch scripts are found.
             timeout=timeout,
-            check=True,
+            check=check,
         )
     finally:
         end_time = time.monotonic()
@@ -84,15 +84,16 @@ def _run_command(
 def run_command(
     args: List[str],
     *,
-    stdin: Optional[BinaryIO],
     retries: int,
     timeout: int,
+    stdin: Optional[BinaryIO] = None,
     input: Optional[bytes] = None,
+    check: bool = True,
 ) -> "subprocess.CompletedProcess[bytes]":
     remaining_retries = retries
     while True:
         try:
-            return _run_command(args, stdin=stdin, timeout=timeout, input=input)
+            return _run_command(args, timeout=timeout, stdin=stdin, input=input, check=check)
         except subprocess.TimeoutExpired as err:
             if remaining_retries == 0:
                 raise err

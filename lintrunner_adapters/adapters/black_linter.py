@@ -7,85 +7,9 @@ import logging
 import os
 import subprocess
 import sys
-import time
-from enum import Enum
-from typing import Any, BinaryIO, List, NamedTuple, Optional
+from typing import List
 
-IS_WINDOWS: bool = os.name == "nt"
-
-
-def eprint(*args: Any, **kwargs: Any) -> None:
-    print(*args, file=sys.stderr, flush=True, **kwargs)
-
-
-class LintSeverity(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    ADVICE = "advice"
-    DISABLED = "disabled"
-
-
-class LintMessage(NamedTuple):
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
-    code: str
-    severity: LintSeverity
-    name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
-
-
-def as_posix(name: str) -> str:
-    return name.replace("\\", "/") if IS_WINDOWS else name
-
-
-def _run_command(
-    args: List[str],
-    *,
-    stdin: BinaryIO,
-    timeout: int,
-) -> "subprocess.CompletedProcess[bytes]":
-    logging.debug("$ %s", " ".join(args))
-    start_time = time.monotonic()
-    try:
-        return subprocess.run(  # noqa: DUO116
-            args,
-            stdin=stdin,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=IS_WINDOWS,  # So batch scripts are found.
-            timeout=timeout,
-            check=True,
-        )
-    finally:
-        end_time = time.monotonic()
-        logging.debug("took %dms", (end_time - start_time) * 1000)
-
-
-def run_command(
-    args: List[str],
-    *,
-    stdin: BinaryIO,
-    retries: int,
-    timeout: int,
-) -> "subprocess.CompletedProcess[bytes]":
-    remaining_retries = retries
-    while True:
-        try:
-            return _run_command(args, stdin=stdin, timeout=timeout)
-        except subprocess.TimeoutExpired as err:
-            if remaining_retries == 0:
-                raise err
-            remaining_retries -= 1
-            logging.warning(
-                "(%s/%s) Retrying because command failed with: %r",
-                retries - remaining_retries,
-                retries,
-                err,
-            )
-            time.sleep(1)
+from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix
 
 
 def check_file(
@@ -219,7 +143,7 @@ def main() -> None:
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
-                    print(json.dumps(lint_message._asdict()), flush=True)
+                    print(json.dumps(lint_message.asdict()), flush=True)
             except Exception:
                 logging.critical('Failed at "%s".', futures[future])
                 raise
