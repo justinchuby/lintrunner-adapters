@@ -113,6 +113,11 @@ def main() -> None:
         help="clang-format binary path",
     )
     parser.add_argument(
+        "--fallback",
+        action="store_true",
+        help="fallback to using clang-format from PATH",
+    )
+    parser.add_argument(
         "--retries",
         default=3,
         type=int,
@@ -147,23 +152,46 @@ def main() -> None:
     )
 
     binary = os.path.normpath(args.binary) if IS_WINDOWS else args.binary
-    if not Path(binary).exists() and shutil.which(binary) is None:
-        lint_message = LintMessage(
-            path=None,
-            line=None,
-            char=None,
-            code=LINTER_CODE,
-            severity=LintSeverity.ERROR,
-            name="init-error",
-            original=None,
-            replacement=None,
-            description=(
-                f"Could not find clang-format binary at {binary}, "
-                "did you forget to run `lintrunner init`?"
-            ),
-        )
-        lint_message.display()
-        sys.exit(0)
+    if not Path(binary).exists():
+        if args.fallback:
+            # Find clang-format in PATH
+            binary = shutil.which("clang-format")
+            if binary is None:
+                lint_message = LintMessage(
+                    path=None,
+                    line=None,
+                    char=None,
+                    code=LINTER_CODE,
+                    severity=LintSeverity.ERROR,
+                    name="init-error",
+                    original=None,
+                    replacement=None,
+                    description=(
+                        f"Could not find clang-format binary at {binary}, "
+                        "and fallback to PATH failed."
+                        "Run `lintrunner init` or make sure clang-format is "
+                        "installed and in PATH."
+                    ),
+                )
+                lint_message.display()
+                sys.exit(0)
+        else:
+            lint_message = LintMessage(
+                path=None,
+                line=None,
+                char=None,
+                code=LINTER_CODE,
+                severity=LintSeverity.ERROR,
+                name="init-error",
+                original=None,
+                replacement=None,
+                description=(
+                    f"Could not find clang-format binary at {binary}. "
+                    "did you forget to run `lintrunner init`?"
+                ),
+            )
+            lint_message.display()
+            sys.exit(0)
 
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=os.cpu_count(),
