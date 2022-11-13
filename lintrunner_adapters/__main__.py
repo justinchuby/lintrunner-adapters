@@ -1,4 +1,5 @@
 """cli for running lintrunner adapters.
+
 Usage:
 
     python -m lintrunner_adapters <adapter_name> <args>
