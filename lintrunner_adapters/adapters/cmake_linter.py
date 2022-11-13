@@ -7,11 +7,15 @@ import logging
 import os
 import re
 import subprocess
-import time
-from enum import Enum
-from typing import List, NamedTuple, Optional, Pattern
+from typing import List, Pattern
 
-from lintrunner_adapters import LintMessage, LintSeverity, run_command, as_posix, IS_WINDOWS
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+    run_command,
+    as_posix,
+    IS_WINDOWS,
+)
 
 
 LINTER_CODE = "CMAKE"
@@ -28,6 +32,7 @@ RESULTS_RE: Pattern[str] = re.compile(
     $
     """
 )
+
 
 def check_file(
     filename: str,
@@ -82,7 +87,7 @@ def check_file(
     ]
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="cmakelint runner",
         fromfile_prefix_chars="@",
@@ -115,7 +120,11 @@ if __name__ == "__main__":
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
-                    print(json.dumps(lint_message._asdict()), flush=True)
+                    print(json.dumps(lint_message.asdict()), flush=True)
             except Exception:
                 logging.critical('Failed at "%s".', futures[future])
                 raise
+
+
+if __name__ == "__main__":
+    main()
