@@ -196,14 +196,14 @@ if __name__ == "__main__":
         stream=sys.stderr,
     )
 
-    with open(args.config_json, encoding="utf-8") as f:
+    with open(pathlib.Path(args.config_json), encoding="utf-8") as f:
         config = json.load(f)
     config = config[args.linter]
 
     # If the host platform is not in platform_to_hash, it is unsupported.
     if HOST_PLATFORM not in config:
         logging.error(f"Unsupported platform: {HOST_PLATFORM}")
-        sys.exit(1)
+        sys.exit(0)
 
     url = config[HOST_PLATFORM]["download_url"]
     hash = config[HOST_PLATFORM]["hash"]
