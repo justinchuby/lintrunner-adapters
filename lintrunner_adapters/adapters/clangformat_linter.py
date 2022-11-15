@@ -24,6 +24,7 @@ LINTER_CODE = "CLANGFORMAT"
 def check_file(
     filename: str,
     binary: str,
+    style: str,
     retries: int,
     timeout: int,
 ) -> List[LintMessage]:
@@ -31,7 +32,7 @@ def check_file(
         with open(filename, "rb") as f:
             original = f.read()
         proc = run_command(
-            [binary, filename],
+            [binary, f"-style={style}", filename],
             retries=retries,
             timeout=timeout,
             check=True,
@@ -118,6 +119,11 @@ def main() -> None:
         help="fallback to using clang-format from PATH",
     )
     parser.add_argument(
+        "--style",
+        default="file",
+        help="clang-format style",
+    )
+    parser.add_argument(
         "--retries",
         default=3,
         type=int,
@@ -198,7 +204,9 @@ def main() -> None:
         thread_name_prefix="Thread",
     ) as executor:
         futures = {
-            executor.submit(check_file, x, binary, args.retries, args.timeout): x
+            executor.submit(
+                check_file, x, binary, args.style, args.retries, args.timeout
+            ): x
             for x in args.filenames
         }
         for future in concurrent.futures.as_completed(futures):
