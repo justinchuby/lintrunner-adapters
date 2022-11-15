@@ -59,7 +59,3 @@ def to_sarif(input, output):
     lintrunner_jsons = [json.loads(line) for line in input]
     sarif = convert_to_sarif.produce_sarif(lintrunner_jsons)
     json.dump(sarif, output)
-
-
-if __name__ == "__main__":
-    cli()
