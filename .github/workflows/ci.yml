@@ -26,13 +26,14 @@ jobs:
           python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
-          pip install poetry
-          poetry install
-          poetry run lintrunner init
+          pip install poetry lintrunner pytest ufmt types-pyyaml
+          poetry build
+          pip install dist/*.whl
+          lintrunner init
       - name: Run lintrunner on all files
         run: |
           set +e
-          if ! poetry run lintrunner --force-color --all-files --tee-json=lint.json; then
+          if ! lintrunner --force-color --all-files --tee-json=lint.json; then
               echo ""
               echo -e "\e[1m\e[36mYou can reproduce these results locally by using \`lintrunner\`.\e[0m"
               exit 1
@@ -48,7 +49,7 @@ jobs:
       - name: Produce SARIF
         if: always()
         run: |
-          poetry run python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
+          python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
       - name: Upload SARIF file
         if: always()
         continue-on-error: true
