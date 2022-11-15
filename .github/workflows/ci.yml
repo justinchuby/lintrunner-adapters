@@ -15,14 +15,15 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+        python_version: ["3.9", "3.10", "3.11"]
 
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
-        uses: actions/setup-python@v4.1.0
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
           pip install poetry
