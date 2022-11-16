@@ -31,6 +31,7 @@ def check_file(
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
+                check=True,
             )
             import_sorted = proc.stdout
             # Pipe isort's result to black
@@ -40,6 +41,7 @@ def check_file(
                 input=import_sorted,
                 retries=retries,
                 timeout=timeout,
+                check=True,
             )
     except subprocess.TimeoutExpired:
         return [
