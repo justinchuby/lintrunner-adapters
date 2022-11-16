@@ -24,21 +24,24 @@ def check_file(
         with open(filename, "rb") as f:
             original = f.read()
         with open(filename, "rb") as f:
+            # Run isort first then black so we get consistent result
+            # even if isort is not using the black profile
             proc = run_command(
-                [sys.executable, "-mblack", "--stdin-filename", filename, "-"],
+                [sys.executable, "-misort", "-"],
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
                 check=True,
             )
-            formatted = proc.stdout
-            # Pipe black's result to isort
+            import_sorted = proc.stdout
+            # Pipe isort's result to black
             proc = run_command(
-                [sys.executable, "-misort", "-"],
+                [sys.executable, "-mblack", "--stdin-filename", filename, "-"],
                 stdin=None,
-                input=formatted,
+                input=import_sorted,
                 retries=retries,
                 timeout=timeout,
+                check=True,
             )
     except subprocess.TimeoutExpired:
         return [
