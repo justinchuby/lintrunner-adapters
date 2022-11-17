@@ -83,12 +83,14 @@ def pylint_doc_url(code: str, string_code: str) -> str:
 def check_files(
     filenames: List[str],
     rcfile: Optional[str],
+    jobs: int,
     retries: int,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
             [sys.executable, "-mpylint", "--score=n"]
             + ([f"--rcfile={rcfile}"] if rcfile else [])
+            + [f"--jobs={jobs}"]
             + filenames,
             retries=retries,
         )
@@ -145,6 +147,12 @@ def main() -> None:
         help="pylint config file",
     )
     parser.add_argument(
+        "--jobs",
+        default=0,
+        type=int,
+        help="number of jobs to run in parallel, 0 for number of CPUs",
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="verbose logging",
@@ -166,7 +174,9 @@ def main() -> None:
         stream=sys.stderr,
     )
 
-    lint_messages = check_files(list(args.filenames), args.rcfile, args.retries)
+    lint_messages = check_files(
+        list(args.filenames), args.rcfile, args.jobs, args.retries
+    )
     for lint_message in lint_messages:
         lint_message.display()
 
