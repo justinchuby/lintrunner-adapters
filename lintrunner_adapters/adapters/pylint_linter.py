@@ -81,7 +81,9 @@ def pylint_doc_url(code: str, string_code: str) -> str:
     return f"https://pylint.pycqa.org/en/latest/user_guide/messages/{category}/{string_code}.html"
 
 
-def format_lint_messages(message, code, string_code, show_disable: bool) -> str:
+def format_lint_messages(
+    message: str, code: str, string_code: str, show_disable: bool
+) -> str:
     formatted = (
         f"{message} ({string_code})\n"
         f"See [{string_code}]({pylint_doc_url(code, string_code)})."

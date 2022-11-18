@@ -50,7 +50,7 @@ def check_files(
     ]
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description=f"shellcheck runner. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",

@@ -40,10 +40,10 @@ class LintMessage:
     replacement: Optional[str]
     description: Optional[str]
 
-    def asdict(self) -> dict:
+    def asdict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
 
-    def display(self):
+    def display(self) -> None:
         """Print to stdout for lintrunner to consume."""
         print(json.dumps(self.asdict()), flush=True)
 

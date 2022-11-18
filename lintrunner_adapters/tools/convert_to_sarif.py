@@ -3,10 +3,10 @@
 import argparse
 import json
 import os
-from typing import Iterable
+from typing import Any, Iterable
 
 
-def format_rule_name(lintrunner_result: dict) -> str:
+def format_rule_name(lintrunner_result: dict[str, Any]) -> str:
     return f"{lintrunner_result['code']}/{lintrunner_result['name']}"
 
 
@@ -16,7 +16,9 @@ def severity_to_github_level(severity: str) -> str:
     return severity
 
 
-def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
+def parse_single_lintrunner_result(
+    lintrunner_result: dict[str, Any]
+) -> tuple[dict[str, Any], dict[str, Any]]:
     r"""Parse a single lintrunner result.
 
     A result looks like this:
@@ -79,7 +81,7 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
     return result, rule
 
 
-def produce_sarif(lintrunner_results: Iterable[dict]) -> dict:
+def produce_sarif(lintrunner_results: Iterable[dict[str, Any]]) -> dict[str, Any]:
     """Convert the output of lintrunner json to SARIF."""
 
     rules = {}
@@ -108,9 +110,8 @@ def produce_sarif(lintrunner_results: Iterable[dict]) -> dict:
     return sarif
 
 
-def main(args):
+def main(args: Any) -> None:
     """Convert the output of lintrunner json to SARIF."""
-
     with open(args.input, "r", encoding="utf-8") as f:
         lintrunner_jsons = [json.loads(line) for line in f]
 

@@ -79,7 +79,7 @@ def check_file(
     ]
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description=f"cmakelint runner. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",

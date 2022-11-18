@@ -110,7 +110,7 @@ def check_files(
     ]
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description=f"mypy wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
