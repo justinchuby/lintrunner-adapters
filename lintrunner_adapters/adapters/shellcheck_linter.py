@@ -1,5 +1,7 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import argparse
 import json
 import shutil
@@ -50,7 +52,7 @@ def check_files(
     ]
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description=f"shellcheck runner. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",

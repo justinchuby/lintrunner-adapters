@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import dataclasses
 import enum
@@ -7,7 +9,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Any, BinaryIO, List, Optional
+from typing import Any, BinaryIO, Optional
 
 IS_WINDOWS: bool = os.name == "nt"
 
@@ -40,10 +42,10 @@ class LintMessage:
     replacement: Optional[str]
     description: Optional[str]
 
-    def asdict(self) -> dict:
+    def asdict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
 
-    def display(self):
+    def display(self) -> None:
         """Print to stdout for lintrunner to consume."""
         print(json.dumps(self.asdict()), flush=True)
 
@@ -53,7 +55,7 @@ def as_posix(name: str) -> str:
 
 
 def _run_command(
-    args: List[str],
+    args: list[str],
     *,
     timeout: Optional[int],
     stdin: Optional[BinaryIO],
@@ -89,7 +91,7 @@ def _run_command(
 
 
 def run_command(
-    args: List[str],
+    args: list[str],
     *,
     retries: int = 0,
     timeout: Optional[int] = None,

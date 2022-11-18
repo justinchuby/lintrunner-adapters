@@ -1,5 +1,7 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import argparse
 import concurrent.futures
 import logging
@@ -79,7 +81,7 @@ def check_file(
     ]
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(
         description=f"cmakelint runner. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
