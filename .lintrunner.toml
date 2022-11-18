@@ -48,7 +48,7 @@ command = [
     'mypy_linter',
     '--config=pyproject.toml',
     '--show-notes',
-    '--show-disable',
+    # '--show-disable',
     '--',
     '@{{PATHSFILE}}'
 ]
@@ -211,12 +211,12 @@ exclude_patterns = [
 ]
 init_command = [
     'python3',
-    '-m',
-    'lintrunner_adapters',
-    'run',
-    'pip_init',
+    'examples/pytorch/s3_init.py',
+    '--config-json=examples/pytorch/s3_init_config.json',
+    '--linter=clang-format',
     '--dry-run={{DRYRUN}}',
-    'clang-format==15.0.4',
+    '--output-dir=.lintbin',
+    '--output-name=clang-format',
 ]
 command = [
     'python3',
