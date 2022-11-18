@@ -69,9 +69,8 @@ def check_files(
         LintMessage(
             path=match["file"],
             name=match["code"],
-            description=match["message"] + disable_message(match["code"])
-            if show_disable
-            else "",
+            description=match["message"]
+            + (disable_message(match["code"]) if show_disable else ""),
             line=int(match["line"]),
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
@@ -85,7 +84,7 @@ def check_files(
     ]
 
 
-def main() -> int:
+def main():
     parser = argparse.ArgumentParser(
         description=f"mypy wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
