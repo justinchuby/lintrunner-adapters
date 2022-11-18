@@ -47,9 +47,7 @@ class TestConvertToSarif(unittest.TestCase):
                                 {
                                     "id": "FLAKE8/test-code",
                                     "name": "FLAKE8/test-code",
-                                    "shortDescription": {
-                                        "text": "FLAKE8/test-code: test description"
-                                    },
+                                    "shortDescription": {"text": "FLAKE8/test-code"},
                                     "fullDescription": {
                                         "text": "FLAKE8/test-code\ntest description"
                                     },
@@ -58,9 +56,7 @@ class TestConvertToSarif(unittest.TestCase):
                                 {
                                     "id": "FLAKE8/test-code-2",
                                     "name": "FLAKE8/test-code-2",
-                                    "shortDescription": {
-                                        "text": "FLAKE8/test-code-2: test description"
-                                    },
+                                    "shortDescription": {"text": "FLAKE8/test-code-2"},
                                     "fullDescription": {
                                         "text": "FLAKE8/test-code-2\ntest description"
                                     },
@@ -73,7 +69,7 @@ class TestConvertToSarif(unittest.TestCase):
                         {
                             "ruleId": "FLAKE8/test-code",
                             "level": "error",
-                            "message": {"text": "FLAKE8/test-code\ntest description"},
+                            "message": {"text": "test description"},
                             "locations": [
                                 {
                                     "physicalLocation": {
@@ -86,7 +82,7 @@ class TestConvertToSarif(unittest.TestCase):
                         {
                             "ruleId": "FLAKE8/test-code-2",
                             "level": "error",
-                            "message": {"text": "FLAKE8/test-code-2\ntest description"},
+                            "message": {"text": "test description"},
                             "locations": [
                                 {
                                     "physicalLocation": {
@@ -99,7 +95,7 @@ class TestConvertToSarif(unittest.TestCase):
                         {
                             "ruleId": "FLAKE8/test-code",
                             "level": "note",
-                            "message": {"text": "FLAKE8/test-code\ntest description"},
+                            "message": {"text": "test description"},
                             "locations": [
                                 {
                                     "physicalLocation": {
@@ -133,7 +129,7 @@ class TestConvertToSarif(unittest.TestCase):
             {
                 "ruleId": "FLAKE8/test-code",
                 "level": "error",
-                "message": {"text": "FLAKE8/test-code\ntest description"},
+                "message": {"text": "test description"},
                 "locations": [
                     {
                         "physicalLocation": {
@@ -163,7 +159,7 @@ class TestConvertToSarif(unittest.TestCase):
             {
                 "ruleId": "FLAKE8/test-code",
                 "level": "error",
-                "message": {"text": "FLAKE8/test-code\ntest description"},
+                "message": {"text": "test description"},
                 "locations": [
                     {
                         "physicalLocation": {

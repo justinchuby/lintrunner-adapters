@@ -42,9 +42,7 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
         "ruleId": format_rule_name(lintrunner_result),
         "level": severity_to_github_level(lintrunner_result["severity"]),
         "message": {
-            "text": format_rule_name(lintrunner_result)
-            + "\n"
-            + lintrunner_result["description"],
+            "text": lintrunner_result["description"],
         },
         "locations": [
             {
@@ -66,11 +64,7 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
         "rule": {
             "id": format_rule_name(lintrunner_result),
             "name": format_rule_name(lintrunner_result),
-            "shortDescription": {
-                "text": format_rule_name(lintrunner_result)
-                + ": "
-                + lintrunner_result["description"].split("\n")[0],
-            },
+            "shortDescription": {"text": format_rule_name(lintrunner_result)},
             "fullDescription": {
                 "text": format_rule_name(lintrunner_result)
                 + "\n"
