@@ -81,11 +81,23 @@ def pylint_doc_url(code: str, string_code: str) -> str:
     return f"https://pylint.pycqa.org/en/latest/user_guide/messages/{category}/{string_code}.html"
 
 
+def format_lint_messages(message, code, string_code, show_disable: bool) -> str:
+    formatted = (
+        f"{message} ({string_code})\n"
+        f"See [{string_code}]({pylint_doc_url(code, string_code)})"
+    )
+    if show_disable:
+        formatted += f"\n\nTo disable, use `  # pylint: disable={string_code}`"
+    return formatted
+
+
 def check_files(
     filenames: List[str],
+    *,
     rcfile: Optional[str],
     jobs: int,
     retries: int,
+    show_disable: bool,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
@@ -114,9 +126,9 @@ def check_files(
         LintMessage(
             path=match["file"],
             name=match["code"],
-            description=match["message"]
-            + f" ({match['string_code']})"
-            + f"\nSee {pylint_doc_url(match['code'], match['string_code'])}",
+            description=format_lint_messages(
+                match["message"], match["code"], match["string_code"], show_disable
+            ),
             line=int(match["line"]),
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
@@ -147,6 +159,11 @@ def main() -> None:
         type=int,
         help="number of jobs to run in parallel, 0 for number of CPUs",
     )
+    parser.add_argument(
+        "--show-disable",
+        action="store_true",
+        help="show how to disable a lint message",
+    )
     lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
@@ -161,7 +178,11 @@ def main() -> None:
     )
 
     lint_messages = check_files(
-        list(args.filenames), args.rcfile, args.jobs, args.retries
+        list(args.filenames),
+        rcfile=args.rcfile,
+        jobs=args.jobs,
+        retries=args.retries,
+        show_disable=args.show_disable,
     )
     for lint_message in lint_messages:
         lint_message.display()

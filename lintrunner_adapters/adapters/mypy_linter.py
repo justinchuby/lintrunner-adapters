@@ -34,10 +34,16 @@ SEVERITIES = {
 }
 
 
+def disable_message(code: str = {}) -> str:
+    return f"\nTo disable this error, use `  # type: ignore{code}`"
+
+
 def check_files(
     filenames: List[str],
+    *,
     config: str,
     retries: int,
+    show_disable: bool,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
@@ -63,7 +69,9 @@ def check_files(
         LintMessage(
             path=match["file"],
             name=match["code"],
-            description=match["message"],
+            description=match["message"] + disable_message(match["code"])
+            if show_disable
+            else "",
             line=int(match["line"]),
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
@@ -77,7 +85,7 @@ def check_files(
     ]
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(
         description=f"mypy wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
@@ -86,6 +94,11 @@ def main() -> None:
         "--config",
         required=True,
         help="path to an mypy .ini config file",
+    )
+    parser.add_argument(
+        "--show-disable",
+        action="store_true",
+        help="show how to disable a lint message",
     )
     lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
@@ -117,7 +130,12 @@ def main() -> None:
         else:
             filenames[filename] = True
 
-    lint_messages = check_files(list(filenames), args.config, args.retries)
+    lint_messages = check_files(
+        list(filenames),
+        config=args.config,
+        retries=args.retries,
+        show_disable=args.show_disable,
+    )
     for lint_message in lint_messages:
         lint_message.display()
 

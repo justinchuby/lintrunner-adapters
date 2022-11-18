@@ -177,11 +177,20 @@ def get_issue_documentation_url(code: str) -> str:
     return ""
 
 
+def format_lint_message(message: str, code: str, show_disable: bool) -> str:
+    formatted = f"{message}\nSee {get_issue_documentation_url(code)}"
+    if show_disable:
+        formatted += f"\n\nTo disable, use `  # noqa: {code}`"
+    return formatted
+
+
 def check_files(
     filenames: List[str],
     severities: Dict[str, LintSeverity],
+    *,
     retries: int,
     docstring_convention: Optional[str],
+    show_disable: bool,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
@@ -227,9 +236,10 @@ def check_files(
         LintMessage(
             path=match["file"],
             name=match["code"],
-            description="{}\nSee {}".format(
+            description=format_lint_message(
                 match["message"],
-                get_issue_documentation_url(match["code"]),
+                match["code"],
+                show_disable,
             ),
             line=int(match["line"]),
             char=int(match["column"])
@@ -260,6 +270,11 @@ def main() -> None:
         type=str,
         help="docstring convention to use. E.g. 'google', 'numpy'",
     )
+    parser.add_argument(
+        "--show-disable",
+        action="store_true",
+        help="show how to disable a lint message",
+    )
     lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
@@ -283,8 +298,9 @@ def main() -> None:
     lint_messages = check_files(
         args.filenames,
         severities,
-        args.retries,
-        args.docstring_convention,
+        retries=args.retries,
+        docstring_convention=args.docstring_convention,
+        show_disable=args.show_disable,
     )
     for lint_message in lint_messages:
         lint_message.display()
