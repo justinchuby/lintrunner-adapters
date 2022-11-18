@@ -21,10 +21,29 @@ RESULTS_RE: Pattern[str] = re.compile(
     (?:(?P<column>-?\d+):)?
     \s(?P<severity>\S+?):?
     \s(?P<message>.*)
-    \s(?P<code>\[.*\])
+    \s\[(?P<code>.*)\]
     $
     """
 )
+
+
+def _test_results_re() -> None:
+    """Doctests.
+
+    >>> def t(s): return RESULTS_RE.search(s).groupdict()
+
+    >>> t(r'prog.py:1: error: "str" has no attribute "trim"  [attr-defined]')
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'prog.py', 'line': '1', 'column': None, 'severity': 'error',
+     'message': '"str" has no attribute "trim" ', 'code': 'attr-defined'}
+
+    >>> t(r'flake8_linter.py:15:13: error: Incompatibl...int")  [assignment]')
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'flake8_linter.py', 'line': '15', 'column': '13', 'severity': 'error',
+     'message': 'Incompatibl...int") ', 'code': 'assignment'}
+    """
+    pass
+
 
 # Severity is either "error" or "note":
 # https://github.com/python/mypy/blob/8b47a032e1317fb8e3f9a818005a6b63e9bf0311/mypy/errors.py#L46-L47
@@ -35,7 +54,7 @@ SEVERITIES = {
 
 
 def disable_message(code: str) -> str:
-    return f"\n\nTo disable, use `  # type: ignore{code}`"
+    return f"\n\nTo disable, use `  # type: ignore[{code}]`"
 
 
 def check_files(
