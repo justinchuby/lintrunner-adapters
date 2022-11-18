@@ -47,9 +47,7 @@ class TestConvertToSarif(unittest.TestCase):
                                 {
                                     "id": "FLAKE8/test-code",
                                     "name": "FLAKE8/test-code",
-                                    "shortDescription": {
-                                        "text": "FLAKE8/test-code"
-                                    },
+                                    "shortDescription": {"text": "FLAKE8/test-code"},
                                     "fullDescription": {
                                         "text": "FLAKE8/test-code\ntest description"
                                     },
@@ -58,9 +56,7 @@ class TestConvertToSarif(unittest.TestCase):
                                 {
                                     "id": "FLAKE8/test-code-2",
                                     "name": "FLAKE8/test-code-2",
-                                    "shortDescription": {
-                                        "text": "FLAKE8/test-code-2"
-                                    },
+                                    "shortDescription": {"text": "FLAKE8/test-code-2"},
                                     "fullDescription": {
                                         "text": "FLAKE8/test-code-2\ntest description"
                                     },
