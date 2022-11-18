@@ -129,7 +129,7 @@ class TestConvertToSarif(unittest.TestCase):
             {
                 "ruleId": "FLAKE8/test-code",
                 "level": "error",
-                "message": {"text": "FLAKE8/test-code\ntest description"},
+                "message": {"text": "test description"},
                 "locations": [
                     {
                         "physicalLocation": {
@@ -159,7 +159,7 @@ class TestConvertToSarif(unittest.TestCase):
             {
                 "ruleId": "FLAKE8/test-code",
                 "level": "error",
-                "message": {"text": "FLAKE8/test-code\ntest description"},
+                "message": {"text": "test description"},
                 "locations": [
                     {
                         "physicalLocation": {
