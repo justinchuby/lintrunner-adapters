@@ -1,5 +1,15 @@
 """Adapters and tools for lintrunner."""
 
+__all__ = [
+    "add_default_options",
+    "as_posix",
+    "available_adapters",
+    "IS_WINDOWS",
+    "LintMessage",
+    "LintSeverity",
+    "run_command",
+]
+
 import pathlib
 from typing import Dict
 
