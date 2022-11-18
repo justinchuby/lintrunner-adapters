@@ -33,6 +33,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
 strict = true
+show_error_codes = true
+show_column_numbers = true
+ignore_missing_imports = true
 
 [tool.isort]
 profile = "black"
