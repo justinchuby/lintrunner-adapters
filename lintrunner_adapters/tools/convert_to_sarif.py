@@ -68,8 +68,6 @@ def parse_single_lintrunner_result(lintrunner_result: dict) -> tuple:
             "name": format_rule_name(lintrunner_result),
             "shortDescription": {
                 "text": format_rule_name(lintrunner_result)
-                + ": "
-                + lintrunner_result["description"].split("\n")[0],
             },
             "fullDescription": {
                 "text": format_rule_name(lintrunner_result)
