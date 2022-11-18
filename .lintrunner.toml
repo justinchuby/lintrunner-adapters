@@ -211,12 +211,12 @@ exclude_patterns = [
 ]
 init_command = [
     'python3',
-    'examples/pytorch/s3_init.py',
-    '--config-json=examples/pytorch/s3_init_config.json',
-    '--linter=clang-format',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
     '--dry-run={{DRYRUN}}',
-    '--output-dir=.lintbin',
-    '--output-name=clang-format',
+    'clang-format==15.0.4',
 ]
 command = [
     'python3',
