@@ -59,6 +59,8 @@ SEVERITIES = {
 
 
 def disable_message(code: str) -> str:
+    if code is None:
+        return ""
     return f"\n\nTo disable, use `  # type: ignore[{code}]`"
 
 
@@ -92,7 +94,7 @@ def check_files(
     return [
         LintMessage(
             path=match["file"],
-            name=match["code"],
+            name=match["code"] or "note",
             description=match["message"]
             + (disable_message(match["code"]) if show_disable else ""),
             line=int(match["line"]),
