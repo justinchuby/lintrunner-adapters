@@ -8,6 +8,7 @@ import subprocess
 import sys
 from typing import List
 
+import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 LINTER_CODE = "ISORT"
@@ -101,27 +102,12 @@ def main() -> None:
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
-        "--retries",
-        default=3,
-        type=int,
-        help="times to retry timed out isort",
-    )
-    parser.add_argument(
         "--timeout",
         default=90,
         type=int,
         help="seconds to wait for isort",
     )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="verbose logging",
-    )
-    parser.add_argument(
-        "filenames",
-        nargs="+",
-        help="paths to lint",
-    )
+    lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
     logging.basicConfig(
