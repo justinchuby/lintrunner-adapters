@@ -48,7 +48,7 @@ command = [
     'mypy_linter',
     '--config=pyproject.toml',
     '--show-notes',
-    # '--show-disable',
+    '--show-disable',
     '--',
     '@{{PATHSFILE}}'
 ]
@@ -59,7 +59,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'mypy==0.990',
+    'mypy==0.991',
 ]
 
 [[linter]]
