@@ -20,8 +20,8 @@ RESULTS_RE: Pattern[str] = re.compile(
     (?P<line>\d+):
     (?:(?P<column>-?\d+):)?
     \s(?P<severity>\S+?):?
-    \s(?P<message>.*)
-    \s\[(?P<code>.*)\]
+    \s(?P<message>.*?)
+    (?:\s\[(?P<code>.*)\])?
     $
     """
 )
@@ -41,6 +41,11 @@ def _test_results_re() -> None:
     ... # doctest: +NORMALIZE_WHITESPACE
     {'file': 'flake8_linter.py', 'line': '15', 'column': '13', 'severity': 'error',
      'message': 'Incompatibl...int") ', 'code': 'assignment'}
+
+    >>> t(r'mypy_linter.py:106: note: Use "-> None" if function does not return a value')
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'mypy_linter.py', 'line': '106', 'column': None, 'severity': 'note',
+     'message': 'Use "-> None" if function does not return a value', 'code': None}
     """
     pass
 
@@ -114,6 +119,11 @@ def main():
         help="path to an mypy .ini config file",
     )
     parser.add_argument(
+        "--show-notes",
+        action="store_true",
+        help="show notes in addition to errors",
+    )
+    parser.add_argument(
         "--show-disable",
         action="store_true",
         help="show how to disable a lint message",
@@ -155,6 +165,8 @@ def main():
         show_disable=args.show_disable,
     )
     for lint_message in lint_messages:
+        if lint_message.severity == LintSeverity.ADVICE and not args.show_notes:
+            continue
         lint_message.display()
 
 

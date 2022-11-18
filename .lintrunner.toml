@@ -47,6 +47,7 @@ command = [
     'run',
     'mypy_linter',
     '--config=pyproject.toml',
+    '--show-notes',
     '--show-disable',
     '--',
     '@{{PATHSFILE}}'
