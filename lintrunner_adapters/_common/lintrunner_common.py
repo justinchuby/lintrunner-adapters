@@ -9,7 +9,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Any, BinaryIO, List, Optional
+from typing import Any, BinaryIO, Optional
 
 IS_WINDOWS: bool = os.name == "nt"
 
@@ -55,7 +55,7 @@ def as_posix(name: str) -> str:
 
 
 def _run_command(
-    args: List[str],
+    args: list[str],
     *,
     timeout: Optional[int],
     stdin: Optional[BinaryIO],
@@ -91,7 +91,7 @@ def _run_command(
 
 
 def run_command(
-    args: List[str],
+    args: list[str],
     *,
     retries: int = 0,
     timeout: Optional[int] = None,
