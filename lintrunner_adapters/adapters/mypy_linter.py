@@ -34,8 +34,8 @@ SEVERITIES = {
 }
 
 
-def disable_message(code: str = {}) -> str:
-    return f"\nTo disable this error, use `  # type: ignore{code}`"
+def disable_message(code: str) -> str:
+    return f"\n\nTo disable, use `  # type: ignore{code}`"
 
 
 def check_files(

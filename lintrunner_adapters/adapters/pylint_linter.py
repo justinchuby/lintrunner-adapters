@@ -84,7 +84,7 @@ def pylint_doc_url(code: str, string_code: str) -> str:
 def format_lint_messages(message, code, string_code, show_disable: bool) -> str:
     formatted = (
         f"{message} ({string_code})\n"
-        f"See [{string_code}]({pylint_doc_url(code, string_code)})"
+        f"See [{string_code}]({pylint_doc_url(code, string_code)})."
     )
     if show_disable:
         formatted += f"\n\nTo disable, use `  # pylint: disable={string_code}`"

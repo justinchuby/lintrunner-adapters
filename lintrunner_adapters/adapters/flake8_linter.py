@@ -7,8 +7,8 @@ import subprocess
 import sys
 from typing import Dict, List, Optional, Pattern, Set
 
-from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 import lintrunner_adapters
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 LINTER_CODE = "FLAKE8"
 
@@ -178,7 +178,7 @@ def get_issue_documentation_url(code: str) -> str:
 
 
 def format_lint_message(message: str, code: str, show_disable: bool) -> str:
-    formatted = f"{message}\nSee {get_issue_documentation_url(code)}"
+    formatted = f"{message}\nSee {get_issue_documentation_url(code)}."
     if show_disable:
         formatted += f"\n\nTo disable, use `  # noqa: {code}`"
     return formatted
