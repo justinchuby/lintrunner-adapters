@@ -8,6 +8,7 @@ import sys
 from typing import Dict, List, Optional, Pattern, Set
 
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
+import lintrunner_adapters
 
 LINTER_CODE = "FLAKE8"
 
@@ -254,27 +255,12 @@ def main() -> None:
         help="map code to severity (e.g. `B950:advice`)",
     )
     parser.add_argument(
-        "--retries",
-        default=3,
-        type=int,
-        help="times to retry timed out flake8",
-    )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="verbose logging",
-    )
-    parser.add_argument(
         "--docstring-convention",
         default=None,
         type=str,
         help="docstring convention to use. E.g. 'google', 'numpy'",
     )
-    parser.add_argument(
-        "filenames",
-        nargs="+",
-        help="paths to lint",
-    )
+    lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
     logging.basicConfig(

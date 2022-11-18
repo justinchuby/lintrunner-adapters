@@ -8,6 +8,7 @@ import re
 import subprocess
 from typing import List, Pattern
 
+import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 LINTER_CODE = "CMAKE"

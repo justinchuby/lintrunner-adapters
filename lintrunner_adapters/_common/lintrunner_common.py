@@ -1,3 +1,4 @@
+import argparse
 import dataclasses
 import enum
 import json
@@ -113,3 +114,26 @@ def run_command(
                 err,
             )
             time.sleep(1)
+
+
+def add_default_options(parser: argparse.ArgumentParser) -> None:
+    """Add default options to a parser.
+
+    This should be called the last in the chain of add_argument calls.
+    """
+    parser.add_argument(
+        "--retries",
+        type=int,
+        default=3,
+        help="number of times to retry if the linter times out.",
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="verbose logging",
+    )
+    parser.add_argument(
+        "filenames",
+        nargs="+",
+        help="paths to lint",
+    )

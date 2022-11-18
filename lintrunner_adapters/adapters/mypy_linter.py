@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Pattern
 
+import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
 LINTER_CODE = "MYPY"
@@ -82,26 +83,11 @@ def main() -> None:
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
-        "--retries",
-        default=3,
-        type=int,
-        help="times to retry timed out mypy",
-    )
-    parser.add_argument(
         "--config",
         required=True,
         help="path to an mypy .ini config file",
     )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="verbose logging",
-    )
-    parser.add_argument(
-        "filenames",
-        nargs="+",
-        help="paths to lint",
-    )
+    lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
     logging.basicConfig(

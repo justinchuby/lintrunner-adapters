@@ -4,6 +4,7 @@ import re
 import sys
 from typing import List, Optional, Pattern
 
+import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
 LINTER_CODE = "PYLINT"
@@ -135,12 +136,6 @@ def main() -> None:
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
-        "--retries",
-        default=3,
-        type=int,
-        help="times to retry timed out pylint",
-    )
-    parser.add_argument(
         "--rcfile",
         default=None,
         type=str,
@@ -152,16 +147,7 @@ def main() -> None:
         type=int,
         help="number of jobs to run in parallel, 0 for number of CPUs",
     )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="verbose logging",
-    )
-    parser.add_argument(
-        "filenames",
-        nargs="+",
-        help="paths to lint",
-    )
+    lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
     logging.basicConfig(
