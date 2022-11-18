@@ -7,6 +7,7 @@ import os
 import subprocess
 import sys
 from typing import List
+import unused
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
