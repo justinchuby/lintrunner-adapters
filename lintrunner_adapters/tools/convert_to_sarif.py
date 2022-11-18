@@ -1,5 +1,7 @@
 """Convert the output of lintrunner json to SARIF."""
 
+from __future__ import annotations
+
 import argparse
 import json
 import os
