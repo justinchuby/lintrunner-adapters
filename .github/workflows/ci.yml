@@ -11,28 +11,39 @@ on:
 jobs:
   lint:
     name: lintrunner
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python_version: ["3.9", "3.10", "3.11"]
+
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
           pip install poetry
+          poetry config virtualenvs.create false
           poetry install
-          poetry run lintrunner init
-      - name: Run lintrunner on all files
+          lintrunner init
+      - name: Run lintrunner on all files - Linux
+        if: matrix.os != 'windows-latest'
         run: |
           set +e
-          if ! poetry run lintrunner --force-color --all-files --tee-json=lint.json; then
+          if ! lintrunner --force-color --all-files --tee-json=lint.json; then
               echo ""
               echo -e "\e[1m\e[36mYou can reproduce these results locally by using \`lintrunner\`.\e[0m"
               exit 1
           fi
+      - name: Run lintrunner on all files - Windows
+        if: matrix.os == 'windows-latest'
+        run: lintrunner --force-color --all-files --tee-json=lint.json --skip NEWLINE,NOQA,TABS,SPACES
       - name: Store annotations
-        if: always() && github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request' && matrix.os != 'windows-latest'
         continue-on-error: true
         run: |
           # Use jq to massage the JSON lint output into GitHub Actions workflow commands.
@@ -42,9 +53,9 @@ jobs:
       - name: Produce SARIF
         if: always()
         run: |
-          poetry run python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
+          python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
       - name: Upload SARIF file
-        if: always()
+        if: always() && matrix.os == 'ubuntu-latest'
         continue-on-error: true
         uses: github/codeql-action/upload-sarif@v2
         with:
@@ -57,7 +68,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, windows-latest]
         python_version: ["3.8", "3.9", "3.10", "3.11"]
 
     runs-on: ${{ matrix.os }}
@@ -70,11 +81,14 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
+          poetry config virtualenvs.create false
           poetry install
-          poetry run lintrunner init
+          lintrunner init
       - name: Run pytest
         run: |
-          PY_IGNORE_IMPORTMISMATCH=1 poetry run pytest --doctest-modules lintrunner_adapters
+          pytest --doctest-modules lintrunner_adapters
+        env:
+          PY_IGNORE_IMPORTMISMATCH: 1
       - name: Build package with poetry
         run: |
           poetry build

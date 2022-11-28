@@ -5,6 +5,7 @@ import hashlib
 import json
 import logging
 import os
+import pathlib
 import platform
 import stat
 import subprocess
@@ -12,7 +13,6 @@ import sys
 import textwrap
 import urllib.error
 import urllib.request
-from pathlib import Path
 
 # String representing the host platform (e.g. Linux, Darwin).
 HOST_PLATFORM = platform.system()
@@ -62,7 +62,7 @@ def report_download_progress(
         sys.stdout.write("\r0% |{:<64}| {}%".format(bar, int(percent * 100)))
 
 
-def check(binary_path: Path, reference_hash: str) -> bool:
+def check(binary_path: pathlib.Path, reference_hash: str) -> bool:
     """Check whether the binary exists and is the right one.
 
     If there is hash difference, delete the actual binary.
@@ -115,7 +115,7 @@ def download(
     that it is the right binary by checking its SHA256 hash against the expected hash.
     """
     # First check if we need to do anything
-    binary_path = Path(output_dir, name)
+    binary_path = pathlib.Path(output_dir, name)
     if check(binary_path, reference_bin_hash):
         logging.info(f"Correct binary already exists at {binary_path}. Exiting.")
         return True
@@ -196,14 +196,14 @@ if __name__ == "__main__":
         stream=sys.stderr,
     )
 
-    with open(args.config_json, encoding="utf-8") as f:
+    with open(pathlib.Path(args.config_json), encoding="utf-8") as f:
         config = json.load(f)
     config = config[args.linter]
 
     # If the host platform is not in platform_to_hash, it is unsupported.
     if HOST_PLATFORM not in config:
         logging.error(f"Unsupported platform: {HOST_PLATFORM}")
-        sys.exit(1)
+        sys.exit(0)
 
     url = config[HOST_PLATFORM]["download_url"]
     hash = config[HOST_PLATFORM]["hash"]
