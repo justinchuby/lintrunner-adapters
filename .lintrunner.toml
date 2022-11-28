@@ -8,7 +8,7 @@ include_patterns = [
 ]
 exclude_patterns = []
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -18,7 +18,7 @@ command = [
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -41,7 +41,7 @@ include_patterns = [
 exclude_patterns = [
 ]
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -53,7 +53,7 @@ command = [
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -67,7 +67,7 @@ code = 'NOQA'
 include_patterns = ['**/*.py', '**/*.pyi']
 exclude_patterns = []
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -88,7 +88,7 @@ code = 'NEWLINE'
 include_patterns=['**']
 exclude_patterns=[]
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -103,7 +103,7 @@ code = 'SPACES'
 include_patterns = ['**']
 exclude_patterns = []
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -126,7 +126,7 @@ exclude_patterns = [
     '.lintrunner.toml',
 ]
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -150,7 +150,7 @@ include_patterns = [
 ]
 exclude_patterns = []
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -159,7 +159,7 @@ command = [
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -178,7 +178,7 @@ include_patterns = [
 exclude_patterns = [
 ]
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -190,7 +190,7 @@ command = [
     '@{{PATHSFILE}}'
 ]
 init_command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -210,7 +210,7 @@ include_patterns = [
 exclude_patterns = [
 ]
 # init_command = [
-#     'python3',
+#     'python',
 #     'examples/pytorch/s3_init.py',
 #     '--config-json=examples/pytorch/s3_init_config.json',
 #     '--linter=clang-format',
@@ -219,7 +219,7 @@ exclude_patterns = [
 #     '--output-name=clang-format',
 # ]
 init_command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
@@ -228,7 +228,7 @@ init_command = [
     'clang-format==15.0.4',
 ]
 command = [
-    'python3',
+    'python',
     '-m',
     'lintrunner_adapters',
     'run',
