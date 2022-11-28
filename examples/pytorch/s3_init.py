@@ -5,6 +5,7 @@ import hashlib
 import json
 import logging
 import os
+import pathlib
 import platform
 import stat
 import subprocess
@@ -12,7 +13,6 @@ import sys
 import textwrap
 import urllib.error
 import urllib.request
-from pathlib import Path
 
 # String representing the host platform (e.g. Linux, Darwin).
 HOST_PLATFORM = platform.system()
