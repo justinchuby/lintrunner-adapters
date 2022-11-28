@@ -15,7 +15,7 @@ packages = [{ include = "lintrunner_adapters" }]
 include = ["LICENSE"]
 
 [tool.poetry.scripts]
-lintrunner_adapters = 'lintrunner_adapters.cli:cli'
+lintrunner_adapters = 'lintrunner_adapters.__main__:cli'
 
 [tool.poetry.dependencies]
 python = "^3.7"
