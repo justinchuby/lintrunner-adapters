@@ -41,7 +41,7 @@ jobs:
           fi
       - name: Run lintrunner on all files - Windows
         if: matrix.os == 'windows-latest'
-        run: lintrunner --force-color --all-files --tee-json=lint.json
+        run: lintrunner --force-color --all-files --tee-json=lint.json --skip NEWLINE,NOQA,TABS,SPACES
       - name: Store annotations
         if: always() && github.event_name == 'pull_request' && matrix.os != 'windows-latest'
         continue-on-error: true
