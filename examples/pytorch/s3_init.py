@@ -62,7 +62,7 @@ def report_download_progress(
         sys.stdout.write("\r0% |{:<64}| {}%".format(bar, int(percent * 100)))
 
 
-def check(binary_path: Path, reference_hash: str) -> bool:
+def check(binary_path: pathlib.Path, reference_hash: str) -> bool:
     """Check whether the binary exists and is the right one.
 
     If there is hash difference, delete the actual binary.
@@ -115,7 +115,7 @@ def download(
     that it is the right binary by checking its SHA256 hash against the expected hash.
     """
     # First check if we need to do anything
-    binary_path = Path(output_dir, name)
+    binary_path = pathlib.Path(output_dir, name)
     if check(binary_path, reference_bin_hash):
         logging.info(f"Correct binary already exists at {binary_path}. Exiting.")
         return True
