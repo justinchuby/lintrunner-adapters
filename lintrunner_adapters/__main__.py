@@ -54,8 +54,8 @@ def run(adapter: str) -> None:
 
 
 @cli.command()
-@click.argument("input", type=click.File("r"))
-@click.argument("output", type=click.File("w"))
+@click.argument("input", type=click.File("r", encoding="utf-8"))
+@click.argument("output", type=click.File("w", encoding="utf-8"))
 def to_sarif(input: Any, output: Any) -> None:
     """Convert the output of lintrunner json (INPUT) to SARIF (OUTPUT)."""
     lintrunner_jsons = [json.loads(line) for line in input]
