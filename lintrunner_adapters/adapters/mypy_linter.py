@@ -1,5 +1,7 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import argparse
 import logging
 import re
@@ -7,6 +9,7 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Pattern
 
+import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
 LINTER_CODE = "MYPY"
@@ -19,11 +22,35 @@ RESULTS_RE: Pattern[str] = re.compile(
     (?P<line>\d+):
     (?:(?P<column>-?\d+):)?
     \s(?P<severity>\S+?):?
-    \s(?P<message>.*)
-    \s(?P<code>\[.*\])
+    \s(?P<message>.*?)
+    (?:\s\[(?P<code>.*)\])?
     $
     """
 )
+
+
+def _test_results_re() -> None:
+    """Doctests.
+
+    >>> def t(s): return RESULTS_RE.search(s).groupdict()
+
+    >>> t(r'prog.py:1: error: "str" has no attribute "trim"  [attr-defined]')
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'prog.py', 'line': '1', 'column': None, 'severity': 'error',
+     'message': '"str" has no attribute "trim" ', 'code': 'attr-defined'}
+
+    >>> t(r'flake8_linter.py:15:13: error: Incompatibl...int")  [assignment]')
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'flake8_linter.py', 'line': '15', 'column': '13', 'severity': 'error',
+     'message': 'Incompatibl...int") ', 'code': 'assignment'}
+
+    >>> t(r'mypy_linter.py:106: note: Use "-> None" if function does not return a value')
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'file': 'mypy_linter.py', 'line': '106', 'column': None, 'severity': 'note',
+     'message': 'Use "-> None" if function does not return a value', 'code': None}
+    """
+    pass
+
 
 # Severity is either "error" or "note":
 # https://github.com/python/mypy/blob/8b47a032e1317fb8e3f9a818005a6b63e9bf0311/mypy/errors.py#L46-L47
@@ -33,10 +60,18 @@ SEVERITIES = {
 }
 
 
+def disable_message(code: str) -> str:
+    if code is None:
+        return ""
+    return f"\n\nTo disable, use `  # type: ignore[{code}]`"
+
+
 def check_files(
     filenames: List[str],
+    *,
     config: str,
     retries: int,
+    show_disable: bool,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
@@ -61,8 +96,9 @@ def check_files(
     return [
         LintMessage(
             path=match["file"],
-            name=match["code"],
-            description=match["message"],
+            name=match["code"] or "note",
+            description=match["message"]
+            + (disable_message(match["code"]) if show_disable else ""),
             line=int(match["line"]),
             char=int(match["column"])
             if match["column"] is not None and not match["column"].startswith("-")
@@ -82,26 +118,21 @@ def main() -> None:
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
-        "--retries",
-        default=3,
-        type=int,
-        help="times to retry timed out mypy",
-    )
-    parser.add_argument(
         "--config",
         required=True,
         help="path to an mypy .ini config file",
     )
     parser.add_argument(
-        "--verbose",
+        "--show-notes",
         action="store_true",
-        help="verbose logging",
+        help="show notes in addition to errors",
     )
     parser.add_argument(
-        "filenames",
-        nargs="+",
-        help="paths to lint",
+        "--show-disable",
+        action="store_true",
+        help="show how to disable a lint message",
     )
+    lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -131,8 +162,15 @@ def main() -> None:
         else:
             filenames[filename] = True
 
-    lint_messages = check_files(list(filenames), args.config, args.retries)
+    lint_messages = check_files(
+        list(filenames),
+        config=args.config,
+        retries=args.retries,
+        show_disable=args.show_disable,
+    )
     for lint_message in lint_messages:
+        if lint_message.severity == LintSeverity.ADVICE and not args.show_notes:
+            continue
         lint_message.display()
 
 

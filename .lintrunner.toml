@@ -13,6 +13,7 @@ command = [
     'lintrunner_adapters',
     'run',
     'flake8_linter',
+    '--show-disable',
     '--',
     '@{{PATHSFILE}}'
 ]
@@ -46,6 +47,8 @@ command = [
     'run',
     'mypy_linter',
     '--config=pyproject.toml',
+    '--show-notes',
+    '--show-disable',
     '--',
     '@{{PATHSFILE}}'
 ]
@@ -56,7 +59,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'mypy==0.990',
+    'mypy==0.991',
 ]
 
 [[linter]]
@@ -181,6 +184,8 @@ command = [
     'run',
     'pylint_linter',
     '--rcfile=pyproject.toml',
+    '--jobs=0',
+    '--show-disable',
     '--',
     '@{{PATHSFILE}}'
 ]

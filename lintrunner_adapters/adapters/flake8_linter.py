@@ -1,5 +1,7 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import argparse
 import logging
 import re
@@ -7,6 +9,7 @@ import subprocess
 import sys
 from typing import Dict, List, Optional, Pattern, Set
 
+import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 LINTER_CODE = "FLAKE8"
@@ -176,11 +179,20 @@ def get_issue_documentation_url(code: str) -> str:
     return ""
 
 
+def format_lint_message(message: str, code: str, show_disable: bool) -> str:
+    formatted = f"{message}\nSee {get_issue_documentation_url(code)}."
+    if show_disable:
+        formatted += f"\n\nTo disable, use `  # noqa: {code}`"
+    return formatted
+
+
 def check_files(
     filenames: List[str],
     severities: Dict[str, LintSeverity],
+    *,
     retries: int,
     docstring_convention: Optional[str],
+    show_disable: bool,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
@@ -226,9 +238,10 @@ def check_files(
         LintMessage(
             path=match["file"],
             name=match["code"],
-            description="{}\nSee {}".format(
+            description=format_lint_message(
                 match["message"],
-                get_issue_documentation_url(match["code"]),
+                match["code"],
+                show_disable,
             ),
             line=int(match["line"]),
             char=int(match["column"])
@@ -254,27 +267,17 @@ def main() -> None:
         help="map code to severity (e.g. `B950:advice`)",
     )
     parser.add_argument(
-        "--retries",
-        default=3,
-        type=int,
-        help="times to retry timed out flake8",
-    )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="verbose logging",
-    )
-    parser.add_argument(
         "--docstring-convention",
         default=None,
         type=str,
         help="docstring convention to use. E.g. 'google', 'numpy'",
     )
     parser.add_argument(
-        "filenames",
-        nargs="+",
-        help="paths to lint",
+        "--show-disable",
+        action="store_true",
+        help="show how to disable a lint message",
     )
+    lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -297,8 +300,9 @@ def main() -> None:
     lint_messages = check_files(
         args.filenames,
         severities,
-        args.retries,
-        args.docstring_convention,
+        retries=args.retries,
+        docstring_convention=args.docstring_convention,
+        show_disable=args.show_disable,
     )
     for lint_message in lint_messages:
         lint_message.display()

@@ -1,5 +1,7 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import argparse
 import concurrent.futures
 import logging
@@ -8,7 +10,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-from ufmt.core import make_black_config, ufmt_string
+from ufmt.core import make_black_config, ufmt_string  # type: ignore[attr-defined]
 from usort import Config as UsortConfig
 
 from lintrunner_adapters import LintMessage, LintSeverity

@@ -2,6 +2,8 @@
 
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import argparse
 import logging
 import os

@@ -14,7 +14,7 @@ import json
 import logging
 import os
 
-import boto3  # type: ignore[import]
+import boto3
 
 
 def compute_file_sha256(path: str) -> str:

@@ -1,5 +1,7 @@
 # PyTorch LICENSE. See LICENSE file in the root directory of this source tree.
 
+from __future__ import annotations
+
 import argparse
 import concurrent.futures
 import logging
@@ -10,6 +12,7 @@ import sys
 from pathlib import Path
 from typing import List
 
+import lintrunner_adapters
 from lintrunner_adapters import (
     IS_WINDOWS,
     LintMessage,
@@ -124,27 +127,12 @@ def main() -> None:
         help="clang-format style",
     )
     parser.add_argument(
-        "--retries",
-        default=3,
-        type=int,
-        help="times to retry timed out clang-format",
-    )
-    parser.add_argument(
         "--timeout",
         default=90,
         type=int,
         help="seconds to wait for clang-format",
     )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="verbose logging",
-    )
-    parser.add_argument(
-        "filenames",
-        nargs="+",
-        help="paths to lint",
-    )
+    lintrunner_adapters.add_default_options(parser)
     args = parser.parse_args()
 
     logging.basicConfig(

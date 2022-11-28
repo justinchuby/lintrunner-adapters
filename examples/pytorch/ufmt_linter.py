@@ -10,7 +10,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, List, NamedTuple, Optional
 
-from ufmt.core import make_black_config, ufmt_string
+from ufmt.core import make_black_config, ufmt_string  # type: ignore[attr-defined]
 from usort import Config as UsortConfig
 
 IS_WINDOWS: bool = os.name == "nt"

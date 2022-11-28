@@ -30,7 +30,7 @@ Use `lintrunner_adapters run` to see a list of adapters available.
 
 ### Write lint config in `.lintrunner.toml`
 
-https://docs.rs/lintrunner/latest/lintrunner/lint_message/struct.LintMessage.html
+https://docs.rs/lintrunner/latest/lintrunner/lint_config/struct.LintConfig.html
 
 ### Create a new adapter
 
