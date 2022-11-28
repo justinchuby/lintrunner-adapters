@@ -13,7 +13,7 @@ __all__ = [
 
 import pathlib
 
-from ._common.lintrunner_common import (  # noqa: F401
+from ._common.lintrunner_common import (
     IS_WINDOWS,
     LintMessage,
     LintSeverity,
