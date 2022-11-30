@@ -51,7 +51,7 @@ jobs:
             '"::\(if .severity == "advice" or .severity == "disabled" then "warning" else .severity end) file=\(.path),line=\(.line),col=\(.char),title=\(.code) \(.name)::" + (.description | gsub("\\n"; "%0A"))' \
             lint.json
       - name: Produce SARIF
-        if: always()
+        if: always() && matrix.os == 'ubuntu-latest'
         run: |
           python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
       - name: Upload SARIF file
