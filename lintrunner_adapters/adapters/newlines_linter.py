@@ -9,7 +9,7 @@ import logging
 import sys
 from typing import List, Optional
 
-from lintrunner_adapters import LintMessage, LintSeverity
+from lintrunner_adapters import IS_WINDOWS, LintMessage, LintSeverity
 
 NEWLINE = 10  # ASCII "\n"
 CARRIAGE_RETURN = 13  # ASCII "\r"
@@ -67,6 +67,12 @@ def check_file(filename: str) -> Optional[LintMessage]:
             replacement=original.rstrip("\n") + "\n",
             description="Trailing newline found. Run `lintrunner --take NEWLINE -a` to apply changes.",
         )
+
+    # Check DOS newlines
+    if IS_WINDOWS:
+        # Do nothing on Windows
+        return None
+
     has_changes = False
     original_lines: Optional[List[bytes]] = None
     for idx, line in enumerate(lines):

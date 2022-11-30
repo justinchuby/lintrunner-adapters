@@ -41,7 +41,7 @@ jobs:
           fi
       - name: Run lintrunner on all files - Windows
         if: matrix.os == 'windows-latest'
-        run: lintrunner --force-color --all-files --tee-json=lint.json --skip NEWLINE,NOQA,TABS,SPACES
+        run: lintrunner -v --force-color --all-files --skip NOQA,TABS,SPACES
       - name: Store annotations
         if: always() && github.event_name == 'pull_request' && matrix.os != 'windows-latest'
         continue-on-error: true
@@ -51,7 +51,7 @@ jobs:
             '"::\(if .severity == "advice" or .severity == "disabled" then "warning" else .severity end) file=\(.path),line=\(.line),col=\(.char),title=\(.code) \(.name)::" + (.description | gsub("\\n"; "%0A"))' \
             lint.json
       - name: Produce SARIF
-        if: always()
+        if: always() && matrix.os == 'ubuntu-latest'
         run: |
           python -m lintrunner_adapters to-sarif lint.json lintrunner.sarif
       - name: Upload SARIF file
