@@ -70,7 +70,6 @@ def _run_command(
                 args,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                shell=IS_WINDOWS,  # So batch scripts are found.
                 input=input,
                 timeout=timeout,
                 check=check,
@@ -81,7 +80,6 @@ def _run_command(
             stdin=stdin,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            shell=IS_WINDOWS,  # So batch scripts are found.
             timeout=timeout,
             check=check,
         )
