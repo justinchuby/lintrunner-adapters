@@ -238,3 +238,29 @@ command = [
     '@{{PATHSFILE}}'
 ]
 is_formatter = true
+
+[[linter]]
+code = 'EDITORCONFIG-CHECKER'
+include_patterns = [
+    '**/*',
+]
+exclude_patterns = [
+]
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'editorconfig_checker_linter',
+    '--',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'editorconfig-checker==2.6.2',
+]
