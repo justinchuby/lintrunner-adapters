@@ -6,7 +6,7 @@ import argparse
 import logging
 import re
 import sys
-from typing import List, Optional, Pattern
+from typing import List, Pattern
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
@@ -16,7 +16,7 @@ LINTER_CODE = "EDITORCONFIG-CHECKER"
 RESULTS_RE: Pattern[str] = re.compile(
     r"""(?mx)
     ^
-    \s+
+    [ \t]*  # Leading whitespace.
     (?:(?P<line>\d+):)?
     \s(?P<message>.*)
     $
@@ -28,11 +28,11 @@ def _test_results_re() -> None:
     """
     >>> def t(s): return RESULTS_RE.search(s).groupdict()
 
-    >>> t(r"        No final newline expected")
+    >>> t(r"\tNo final newline expected")
     ... # doctest: +NORMALIZE_WHITESPACE
     {'line': None, 'message': 'No final newline expected'}
 
-    >>> t(r"        6: Trailing whitespace")
+    >>> t(r"\t6: Trailing whitespace")
     ... # doctest: +NORMALIZE_WHITESPACE
     {'line': '6', 'message': 'Trailing whitespace'}
     """
@@ -42,14 +42,11 @@ def _test_results_re() -> None:
 def check_files(
     filenames: List[str],
     *,
-    rcfile: Optional[str],
-    jobs: int,
     retries: int,
-    show_disable: bool,
 ) -> List[LintMessage]:
     try:
         proc = run_command(
-            ["ec", *filenames],
+            ["ec", "-no-color", *filenames],
             retries=retries,
         )
     except OSError as err:
@@ -70,7 +67,7 @@ def check_files(
     lint_messages = []
     path = ""
     for line in stdout.splitlines():
-        if not line.startswith(" "):
+        if not line.startswith("\t"):
             # Trim the trailing colon.
             path = line[:-1]
         else:
@@ -83,7 +80,7 @@ def check_files(
                         char=None,
                         code=LINTER_CODE,
                         severity=LintSeverity.WARNING,
-                        name="editorconfig-checker",
+                        name="editorconfig",
                         original=None,
                         replacement=None,
                         description=match.group("message"),
@@ -112,10 +109,7 @@ def main() -> None:
 
     lint_messages = check_files(
         list(args.filenames),
-        rcfile=args.rcfile,
-        jobs=args.jobs,
         retries=args.retries,
-        show_disable=args.show_disable,
     )
     for lint_message in lint_messages:
         lint_message.display()
