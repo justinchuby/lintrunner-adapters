@@ -66,22 +66,22 @@ def _run_command(
     start_time = time.monotonic()
     try:
         if input is not None:
-            return subprocess.run(  # noqa: DUO116
+            return subprocess.run(
                 args,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                shell=IS_WINDOWS,  # So batch scripts are found.
+                shell=False,
                 input=input,
                 timeout=timeout,
                 check=check,
             )
 
-        return subprocess.run(  # noqa: DUO116
+        return subprocess.run(
             args,
             stdin=stdin,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            shell=IS_WINDOWS,  # So batch scripts are found.
+            shell=False,
             timeout=timeout,
             check=check,
         )
