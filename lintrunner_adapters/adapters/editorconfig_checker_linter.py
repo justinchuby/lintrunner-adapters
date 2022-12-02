@@ -35,7 +35,7 @@ def _test_results_re() -> None:
     >>> t(r"\t6: Trailing whitespace")
     ... # doctest: +NORMALIZE_WHITESPACE
     {'line': '6', 'message': 'Trailing whitespace'}
-    """
+    """  # noqa: D301
     pass
 
 
