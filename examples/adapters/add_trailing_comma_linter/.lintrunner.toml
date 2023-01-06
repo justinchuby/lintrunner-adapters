@@ -1,0 +1,16 @@
+[[linter]]
+code = 'ADD-TRAILING-COMMA'
+include_patterns = [
+    '**/*.py',
+    '**/*.pyi',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'add_trailing_comma_linter',
+    '--',
+    '@{{PATHSFILE}}'
+]

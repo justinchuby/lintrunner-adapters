@@ -1,3 +1,5 @@
+"""Add trailing commas to calls and literals."""
+
 from __future__ import annotations
 
 import argparse
@@ -28,16 +30,13 @@ def format_error_message(filename: str, err: Exception) -> LintMessage:
     )
 
 
-def check_file(
-    filename: str,
-    min_version: tuple[int, ...],
-) -> List[LintMessage]:
+def check_file(filename: str) -> List[LintMessage]:
     with open(filename, "rb") as fb:
         contents_bytes = fb.read()
 
     try:
         original = contents_text = contents_bytes.decode("utf-8")
-        replacement = _fix_src(contents_text, min_version)
+        replacement = _fix_src(contents_text, (3, 6))
 
         if original == replacement:
             return []
@@ -64,19 +63,6 @@ def main() -> None:
         description=f"add-trailing-comma wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
-    parser.add_argument(
-        "--py35-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 5),
-        default=(2, 7),
-    )
-    parser.add_argument(
-        "--py36-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 6),
-    )
     add_default_options(parser)
     args = parser.parse_args()
 
@@ -94,9 +80,7 @@ def main() -> None:
         max_workers=os.cpu_count(),
         thread_name_prefix="Thread",
     ) as executor:
-        futures = {
-            executor.submit(check_file, x, args.min_version): x for x in args.filenames
-        }
+        futures = {executor.submit(check_file, x): x for x in args.filenames}
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
