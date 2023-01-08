@@ -40,7 +40,7 @@ show_column_numbers = true
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "lintrunner_adapters.adapters"
+module = "lintrunner_adapters.adapters.*"
 warn_unused_ignores = false
 
 [tool.isort]
