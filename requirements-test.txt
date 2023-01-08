@@ -1,0 +1,3 @@
+# Test dependencies to avoid doctest import errors
+add-trailing-comma==2.4.0
+ufmt==2.0.1
