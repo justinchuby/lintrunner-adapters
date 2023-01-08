@@ -38,7 +38,7 @@ include_patterns = [
     '**/*.pyi',
 ]
 exclude_patterns = [
-    'examples/pytorch/**.py',
+    'examples/pytorch/*.py',
 ]
 command = [
     'python',
