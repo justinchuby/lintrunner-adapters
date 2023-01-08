@@ -81,12 +81,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
+          pip install -r requirements-test.txt
           poetry config virtualenvs.create false
           poetry install
           lintrunner init
       - name: Run pytest
         run: |
-          pytest --doctest-modules lintrunner_adapters
+          pytest lintrunner_adapters
         env:
           PY_IGNORE_IMPORTMISMATCH: 1
       - name: Build package with poetry

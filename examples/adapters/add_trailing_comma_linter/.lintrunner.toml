@@ -15,3 +15,12 @@ command = [
     '--',
     '@{{PATHSFILE}}'
 ]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'add-trailing-comma==2.4.0',
+]
