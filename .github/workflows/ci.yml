@@ -81,6 +81,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
+          pip install -r requirements-test.txt
           poetry config virtualenvs.create false
           poetry install
           lintrunner init
