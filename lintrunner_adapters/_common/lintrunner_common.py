@@ -9,7 +9,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Any, BinaryIO, Optional
+from typing import Any, BinaryIO
 
 IS_WINDOWS: bool = os.name == "nt"
 

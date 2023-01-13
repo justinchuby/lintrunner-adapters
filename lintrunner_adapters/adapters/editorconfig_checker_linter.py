@@ -6,7 +6,7 @@ import argparse
 import logging
 import re
 import sys
-from typing import List, Pattern
+from typing import Pattern
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command

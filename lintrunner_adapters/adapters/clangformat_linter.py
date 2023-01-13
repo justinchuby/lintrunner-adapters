@@ -10,7 +10,6 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import List
 
 import lintrunner_adapters
 from lintrunner_adapters import (

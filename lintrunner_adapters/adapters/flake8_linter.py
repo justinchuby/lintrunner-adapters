@@ -7,7 +7,7 @@ import logging
 import re
 import subprocess
 import sys
-from typing import Dict, List, Optional, Pattern, Set
+from typing import Pattern
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command

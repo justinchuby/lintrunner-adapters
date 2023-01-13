@@ -8,7 +8,6 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import List
 
 from ufmt.core import make_black_config, ufmt_string  # type: ignore[attr-defined]
 from usort import Config as UsortConfig

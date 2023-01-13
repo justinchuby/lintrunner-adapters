@@ -7,7 +7,6 @@ import concurrent.futures
 import logging
 import os
 import sys
-from typing import List
 
 from pyupgrade._data import Settings
 from pyupgrade._main import _fix_plugins, _fix_tokens

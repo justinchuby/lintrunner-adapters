@@ -10,7 +10,6 @@ import logging
 import os
 import subprocess
 import sys
-from typing import List
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command

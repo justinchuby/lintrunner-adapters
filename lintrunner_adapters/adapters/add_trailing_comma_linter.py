@@ -7,7 +7,6 @@ import concurrent.futures
 import logging
 import os
 import sys
-from typing import List
 
 from add_trailing_comma._main import _fix_src
 

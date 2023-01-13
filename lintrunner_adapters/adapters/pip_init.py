@@ -10,7 +10,6 @@ import os
 import subprocess
 import sys
 import time
-from typing import List
 
 
 def run_command(args: list[str]) -> subprocess.CompletedProcess[bytes]:

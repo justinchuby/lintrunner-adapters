@@ -6,7 +6,6 @@ import argparse
 import json
 import shutil
 import sys
-from typing import List
 
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
