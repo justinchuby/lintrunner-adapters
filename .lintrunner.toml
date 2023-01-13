@@ -292,4 +292,3 @@ init_command = [
      '--dry-run={{DRYRUN}}',
      'pyupgrade==3.3.1',
  ]
- 
