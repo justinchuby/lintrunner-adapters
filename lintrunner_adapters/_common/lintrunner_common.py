@@ -9,7 +9,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Any, BinaryIO, Optional
+from typing import Any, BinaryIO
 
 IS_WINDOWS: bool = os.name == "nt"
 
@@ -32,15 +32,15 @@ class LintSeverity(str, enum.Enum):
 class LintMessage:
     """A lint message defined by https://docs.rs/lintrunner/latest/lintrunner/lint_message/struct.LintMessage.html."""
 
-    path: Optional[str]
-    line: Optional[int]
-    char: Optional[int]
+    path: str | None
+    line: int | None
+    char: int | None
     code: str
     severity: LintSeverity
     name: str
-    original: Optional[str]
-    replacement: Optional[str]
-    description: Optional[str]
+    original: str | None
+    replacement: str | None
+    description: str | None
 
     def asdict(self) -> dict[str, Any]:
         return dataclasses.asdict(self)
@@ -57,19 +57,18 @@ def as_posix(name: str) -> str:
 def _run_command(
     args: list[str],
     *,
-    timeout: Optional[int],
-    stdin: Optional[BinaryIO],
-    input: Optional[bytes],
+    timeout: int | None,
+    stdin: BinaryIO | None,
+    input: bytes | None,
     check: bool,
-) -> "subprocess.CompletedProcess[bytes]":
+) -> subprocess.CompletedProcess[bytes]:
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:
         if input is not None:
             return subprocess.run(
                 args,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=True,
                 shell=False,
                 input=input,
                 timeout=timeout,
@@ -79,8 +78,7 @@ def _run_command(
         return subprocess.run(
             args,
             stdin=stdin,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             shell=False,
             timeout=timeout,
             check=check,
@@ -94,11 +92,11 @@ def run_command(
     args: list[str],
     *,
     retries: int = 0,
-    timeout: Optional[int] = None,
-    stdin: Optional[BinaryIO] = None,
-    input: Optional[bytes] = None,
+    timeout: int | None = None,
+    stdin: BinaryIO | None = None,
+    input: bytes | None = None,
     check: bool = False,
-) -> "subprocess.CompletedProcess[bytes]":
+) -> subprocess.CompletedProcess[bytes]:
     remaining_retries = retries
     while True:
         try:

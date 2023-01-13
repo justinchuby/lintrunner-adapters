@@ -10,10 +10,9 @@ import os
 import subprocess
 import sys
 import time
-from typing import List
 
 
-def run_command(args: List[str]) -> "subprocess.CompletedProcess[bytes]":
+def run_command(args: list[str]) -> subprocess.CompletedProcess[bytes]:
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
     try:

@@ -8,7 +8,7 @@ import logging
 import os
 import re
 import subprocess
-from typing import List, Pattern
+from typing import Pattern
 
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
@@ -31,7 +31,7 @@ RESULTS_RE: Pattern[str] = re.compile(
 def check_file(
     filename: str,
     config: str,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             ["cmakelint", f"--config={config}", filename],

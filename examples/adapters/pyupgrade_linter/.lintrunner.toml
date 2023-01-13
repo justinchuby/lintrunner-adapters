@@ -1,0 +1,29 @@
+[[linter]]
+code = 'PYUPGRADE'
+is_formatter = true
+include_patterns = [
+    '**/*.py',
+    '**/*.pyi',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pyupgrade_linter',
+    '--py37-plus',
+    '--keep-mock',
+    '--keep-percent-format',
+    '--keep-runtime-typing',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'pyupgrade==3.3.1',
+]

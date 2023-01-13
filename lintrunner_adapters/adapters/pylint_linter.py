@@ -4,7 +4,7 @@ import argparse
 import logging
 import re
 import sys
-from typing import List, Optional, Pattern
+from typing import Pattern
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
@@ -96,13 +96,13 @@ def format_lint_messages(
 
 
 def check_files(
-    filenames: List[str],
+    filenames: list[str],
     *,
-    rcfile: Optional[str],
+    rcfile: str | None,
     jobs: int,
     retries: int,
     show_disable: bool,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             [sys.executable, "-mpylint", "--score=n"]

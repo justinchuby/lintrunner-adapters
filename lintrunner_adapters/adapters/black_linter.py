@@ -8,7 +8,6 @@ import logging
 import os
 import subprocess
 import sys
-from typing import List
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
@@ -20,7 +19,7 @@ def check_file(
     filename: str,
     retries: int,
     timeout: int,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         with open(filename, "rb") as f:
             original = f.read()

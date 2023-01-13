@@ -6,7 +6,6 @@ import argparse
 import json
 import shutil
 import sys
-from typing import List
 
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
 
@@ -14,8 +13,8 @@ LINTER_CODE = "SHELLCHECK"
 
 
 def check_files(
-    files: List[str],
-) -> List[LintMessage]:
+    files: list[str],
+) -> list[LintMessage]:
     try:
         proc = run_command(
             ["shellcheck", "--external-sources", "--format=json1"] + files

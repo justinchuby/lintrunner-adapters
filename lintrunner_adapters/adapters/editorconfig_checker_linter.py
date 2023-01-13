@@ -6,7 +6,7 @@ import argparse
 import logging
 import re
 import sys
-from typing import List, Pattern
+from typing import Pattern
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
@@ -40,10 +40,10 @@ def _test_results_re() -> None:
 
 
 def check_files(
-    filenames: List[str],
+    filenames: list[str],
     *,
     retries: int,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             ["ec", "-no-color", *filenames],
