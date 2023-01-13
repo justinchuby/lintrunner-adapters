@@ -270,8 +270,8 @@ init_command = [
  code = 'PYUPGRADE'
  is_formatter = true
  include_patterns = [
-     '**/*.py',
-     '**/*.pyi',
+     'lintrunner_adapters/**/*.py',
+     'lintrunner_adapters/**/*.pyi',
  ]
  exclude_patterns = []
  command = [
