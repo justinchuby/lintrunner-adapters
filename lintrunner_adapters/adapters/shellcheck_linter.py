@@ -14,8 +14,8 @@ LINTER_CODE = "SHELLCHECK"
 
 
 def check_files(
-    files: List[str],
-) -> List[LintMessage]:
+    files: list[str],
+) -> list[LintMessage]:
     try:
         proc = run_command(
             ["shellcheck", "--external-sources", "--format=json1"] + files

@@ -40,10 +40,10 @@ def _test_results_re() -> None:
 
 
 def check_files(
-    filenames: List[str],
+    filenames: list[str],
     *,
     retries: int,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             ["ec", "-no-color", *filenames],

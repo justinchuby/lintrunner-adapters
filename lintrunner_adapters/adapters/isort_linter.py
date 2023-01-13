@@ -20,7 +20,7 @@ def check_file(
     filename: str,
     retries: int,
     timeout: int,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         with open(filename, "rb") as f:
             original = f.read()

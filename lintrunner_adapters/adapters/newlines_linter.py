@@ -16,7 +16,7 @@ CARRIAGE_RETURN = 13  # ASCII "\r"
 LINTER_CODE = "NEWLINE"
 
 
-def check_file(filename: str) -> Optional[LintMessage]:
+def check_file(filename: str) -> LintMessage | None:
     logging.debug("Checking file %s", filename)
 
     with open(filename, "rb") as f:
@@ -74,7 +74,7 @@ def check_file(filename: str) -> Optional[LintMessage]:
         return None
 
     has_changes = False
-    original_lines: Optional[List[bytes]] = None
+    original_lines: list[bytes] | None = None
     for idx, line in enumerate(lines):
         if len(line) >= 2 and line[-1] == NEWLINE and line[-2] == CARRIAGE_RETURN:
             if not has_changes:

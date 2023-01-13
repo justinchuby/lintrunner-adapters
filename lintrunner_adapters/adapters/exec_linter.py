@@ -8,14 +8,13 @@ import argparse
 import logging
 import os
 import sys
-from typing import Optional
 
 from lintrunner_adapters import LintMessage, LintSeverity
 
 LINTER_CODE = "EXEC"
 
 
-def check_file(filename: str) -> Optional[LintMessage]:
+def check_file(filename: str) -> LintMessage | None:
     is_executable = os.access(filename, os.X_OK)
     if is_executable:
         return LintMessage(

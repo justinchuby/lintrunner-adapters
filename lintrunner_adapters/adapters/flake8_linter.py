@@ -16,7 +16,7 @@ LINTER_CODE = "FLAKE8"
 
 # fmt: off
 # https://www.flake8rules.com/
-DOCUMENTED_IN_FLAKE8RULES: Set[str] = {
+DOCUMENTED_IN_FLAKE8RULES: set[str] = {
     "E101", "E111", "E112", "E113", "E114", "E115", "E116", "E117",
     "E121", "E122", "E123", "E124", "E125", "E126", "E127", "E128", "E129",
     "E131", "E133",
@@ -52,14 +52,14 @@ DOCUMENTED_IN_FLAKE8RULES: Set[str] = {
 }
 
 # https://pypi.org/project/flake8-comprehensions/#rules
-DOCUMENTED_IN_FLAKE8COMPREHENSIONS: Set[str] = {
+DOCUMENTED_IN_FLAKE8COMPREHENSIONS: set[str] = {
     "C400", "C401", "C402", "C403", "C404", "C405", "C406", "C407", "C408", "C409",
     "C410",
     "C411", "C412", "C413", "C414", "C415", "C416",
 }
 
 # https://github.com/PyCQA/flake8-bugbear#list-of-warnings
-DOCUMENTED_IN_BUGBEAR: Set[str] = {
+DOCUMENTED_IN_BUGBEAR: set[str] = {
     "B001", "B002", "B003", "B004", "B005", "B006", "B007", "B008", "B009", "B010",
     "B011", "B012", "B013", "B014", "B015",
     "B301", "B302", "B303", "B304", "B305", "B306",
@@ -187,13 +187,13 @@ def format_lint_message(message: str, code: str, show_disable: bool) -> str:
 
 
 def check_files(
-    filenames: List[str],
-    severities: Dict[str, LintSeverity],
+    filenames: list[str],
+    severities: dict[str, LintSeverity],
     *,
     retries: int,
-    docstring_convention: Optional[str],
+    docstring_convention: str | None,
     show_disable: bool,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             [sys.executable, "-mflake8", "--exit-zero"]
@@ -290,7 +290,7 @@ def main() -> None:
         stream=sys.stderr,
     )
 
-    severities: Dict[str, LintSeverity] = {}
+    severities: dict[str, LintSeverity] = {}
     if args.severity:
         for severity in args.severity:
             parts = severity.split(":", 1)

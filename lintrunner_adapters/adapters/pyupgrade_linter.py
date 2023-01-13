@@ -37,7 +37,7 @@ def check_file(
     keep_percent_format: bool,
     keep_mock: bool,
     keep_runtime_typing: bool,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     with open(filename, "rb") as fb:
         contents_bytes = fb.read()
 

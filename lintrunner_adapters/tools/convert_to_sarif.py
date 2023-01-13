@@ -114,7 +114,7 @@ def produce_sarif(lintrunner_results: Iterable[dict[str, Any]]) -> dict[str, Any
 
 def main(args: Any) -> None:
     """Convert the output of lintrunner json to SARIF."""
-    with open(args.input, "r", encoding="utf-8") as f:
+    with open(args.input, encoding="utf-8") as f:
         lintrunner_jsons = [json.loads(line) for line in f]
 
     sarif = produce_sarif(lintrunner_jsons)

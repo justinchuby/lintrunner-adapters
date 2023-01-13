@@ -34,7 +34,7 @@ def format_error_message(filename: str, err: Exception) -> LintMessage:
 
 def check_file(
     filename: str,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     with open(filename, "rb") as f:
         original = f.read().decode("utf-8")
 

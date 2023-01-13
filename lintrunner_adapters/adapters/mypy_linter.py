@@ -67,12 +67,12 @@ def disable_message(code: str) -> str:
 
 
 def check_files(
-    filenames: List[str],
+    filenames: list[str],
     *,
     config: str,
     retries: int,
     show_disable: bool,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             [sys.executable, "-mmypy", f"--config={config}"] + filenames,
@@ -147,7 +147,7 @@ def main() -> None:
 
     # Use a dictionary here to preserve order. mypy cares about order,
     # tragically, e.g. https://github.com/python/mypy/issues/2015
-    filenames: Dict[str, bool] = {}
+    filenames: dict[str, bool] = {}
 
     # If a stub file exists, have mypy check it instead of the original file, in
     # accordance with PEP-484 (see https://www.python.org/dev/peps/pep-0484/#stub-files)

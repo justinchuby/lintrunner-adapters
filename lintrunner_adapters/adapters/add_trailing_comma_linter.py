@@ -30,7 +30,7 @@ def format_error_message(filename: str, err: Exception) -> LintMessage:
     )
 
 
-def check_file(filename: str) -> List[LintMessage]:
+def check_file(filename: str) -> list[LintMessage]:
     with open(filename, "rb") as fb:
         contents_bytes = fb.read()
 

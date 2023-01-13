@@ -96,13 +96,13 @@ def format_lint_messages(
 
 
 def check_files(
-    filenames: List[str],
+    filenames: list[str],
     *,
-    rcfile: Optional[str],
+    rcfile: str | None,
     jobs: int,
     retries: int,
     show_disable: bool,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             [sys.executable, "-mpylint", "--score=n"]

@@ -31,7 +31,7 @@ RESULTS_RE: Pattern[str] = re.compile(
 def check_file(
     filename: str,
     config: str,
-) -> List[LintMessage]:
+) -> list[LintMessage]:
     try:
         proc = run_command(
             ["cmakelint", f"--config={config}", filename],
