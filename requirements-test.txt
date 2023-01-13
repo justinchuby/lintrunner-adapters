@@ -1,3 +1,4 @@
 # Test dependencies to avoid doctest import errors
 add-trailing-comma==2.4.0
+pyupgrade==3.3.1
 ufmt==2.0.1
