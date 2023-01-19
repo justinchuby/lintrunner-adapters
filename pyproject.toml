@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lintrunner-adapters"
-version = "0.3.0"
+version = "0.4.0"
 description = "Adapters and tools for lintrunner"
 authors = ["Justin Chu <justinchu@microsoft.com>"]
 license = "MIT"
