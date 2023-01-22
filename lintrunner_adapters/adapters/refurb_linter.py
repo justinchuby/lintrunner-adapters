@@ -6,7 +6,7 @@ import argparse
 import logging
 import re
 import sys
-from textwrap import dedent
+import textwrap
 
 from lintrunner_adapters import LintMessage, LintSeverity, add_default_options
 from lintrunner_adapters._common.lintrunner_common import run_command
@@ -47,7 +47,7 @@ def _test_results_re() -> None:
 def format_lint_message(message: str, code: str, show_disable: bool) -> str:
     formatted = f"{message}\n"
     if show_disable:
-        formatted += dedent(
+        formatted += textwrap.dedent(
             f"""
             To disable, use
             [tool.refurb]
@@ -101,7 +101,7 @@ def check_files(
             if match["column"] is not None and not match["column"].startswith("-")
             else None,
             code=LINTER_CODE,
-            severity=severities.get(match["code"], LintSeverity.ERROR),
+            severity=severities.get(match["code"], LintSeverity.ADVICE),
             original=None,
             replacement=None,
         )
@@ -116,7 +116,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--config-file",
-        required=True,
+        default="pyproject.toml",
         help="path to pyproject.toml config file",
     )
     parser.add_argument(
