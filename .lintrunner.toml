@@ -267,28 +267,54 @@ init_command = [
 ]
 
 [[linter]]
- code = 'PYUPGRADE'
- is_formatter = true
- include_patterns = [
-     'lintrunner_adapters/**/*.py',
-     'lintrunner_adapters/**/*.pyi',
- ]
- exclude_patterns = []
- command = [
-     'python',
-     '-m',
-     'lintrunner_adapters',
-     'run',
-     'pyupgrade_linter',
-     '--py37-plus',
-     '@{{PATHSFILE}}'
- ]
- init_command = [
-     'python',
-     '-m',
-     'lintrunner_adapters',
-     'run',
-     'pip_init',
-     '--dry-run={{DRYRUN}}',
-     'pyupgrade==3.3.1',
- ]
+code = 'PYUPGRADE'
+is_formatter = true
+include_patterns = [
+    'lintrunner_adapters/**/*.py',
+    'lintrunner_adapters/**/*.pyi',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pyupgrade_linter',
+    '--py37-plus',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'pyupgrade==3.3.1',
+]
+
+[[linter]]
+code = 'REFURB'
+include_patterns = [
+    'lintrunner_adapters/**/*.py',
+    'lintrunner_adapters/**/*.pyi',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'refurb_linter',
+    '--',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'refurb==1.10.0',
+]

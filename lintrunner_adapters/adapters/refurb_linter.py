@@ -45,10 +45,11 @@ def _test_results_re() -> None:
 
 
 def format_lint_message(message: str, code: str, show_disable: bool) -> str:
-    formatted = f"{message}\n"
+    formatted = f"{message}"
     if show_disable:
         formatted += textwrap.dedent(
             f"""
+
             To disable, use
             [tool.refurb]
             ignore = [{code}]
@@ -111,7 +112,8 @@ def check_files(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"refurb wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"refurb wrapper linter. Linter code: {LINTER_CODE}. "
+        f"Use pyproject.toml to configure any refurb settings.",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

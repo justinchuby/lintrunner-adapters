@@ -73,3 +73,6 @@ disable = [
     "unused-argument",
     "unused-import",
 ]
+
+[tool.refurb]
+python_version = "3.7"
