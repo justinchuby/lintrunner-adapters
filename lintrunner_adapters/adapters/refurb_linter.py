@@ -122,7 +122,8 @@ def main() -> None:
     parser.add_argument(
         "--severity",
         action="append",
-        help="map code to severity (e.g. `FURB109:advice`)",
+        help="map code to severity (e.g. `FURB109:advice`). "
+        "This option can be used multiple times.",
     )
     parser.add_argument(
         "--show-disable",
