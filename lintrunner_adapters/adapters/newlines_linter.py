@@ -21,11 +21,11 @@ def check_file(filename: str) -> LintMessage | None:
     with open(filename, "rb") as f:
         lines = f.readlines()
 
-    if len(lines) == 0:
+    if not lines:
         # File is empty, just leave it alone.
         return None
 
-    if len(lines) == 1 and len(lines[0]) == 1:
+    if len(lines) == len(lines[0]) == 1:
         # file is wrong whether or not the only byte is a newline
         return LintMessage(
             path=filename,
@@ -77,7 +77,7 @@ def check_file(filename: str) -> LintMessage | None:
     for idx, line in enumerate(lines):
         if len(line) >= 2 and line[-1] == NEWLINE and line[-2] == CARRIAGE_RETURN:
             if not has_changes:
-                original_lines = list(lines)
+                original_lines = lines.copy()
                 has_changes = True
             lines[idx] = line[:-2] + b"\n"
 

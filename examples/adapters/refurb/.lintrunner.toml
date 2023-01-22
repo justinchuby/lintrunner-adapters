@@ -10,7 +10,7 @@ command = [
     'lintrunner_adapters',
     'run',
     'refurb_linter',
-    '--config=pyproject.toml',
+    '--config-file=pyproject.toml',
     '--show-disable',
     '--severity=FURB101:advice',
     '--severity=FURB102:warning',
