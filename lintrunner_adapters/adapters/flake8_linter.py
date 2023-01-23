@@ -190,6 +190,7 @@ def check_files(
     filenames: list[str],
     severities: dict[str, LintSeverity],
     *,
+    config: str | None,
     retries: int,
     docstring_convention: str | None,
     show_disable: bool,
@@ -197,6 +198,7 @@ def check_files(
     try:
         proc = run_command(
             [sys.executable, "-mflake8", "--exit-zero"]
+            + ([f"--config={config}"] if config else [])
             + (
                 ["--docstring-convention", docstring_convention]
                 if docstring_convention
@@ -262,6 +264,11 @@ def main() -> None:
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
+        "--config",
+        default=None,
+        help="path to an config file",
+    )
+    parser.add_argument(
         "--severity",
         action="append",
         help="map code to severity (e.g. `B950:advice`)",
@@ -300,6 +307,7 @@ def main() -> None:
     lint_messages = check_files(
         args.filenames,
         severities,
+        config=args.config,
         retries=args.retries,
         docstring_convention=args.docstring_convention,
         show_disable=args.show_disable,
