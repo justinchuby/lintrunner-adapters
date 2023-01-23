@@ -190,6 +190,8 @@ def check_files(
     filenames: list[str],
     severities: dict[str, LintSeverity],
     *,
+    config: str | None,
+    append_config: str | None,
     retries: int,
     docstring_convention: str | None,
     show_disable: bool,
@@ -197,6 +199,8 @@ def check_files(
     try:
         proc = run_command(
             [sys.executable, "-mflake8", "--exit-zero"]
+            + ([f"--config={config}"] if config else [])
+            + ([f"--append-config={append_config}"] if append_config else [])
             + (
                 ["--docstring-convention", docstring_convention]
                 if docstring_convention
@@ -262,6 +266,19 @@ def main() -> None:
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
+        "--config",
+        default=None,
+        help="Path to the config file that will be the authoritative config source. "
+        "This will cause Flake8 to ignore all other configuration files.",
+    )
+    parser.add_argument(
+        "--append-config",
+        default=None,
+        help="Provide extra config files to parse in addition to the files "
+        "found by Flake8 by default. These files are the last ones read and "
+        "so they take the highest precedence when multiple files provide the same option.",
+    )
+    parser.add_argument(
         "--severity",
         action="append",
         help="map code to severity (e.g. `B950:advice`)",
@@ -300,6 +317,8 @@ def main() -> None:
     lint_messages = check_files(
         args.filenames,
         severities,
+        config=args.config,
+        append_config=args.append_config,
         retries=args.retries,
         docstring_convention=args.docstring_convention,
         show_disable=args.show_disable,
