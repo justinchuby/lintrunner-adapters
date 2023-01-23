@@ -134,7 +134,7 @@ def get_issue_severity(code: str) -> LintSeverity:
     # "T49": internal type checker errors or unmatched messages
     if any(
         code.startswith(x)
-        for x in [
+        for x in (
             "B9",
             "C4",
             "C9",
@@ -143,13 +143,13 @@ def get_issue_severity(code: str) -> LintSeverity:
             "E5",
             "T400",
             "T49",
-        ]
+        )
     ):
         return LintSeverity.ADVICE
 
     # "F821": Undefined name
     # "E999": syntax error
-    if any(code.startswith(x) for x in ["F821", "E999"]):
+    if any(code.startswith(x) for x in ("F821", "E999")):
         return LintSeverity.ERROR
 
     # "F": PyFlakes Error

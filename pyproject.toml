@@ -73,3 +73,7 @@ disable = [
     "unused-argument",
     "unused-import",
 ]
+
+[tool.refurb]
+python_version = "3.7"
+disable = ["FURB101", "FURB150"] # disable suggestions using pathlib
