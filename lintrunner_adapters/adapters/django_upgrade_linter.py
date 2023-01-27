@@ -1,4 +1,4 @@
-"""Upgrade your Django project code."""
+"""Adapter for https://github.com/adamchainz/django-upgrade."""
 
 from __future__ import annotations
 
