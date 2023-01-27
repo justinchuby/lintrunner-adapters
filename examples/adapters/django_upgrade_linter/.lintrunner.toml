@@ -1,0 +1,26 @@
+[[linter]]
+code = 'DJANGO_UPGRADE'
+is_formatter = true
+include_patterns = [
+    '**/*.py',
+    '**/*.pyi',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pyupgrade_linter',
+    '--target-version=4.1',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'django-upgrade==1.12.0',
+]

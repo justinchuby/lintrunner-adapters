@@ -1,4 +1,4 @@
-"""Upgrade syntax for newer versions of the language."""
+"""Upgrade your Django project code."""
 
 from __future__ import annotations
 
@@ -7,13 +7,14 @@ import concurrent.futures
 import logging
 import os
 import sys
+from typing import Tuple, cast
 
-from pyupgrade._data import Settings
-from pyupgrade._main import _fix_plugins, _fix_tokens
+from django_upgrade.data import Settings
+from django_upgrade.main import apply_fixers
 
 from lintrunner_adapters import LintMessage, LintSeverity, add_default_options
 
-LINTER_CODE = "PYUPGRADE"
+LINTER_CODE = "DJANGO_UPGRADE"
 
 
 def format_error_message(filename: str, err: Exception) -> LintMessage:
@@ -30,28 +31,13 @@ def format_error_message(filename: str, err: Exception) -> LintMessage:
     )
 
 
-def check_file(
-    filename: str,
-    min_version: tuple[int, ...],
-    keep_percent_format: bool,
-    keep_mock: bool,
-    keep_runtime_typing: bool,
-) -> list[LintMessage]:
+def check_file(filename: str, settings: Settings) -> list[LintMessage]:
     with open(filename, "rb") as fb:
         contents_bytes = fb.read()
 
     try:
         original = replacement = contents_bytes.decode("utf-8")
-        replacement = _fix_plugins(
-            replacement,
-            settings=Settings(
-                min_version=min_version,
-                keep_percent_format=keep_percent_format,
-                keep_mock=keep_mock,
-                keep_runtime_typing=keep_runtime_typing,
-            ),
-        )
-        replacement = _fix_tokens(replacement)
+        replacement = apply_fixers(replacement, settings, filename)
 
         if original == replacement:
             return []
@@ -75,58 +61,36 @@ def check_file(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"pyupgrade wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"django-upgrade wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
-    parser.add_argument("--keep-percent-format", action="store_true")
-    parser.add_argument("--keep-mock", action="store_true")
-    parser.add_argument("--keep-runtime-typing", action="store_true")
     parser.add_argument(
-        "--py3-plus",
-        "--py3-only",
-        action="store_const",
-        dest="min_version",
-        default=(3,),
-        const=(3,),
-    )
-    parser.add_argument(
-        "--py36-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 6),
-    )
-    parser.add_argument(
-        "--py37-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 7),
-    )
-    parser.add_argument(
-        "--py38-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 8),
-    )
-    parser.add_argument(
-        "--py39-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 9),
-    )
-    parser.add_argument(
-        "--py310-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 10),
-    )
-    parser.add_argument(
-        "--py311-plus",
-        action="store_const",
-        dest="min_version",
-        const=(3, 11),
+        "--target-version",
+        default="2.2",
+        choices=[
+            "1.7",
+            "1.8",
+            "1.9",
+            "1.10",
+            "1.11",
+            "2.0",
+            "2.1",
+            "2.2",
+            "3.0",
+            "3.1",
+            "3.2",
+            "4.0",
+            "4.1",
+        ],
     )
     add_default_options(parser)
     args = parser.parse_args()
+
+    target_version: tuple[int, int] = cast(
+        Tuple[int, int],
+        tuple(int(x) for x in args.target_version.split(".", 1)),
+    )
+    settings = Settings(target_version=target_version)
 
     logging.basicConfig(
         format="<%(threadName)s:%(levelname)s> %(message)s",
@@ -146,10 +110,7 @@ def main() -> None:
             executor.submit(
                 check_file,
                 x,
-                args.min_version,
-                args.keep_percent_format,
-                args.keep_mock,
-                args.keep_runtime_typing,
+                settings,
             ): x
             for x in args.filenames
         }
