@@ -1,5 +1,5 @@
 [[linter]]
-code = 'DJANGO_UPGRADE'
+code = 'DJANGO-UPGRADE'
 is_formatter = true
 include_patterns = [
     '**/*.py',

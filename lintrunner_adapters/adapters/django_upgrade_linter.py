@@ -17,7 +17,7 @@ from lintrunner_adapters import (
     run_command,
 )
 
-LINTER_CODE = "DJANGO_UPGRADE"
+LINTER_CODE = "DJANGO-UPGRADE"
 
 
 def check_file(
