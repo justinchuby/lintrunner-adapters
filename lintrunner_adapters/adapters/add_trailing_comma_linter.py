@@ -1,4 +1,4 @@
-"""Add trailing commas to calls and literals."""
+"""Adapter for https://github.com/asottile/add-trailing-comma."""
 
 from __future__ import annotations
 
@@ -6,61 +6,108 @@ import argparse
 import concurrent.futures
 import logging
 import os
+import subprocess
 import sys
 
-from add_trailing_comma._main import _fix_src
-
-from lintrunner_adapters import LintMessage, LintSeverity, add_default_options
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+    add_default_options,
+    as_posix,
+    run_command,
+)
 
 LINTER_CODE = "ADD-TRAILING-COMMA"
 
 
-def format_error_message(filename: str, err: Exception) -> LintMessage:
-    return LintMessage(
-        path=filename,
-        line=None,
-        char=None,
-        code=LINTER_CODE,
-        severity=LintSeverity.ADVICE,
-        name="command-failed",
-        original=None,
-        replacement=None,
-        description=(f"Failed due to {err.__class__.__name__}:\n{err}"),
-    )
-
-
-def check_file(filename: str) -> list[LintMessage]:
-    with open(filename, "rb") as fb:
-        contents_bytes = fb.read()
-
+def check_file(
+    filename: str,
+    retries: int,
+    timeout: int,
+) -> list[LintMessage]:
     try:
-        original = contents_text = contents_bytes.decode("utf-8")
-        replacement = _fix_src(contents_text, (3, 6))
-
-        if original == replacement:
-            return []
-
+        with open(filename, "rb") as f:
+            original = f.read()
+        with open(filename, "rb") as f:
+            proc = run_command(
+                [
+                    sys.executable,
+                    "-madd_trailing_comma",
+                    "--exit-zero-even-if-changed",
+                    "-",
+                ],
+                stdin=f,
+                retries=retries,
+                timeout=timeout,
+                check=True,
+            )
+    except subprocess.TimeoutExpired:
         return [
             LintMessage(
                 path=filename,
                 line=None,
                 char=None,
                 code=LINTER_CODE,
-                severity=LintSeverity.WARNING,
-                name="format",
-                original=original,
-                replacement=replacement,
-                description="Run `lintrunner -a` to apply this patch.",
+                severity=LintSeverity.ERROR,
+                name="timeout",
+                original=None,
+                replacement=None,
+                description="add-trailing-comma timed out while trying to process a file.",
             )
         ]
-    except Exception as err:
-        return [format_error_message(filename, err)]
+    except (OSError, subprocess.CalledProcessError) as err:
+        return [
+            LintMessage(
+                path=filename,
+                line=None,
+                char=None,
+                code=LINTER_CODE,
+                severity=LintSeverity.ADVICE,
+                name="command-failed",
+                original=None,
+                replacement=None,
+                description=(
+                    f"Failed due to {err.__class__.__name__}:\n{err}"
+                    if not isinstance(err, subprocess.CalledProcessError)
+                    else (
+                        f"COMMAND (exit code {err.returncode})\n"
+                        f"{' '.join(as_posix(x) for x in err.cmd)}\n\n"
+                        f"STDERR\n{err.stderr.decode('utf-8').strip() or '(empty)'}\n\n"
+                        f"STDOUT\n{err.stdout.decode('utf-8').strip() or '(empty)'}"
+                    )
+                ),
+            )
+        ]
+
+    replacement = proc.stdout
+    if original == replacement:
+        return []
+
+    return [
+        LintMessage(
+            path=filename,
+            line=None,
+            char=None,
+            code=LINTER_CODE,
+            severity=LintSeverity.WARNING,
+            name="format",
+            original=original.decode("utf-8"),
+            replacement=replacement.decode("utf-8"),
+            description="Run `lintrunner -a` to apply this patch.",
+        )
+    ]
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=f"add-trailing-comma wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
+    )
+    parser.add_argument(
+        "--timeout",
+        default=90,
+        type=int,
+        help="seconds to wait for add-trailing-comma",
     )
     add_default_options(parser)
     args = parser.parse_args()
@@ -79,7 +126,10 @@ def main() -> None:
         max_workers=os.cpu_count(),
         thread_name_prefix="Thread",
     ) as executor:
-        futures = {executor.submit(check_file, x): x for x in args.filenames}
+        futures = {
+            executor.submit(check_file, x, args.retries, args.timeout): x
+            for x in args.filenames
+        }
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
