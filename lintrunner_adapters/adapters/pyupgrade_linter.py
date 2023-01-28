@@ -75,7 +75,7 @@ def check_file(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"add-trailing-comma wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"pyupgrade wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument("--keep-percent-format", action="store_true")
