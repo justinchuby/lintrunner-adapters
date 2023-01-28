@@ -6,57 +6,99 @@ import argparse
 import concurrent.futures
 import logging
 import os
+import subprocess
 import sys
-from typing import Tuple, cast
 
-from django_upgrade.data import Settings
-from django_upgrade.main import apply_fixers
-
-from lintrunner_adapters import LintMessage, LintSeverity, add_default_options
+from lintrunner_adapters import (
+    LintMessage,
+    LintSeverity,
+    add_default_options,
+    as_posix,
+    run_command,
+)
 
 LINTER_CODE = "DJANGO_UPGRADE"
 
 
-def format_error_message(filename: str, err: Exception) -> LintMessage:
-    return LintMessage(
-        path=filename,
-        line=None,
-        char=None,
-        code=LINTER_CODE,
-        severity=LintSeverity.ADVICE,
-        name="command-failed",
-        original=None,
-        replacement=None,
-        description=(f"Failed due to {err.__class__.__name__}:\n{err}"),
-    )
-
-
-def check_file(filename: str, settings: Settings) -> list[LintMessage]:
-    with open(filename, "rb") as fb:
-        contents_bytes = fb.read()
-
+def check_file(
+    filename: str,
+    target_version: str,
+    retries: int,
+    timeout: int,
+) -> list[LintMessage]:
     try:
-        original = replacement = contents_bytes.decode("utf-8")
-        replacement = apply_fixers(replacement, settings, filename)
-
-        if original == replacement:
-            return []
-
+        with open(filename, "rb") as f:
+            original = f.read()
+        with open(filename, "rb") as f:
+            proc = run_command(
+                [
+                    sys.executable,
+                    "-mdjango_upgrade",
+                    "--target-version",
+                    target_version,
+                    "--exit-zero-even-if-changed",
+                    "-",
+                ],
+                stdin=f,
+                retries=retries,
+                timeout=timeout,
+                check=True,
+            )
+    except subprocess.TimeoutExpired:
         return [
             LintMessage(
                 path=filename,
                 line=None,
                 char=None,
                 code=LINTER_CODE,
-                severity=LintSeverity.WARNING,
-                name="format",
-                original=original,
-                replacement=replacement,
-                description="Run `lintrunner -a` to apply this patch.",
+                severity=LintSeverity.ERROR,
+                name="timeout",
+                original=None,
+                replacement=None,
+                description="django-upgrade timed out while trying to process a file.",
             )
         ]
-    except Exception as err:
-        return [format_error_message(filename, err)]
+    except (OSError, subprocess.CalledProcessError) as err:
+        return [
+            LintMessage(
+                path=filename,
+                line=None,
+                char=None,
+                code=LINTER_CODE,
+                severity=LintSeverity.ADVICE,
+                name="command-failed",
+                original=None,
+                replacement=None,
+                description=(
+                    f"Failed due to {err.__class__.__name__}:\n{err}"
+                    if not isinstance(err, subprocess.CalledProcessError)
+                    else (
+                        f"COMMAND (exit code {err.returncode})\n"
+                        f"{' '.join(as_posix(x) for x in err.cmd)}\n\n"
+                        f"STDERR\n{err.stderr.decode('utf-8').strip() or '(empty)'}\n\n"
+                        f"STDOUT\n{err.stdout.decode('utf-8').strip() or '(empty)'}"
+                    )
+                ),
+            )
+        ]
+
+    replacement = proc.stdout
+    if original == replacement:
+        return []
+
+    return [
+        LintMessage(
+            path=filename,
+            line=None,
+            char=None,
+            code=LINTER_CODE,
+            severity=LintSeverity.WARNING,
+            name="format",
+            original=original.decode("utf-8"),
+            replacement=replacement.decode("utf-8"),
+            description="Run `lintrunner -a` to apply this patch.",
+        )
+    ]
 
 
 def main() -> None:
@@ -67,30 +109,15 @@ def main() -> None:
     parser.add_argument(
         "--target-version",
         default="2.2",
-        choices=[
-            "1.7",
-            "1.8",
-            "1.9",
-            "1.10",
-            "1.11",
-            "2.0",
-            "2.1",
-            "2.2",
-            "3.0",
-            "3.1",
-            "3.2",
-            "4.0",
-            "4.1",
-        ],
+    )
+    parser.add_argument(
+        "--timeout",
+        default=90,
+        type=int,
+        help="seconds to wait for django-upgrade",
     )
     add_default_options(parser)
     args = parser.parse_args()
-
-    target_version: tuple[int, int] = cast(
-        Tuple[int, int],
-        tuple(int(x) for x in args.target_version.split(".", 1)),
-    )
-    settings = Settings(target_version=target_version)
 
     logging.basicConfig(
         format="<%(threadName)s:%(levelname)s> %(message)s",
@@ -110,7 +137,9 @@ def main() -> None:
             executor.submit(
                 check_file,
                 x,
-                settings,
+                args.target_version,
+                args.retries,
+                args.timeout,
             ): x
             for x in args.filenames
         }
