@@ -1,0 +1,28 @@
+[[linter]]
+code = 'RUFF'
+is_formatter = true
+include_patterns = [
+    '**/*.py',
+    '**/*.pyi',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'ruff_linter',
+    '--config=pyproject.toml',
+    '--explain',
+    '--severity=F401:advice',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'ruff==0.0.237',
+]
