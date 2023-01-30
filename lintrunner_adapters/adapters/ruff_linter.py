@@ -72,15 +72,17 @@ def check_files(
 
     stdout = str(proc.stdout, "utf-8").strip()
     vulnerabilities = json.loads(stdout)
-    rules = {}
-    for code in {v["code"] for v in vulnerabilities}:
-        rules[code] = explain_rule(code)
+    rules = (
+        {code: explain_rule(code) for code in {v["code"] for v in vulnerabilities}}
+        if explain
+        else None
+    )
     return [
         LintMessage(
             path=vuln["filename"],
             name=vuln["code"],
             description=vuln["message"]
-            if not explain
+            if not rules
             else f"{vuln['message']}\n{rules[vuln['code']]}",
             line=int(vuln["location"]["row"]),
             char=int(vuln["location"]["column"]),

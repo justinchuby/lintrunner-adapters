@@ -103,9 +103,11 @@ def check_file(
     if original == replacement:
         return []
     vulnerabilities = json.loads(str(proc_lint.stdout, "utf-8").strip())
-    rules = {}
-    for code in {v["code"] for v in vulnerabilities}:
-        rules[code] = explain_rule(code)
+    rules = (
+        {code: explain_rule(code) for code in {v["code"] for v in vulnerabilities}}
+        if explain
+        else None
+    )
 
     return [
         LintMessage(
@@ -124,7 +126,7 @@ def check_file(
                 path=vuln["filename"],
                 name=vuln["code"],
                 description=vuln["message"]
-                if not explain
+                if not rules
                 else f"{vuln['message']}\n{rules[vuln['code']]}",
                 line=int(vuln["location"]["row"]),
                 char=int(vuln["location"]["column"]),
