@@ -10,7 +10,6 @@ import json
 import logging
 import pathlib
 import sys
-import typing
 from typing import Any, Collection
 
 import lintrunner_adapters
@@ -183,7 +182,7 @@ def check_files(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"pylint wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"Rust clippy wrapper linter. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     lintrunner_adapters.add_default_options(parser)
