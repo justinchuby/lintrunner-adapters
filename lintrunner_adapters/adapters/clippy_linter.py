@@ -24,6 +24,7 @@ SEVERITIES = {
     "warning": LintSeverity.WARNING,
     "note": LintSeverity.ADVICE,
     "help": LintSeverity.ADVICE,
+    None: LintSeverity.ADVICE,
 }
 
 
@@ -74,7 +75,7 @@ def find_cargo_toml_files(filenames: Collection[pathlib.Path]) -> set[pathlib.Pa
     return all_cargo_tomls
 
 
-def check_cargo_toml(
+def check_cargo_toml(  # pylint: disable=too-many-branches
     cargo_toml: pathlib.Path, filenames: set[str]
 ) -> list[LintMessage]:
     try:
@@ -122,6 +123,10 @@ def check_cargo_toml(
             logging.debug("No message in data: %s", data)
             continue
 
+        if data["message"].get("code") is None:
+            logging.debug("No code in message: %s", data["message"])
+            continue
+
         src_path: str = str(pathlib.Path(data["target"]["src_path"]).resolve())
         # Filter the lint messages to only include the files that are in filenames
         if src_path not in filenames:
@@ -147,8 +152,8 @@ def check_cargo_toml(
                 line=line_num,
                 char=char,
                 code=LINTER_CODE,
-                severity=SEVERITIES[data["level"]],
-                name=data["code"]["code"] if "code" in data else "unknown",
+                severity=SEVERITIES[data["message"].get("level")],
+                name=data["message"]["code"]["code"],
                 original=None,
                 replacement=None,
                 description=format_lint_messages(data["message"]),
