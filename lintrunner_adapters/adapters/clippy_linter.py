@@ -155,7 +155,7 @@ def check_files(
     """Run clippy on the files."""
     # Convert filenames to a set of absolute paths
     absolute_paths = [pathlib.Path(filename).resolve() for filename in filenames]
-    absolute_filenames = set(str(path) for path in absolute_paths)
+    absolute_filenames = {str(path) for path in absolute_paths}
     # Recursively look up to find all the Cargo.toml files in the files to be linted
     all_cargo_tomls = find_cargo_toml_files(absolute_paths)
     # Run clippy on each Cargo.toml file
