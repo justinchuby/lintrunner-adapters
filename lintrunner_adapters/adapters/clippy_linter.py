@@ -29,7 +29,8 @@ SEVERITIES = {
 
 
 def format_lint_messages(clippy_message: dict[str, Any]) -> str:
-    return typing.cast(str, clippy_message["rendered"])
+    message = f"```\n{clippy_message['rendered']}```"
+    return message
 
 
 def is_relative_to(path: pathlib.Path, parent: pathlib.Path) -> bool:
@@ -127,24 +128,22 @@ def check_cargo_toml(  # pylint: disable=too-many-branches
             logging.debug("No code in message: %s", data["message"])
             continue
 
-        src_path: str = str(pathlib.Path(data["target"]["src_path"]).resolve())
+        if "spans" not in data["message"] or not data["message"]["spans"]:
+            logging.debug("No spans in message: %s", data["message"])
+            continue
+
+        first_span = data["message"]["spans"][0]
+        line_num = first_span.get("line_start")
+        char = first_span.get("column_start")
+
+        src_path: str = str(pathlib.Path(first_span["file_name"]).resolve())
         # Filter the lint messages to only include the files that are in filenames
         if src_path not in filenames:
             logging.debug(
                 "Skipping '%s' because it is not in the list of files to be linted",
-                data["filename"],
+                src_path,
             )
             continue
-
-        line_num: int | None = None
-        char: int | None = None
-        if "spans" in data["message"]:
-            if data["message"]["spans"]:
-                first_span = data["message"]["spans"][0]
-                if "line_start" in first_span:
-                    line_num = data["message"]["spans"][0]["line_start"]
-                if "column_start" in first_span:
-                    char = data["message"]["spans"][0]["column_start"]
 
         lint_messages.append(
             LintMessage(
