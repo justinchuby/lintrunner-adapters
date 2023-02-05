@@ -6,10 +6,12 @@ https://doc.rust-lang.org/clippy
 from __future__ import annotations
 
 import argparse
+import json
 import logging
+import pathlib
 import re
 import sys
-from typing import Pattern
+from typing import Collection, Pattern
 
 import lintrunner_adapters
 from lintrunner_adapters import LintMessage, LintSeverity, run_command
@@ -28,29 +30,65 @@ SEVERITIES = {
 }
 
 
-
-def format_lint_messages(
-    message: str, code: str, string_code: str, show_disable: bool
-) -> str:
+def format_lint_messages(message: str, code: str, string_code: str) -> str:
     formatted = (
         f"{message} ({string_code})\n"
         f"See [{string_code}]({pylint_doc_url(code, string_code)})."
     )
-    if show_disable:
-        formatted += f"\n\nTo disable, use `  # pylint: disable={string_code}`"
     return formatted
 
 
-def check_files(
-    filenames: list[str],
-    *,
-    retries: int,
-) -> list[LintMessage]:
+def is_relative_to(path: pathlib.Path, parent: pathlib.Path) -> bool:
+    """Check if path is relative to parent."""
     try:
-        # FIXME: Lint the file list
+        path.relative_to(parent)
+        return True
+    except ValueError:
+        return False
+
+
+def find_cargo_root(path: pathlib.Path) -> pathlib.Path | None:
+    """Find the Cargo.toml file in parent directories of the path."""
+    for parent in path.parents:
+        potential_cargo_toml = parent / "Cargo.toml"
+        if (potential_cargo_toml).exists():
+            return potential_cargo_toml
+    return None
+
+
+def find_cargo_toml_files(filenames: Collection[str]) -> set[pathlib.Path]:
+    # Recursively look up to find all the Cargo.toml files in the files to be linted
+    all_cargo_tomls: set[pathlib.Path] = set()
+    for filename in filenames:
+        path = pathlib.Path(filename)
+        if any(
+            is_relative_to(path, cargo_toml.parent) for cargo_toml in all_cargo_tomls
+        ):
+            logging.debug(
+                f"Skipping {path} because it is in a known Cargo.toml directory"
+            )
+            continue
+        cargo_toml = find_cargo_root(path)
+        if cargo_toml is None:
+            logging.debug(f"No Cargo.toml found in parents of {path}")
+            continue
+        all_cargo_tomls.add(cargo_toml)
+
+    if not all_cargo_tomls:
+        logging.warning("No Cargo.toml found in parents of files to be linted")
+
+    return all_cargo_tomls
+
+
+def check_cargo_toml(
+    cargo_toml: pathlib.Path,
+    filenames: set[str],
+) -> list[LintMessage]:
+
+    try:
         proc = run_command(
-            ["cargo", "clippy", "--message-format=json", "--", *filenames],
-            retries=retries,
+            ["cargo", "clippy", "--message-format=json"],
+            cwd=cargo_toml.parent,
         )
     except OSError as err:
         return [
@@ -67,24 +105,65 @@ def check_files(
             )
         ]
     stdout = str(proc.stdout, "utf-8").strip()
-    return [
-        LintMessage(
-            path=match["file"],
-            name=match["code"],
-            description=format_lint_messages(
-                match["message"], match["code"], match["string_code"], show_disable
-            ),
-            line=int(match["line"]),
-            char=int(match["column"])
-            if match["column"] is not None and not match["column"].startswith("-")
-            else None,
-            code=LINTER_CODE,
-            severity=SEVERITIES.get(match["code"][0], LintSeverity.ERROR),
-            original=None,
-            replacement=None,
+
+    lint_messages: list[LintMessage] = []
+    for line in stdout.splitlines():
+        try:
+            data = json.loads(line)
+        except json.JSONDecodeError as err:
+            logging.warning("Failed to parse JSON: %s", err)
+            continue
+
+        if "message" not in data:
+            logging.debug("No message in data: %s", data)
+            continue
+
+        # Filter the lint messages to only include the files that are in filenames
+        if data["filename"] not in filenames:
+            logging.debug(
+                "Skipping %s because it is not in the list of files to be linted",
+                data["filename"],
+            )
+            continue
+
+        message = data["message"]
+        if "children" in data:
+            for child in data["children"]:
+                if "message" not in child:
+                    logging.debug("No message in child: %s", child)
+                    continue
+                message += "\n" + child["message"]
+
+        lint_messages.append(
+            LintMessage(
+                path=data["filename"],
+                line=data["line_start"],
+                char=data["column_start"],
+                code=LINTER_CODE,
+                severity=SEVERITIES[data["level"]],
+                name=data["code"],
+                original=None,
+                replacement=None,
+                description=message,
+            )
         )
-        for match in RESULTS_RE.finditer(stdout)
-    ]
+
+    return lint_messages
+
+
+def check_files(
+    filenames: Collection[str],
+) -> list[LintMessage]:
+    paths = set(filenames)
+    # Recursively look up to find all the Cargo.toml files in the files to be linted
+    all_cargo_tomls = find_cargo_toml_files(filenames)
+    # Run clippy on each Cargo.toml file
+    lint_messages: list[LintMessage] = []
+    for cargo_toml in all_cargo_tomls:
+        logging.debug(f"Running clippy on {cargo_toml}")
+        lint_messages.extend(check_cargo_toml(cargo_toml, paths))
+
+    return lint_messages
 
 
 def main() -> None:
@@ -105,13 +184,7 @@ def main() -> None:
         stream=sys.stderr,
     )
 
-    lint_messages = check_files(
-        list(args.filenames),
-        rcfile=args.rcfile,
-        jobs=args.jobs,
-        retries=args.retries,
-        show_disable=args.show_disable,
-    )
+    lint_messages = check_files(args.filenames)
     for lint_message in lint_messages:
         lint_message.display()
 

@@ -61,6 +61,7 @@ def _run_command(
     stdin: BinaryIO | None,
     input: bytes | None,
     check: bool,
+    cwd: os.PathLike[Any] | None,
 ) -> subprocess.CompletedProcess[bytes]:
     logging.debug("$ %s", " ".join(args))
     start_time = time.monotonic()
@@ -73,6 +74,7 @@ def _run_command(
                 input=input,
                 timeout=timeout,
                 check=check,
+                cwd=cwd,
             )
 
         return subprocess.run(
@@ -82,6 +84,7 @@ def _run_command(
             shell=False,
             timeout=timeout,
             check=check,
+            cwd=cwd,
         )
     finally:
         end_time = time.monotonic()
@@ -96,12 +99,13 @@ def run_command(
     stdin: BinaryIO | None = None,
     input: bytes | None = None,
     check: bool = False,
+    cwd: os.PathLike[Any] | None = None,
 ) -> subprocess.CompletedProcess[bytes]:
     remaining_retries = retries
     while True:
         try:
             return _run_command(
-                args, timeout=timeout, stdin=stdin, input=input, check=check
+                args, timeout=timeout, stdin=stdin, input=input, check=check, cwd=cwd
             )
         except subprocess.TimeoutExpired as err:
             if remaining_retries == 0:
