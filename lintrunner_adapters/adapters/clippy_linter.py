@@ -107,6 +107,9 @@ def check_cargo_toml(
             logging.warning("Failed to parse JSON: %s", err)
             continue
 
+        if data.get("reason") != "compiler-message":
+            continue
+
         if "target" not in data:
             logging.debug("No target in data: %s", data)
             continue
@@ -128,15 +131,21 @@ def check_cargo_toml(
             )
             continue
 
+        line_num: int | None = None
+        char: int | None = None
+        if "spans" in data["message"]:
+            if data["message"]["spans"]:
+                first_span = data["message"]["spans"][0]
+                if "line_start" in first_span:
+                    line_num = data["message"]["spans"][0]["line_start"]
+                if "column_start" in first_span:
+                    char = data["message"]["spans"][0]["column_start"]
+
         lint_messages.append(
             LintMessage(
                 path=src_path,
-                line=data["message"]["spans"]["line_start"]
-                if "spans" in data["message"]
-                else None,
-                char=data["message"]["spans"]["column_start"]
-                if "spans" in data["message"]
-                else None,
+                line=line_num,
+                char=char,
                 code=LINTER_CODE,
                 severity=SEVERITIES[data["level"]],
                 name=data["code"]["code"] if "code" in data else "unknown",
@@ -158,6 +167,7 @@ def check_files(
     absolute_filenames = {str(path) for path in absolute_paths}
     # Recursively look up to find all the Cargo.toml files in the files to be linted
     all_cargo_tomls = find_cargo_toml_files(absolute_paths)
+    logging.info("Found Cargo.toml files: %s", all_cargo_tomls)
     # Run clippy on each Cargo.toml file
     lint_messages: list[LintMessage] = []
     for cargo_toml in all_cargo_tomls:
