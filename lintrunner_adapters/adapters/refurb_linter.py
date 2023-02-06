@@ -70,7 +70,7 @@ def check_files(
 ) -> list[LintMessage]:
     try:
         proc = run_command(
-            [sys.executable, "-mrefurb", "--config-file", config_file] + filenames,
+            [sys.executable, "-mrefurb", "--config-file", config_file, *filenames],
             retries=retries,
         )
     except OSError as err:

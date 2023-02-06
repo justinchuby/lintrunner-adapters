@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
-import json
 import logging
 import os
 import subprocess
@@ -21,21 +20,10 @@ from lintrunner_adapters import (
 LINTER_CODE = "RUFF-FIX"
 
 
-def explain_rule(code: str) -> str:
-    proc = run_command(
-        [sys.executable, "-mruff", "rule", "--format=json", code],
-        check=True,
-    )
-    rule = json.loads(str(proc.stdout, "utf-8").strip())
-    return f"\n{rule['linter']}: {rule['summary']}"
-
-
 def check_file(
     filename: str,
-    severities: dict[str, LintSeverity],
     *,
     config: str | None,
-    explain: bool,
     retries: int,
     timeout: int,
 ) -> list[LintMessage]:
@@ -45,37 +33,19 @@ def check_file(
         with open(filename, "rb") as f:
             proc_fix = run_command(
                 [
-                    sys.executable,
-                    "-mruff",
-                    "--fix",
-                    "-e",
+                    "ruff",
+                    "--fix-only",
+                    "--exit-zero",
+                    *([f"--config={config}"] if config else []),
                     "--stdin-filename",
                     filename,
                     "-",
-                ]
-                + ([f"--config={config}"] if config else []),
+                ],
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
                 check=True,
             )
-        proc_lint = run_command(
-            [
-                sys.executable,
-                "-mruff",
-                "-e",
-                "-q",
-                "--format=json",
-                "--stdin-filename",
-                filename,
-                "-",
-            ]
-            + ([f"--config={config}"] if config else []),
-            input=proc_fix.stdout,
-            retries=retries,
-            timeout=timeout,
-            check=True,
-        )
     except (OSError, subprocess.CalledProcessError) as err:
         return [
             LintMessage(
@@ -103,12 +73,6 @@ def check_file(
     replacement = proc_fix.stdout
     if original == replacement:
         return []
-    vulnerabilities = json.loads(str(proc_lint.stdout, "utf-8").strip())
-    rules = (
-        {code: explain_rule(code) for code in {v["code"] for v in vulnerabilities}}
-        if explain
-        else None
-    )
 
     return [
         LintMessage(
@@ -121,29 +85,13 @@ def check_file(
             severity=LintSeverity.WARNING,
             original=original.decode("utf-8"),
             replacement=replacement.decode("utf-8"),
-        ),
-        *[
-            LintMessage(
-                path=vuln["filename"],
-                name=vuln["code"],
-                description=vuln["message"]
-                if not rules
-                else f"{vuln['message']}\n{rules[vuln['code']]}",
-                line=int(vuln["location"]["row"]),
-                char=int(vuln["location"]["column"]),
-                code=LINTER_CODE,
-                severity=severities.get(vuln["code"], LintSeverity.ADVICE),
-                original=None,
-                replacement=None,
-            )
-            for vuln in vulnerabilities
-        ],
+        )
     ]
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"ruff wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"Ruff autofix formatter. Linter code: {LINTER_CODE}. Use with RUFF to get lint messages.",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
@@ -153,21 +101,10 @@ def main() -> None:
         "or `ruff.toml` file to use for configuration",
     )
     parser.add_argument(
-        "--explain",
-        action="store_true",
-        help="Explain a rule",
-    )
-    parser.add_argument(
         "--timeout",
         default=90,
         type=int,
         help="Seconds to wait for ruff",
-    )
-    parser.add_argument(
-        "--severity",
-        action="append",
-        help="map code to severity (e.g. `F401:advice`). "
-        "This option can be used multiple times.",
     )
     add_default_options(parser)
     args = parser.parse_args()
@@ -182,13 +119,6 @@ def main() -> None:
         stream=sys.stderr,
     )
 
-    severities: dict[str, LintSeverity] = {}
-    if args.severity:
-        for severity in args.severity:
-            parts = severity.split(":", 1)
-            assert len(parts) == 2, f"invalid severity `{severity}`"
-            severities[parts[0]] = LintSeverity(parts[1])
-
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=os.cpu_count(),
         thread_name_prefix="Thread",
@@ -197,9 +127,7 @@ def main() -> None:
             executor.submit(
                 check_file,
                 x,
-                severities,
                 config=args.config,
-                explain=args.explain,
                 retries=args.retries,
                 timeout=args.timeout,
             ): x

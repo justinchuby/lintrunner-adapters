@@ -17,7 +17,7 @@ def check_files(
 ) -> list[LintMessage]:
     try:
         proc = run_command(
-            ["shellcheck", "--external-sources", "--format=json1"] + files
+            ["shellcheck", "--external-sources", "--format=json1", *files]
         )
     except OSError as err:
         return [

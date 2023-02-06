@@ -105,10 +105,14 @@ def check_files(
 ) -> list[LintMessage]:
     try:
         proc = run_command(
-            [sys.executable, "-mpylint", "--score=n"]
-            + ([f"--rcfile={rcfile}"] if rcfile else [])
-            + [f"--jobs={jobs}"]
-            + filenames,
+            [
+                sys.executable,
+                "-mpylint",
+                "--score=n",
+                *([f"--rcfile={rcfile}"] if rcfile else []),
+                f"--jobs={jobs}",
+                *filenames,
+            ],
             retries=retries,
         )
     except OSError as err:

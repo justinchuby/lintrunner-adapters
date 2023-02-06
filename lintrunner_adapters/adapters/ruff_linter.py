@@ -21,11 +21,53 @@ LINTER_CODE = "RUFF"
 
 def explain_rule(code: str) -> str:
     proc = run_command(
-        [sys.executable, "-mruff", "rule", "--format=json", code],
+        ["ruff", "rule", "--format=json", code],
         check=True,
     )
     rule = json.loads(str(proc.stdout, "utf-8").strip())
     return f"\n{rule['linter']}: {rule['summary']}"
+
+
+def get_issue_severity(code: str) -> LintSeverity:
+    # "B901": `return x` inside a generator
+    # "B902": Invalid first argument to a method
+    # "B903": __slots__ efficiency
+    # "B950": Line too long
+    # "C4": Flake8 Comprehensions
+    # "C9": Cyclomatic complexity
+    # "E2": PEP8 horizontal whitespace "errors"
+    # "E3": PEP8 blank line "errors"
+    # "E5": PEP8 line length "errors"
+    # "T400": type checking Notes
+    # "T49": internal type checker errors or unmatched messages
+    if any(
+        code.startswith(x)
+        for x in (
+            "B9",
+            "C4",
+            "C9",
+            "E2",
+            "E3",
+            "E5",
+            "T400",
+            "T49",
+            "PLC",
+            "PLR",
+        )
+    ):
+        return LintSeverity.ADVICE
+
+    # "F821": Undefined name
+    # "E999": syntax error
+    if any(code.startswith(x) for x in ("F821", "E999", "PLE")):
+        return LintSeverity.ERROR
+
+    # "F": PyFlakes Error
+    # "B": flake8-bugbear Error
+    # "E": PEP8 "Error"
+    # "W": PEP8 Warning
+    # possibly other plugins...
+    return LintSeverity.WARNING
 
 
 def check_files(
@@ -39,9 +81,14 @@ def check_files(
 ) -> list[LintMessage]:
     try:
         proc = run_command(
-            [sys.executable, "-mruff", "-e", "-q", "--format=json"]
-            + ([f"--config={config}"] if config else [])
-            + filenames,
+            [
+                "ruff",
+                "--exit-zero",
+                "--quiet",
+                "--format=json",
+                *([f"--config={config}"] if config else []),
+                *filenames,
+            ],
             retries=retries,
             timeout=timeout,
             check=True,
@@ -81,13 +128,15 @@ def check_files(
         LintMessage(
             path=vuln["filename"],
             name=vuln["code"],
-            description=vuln["message"]
-            if not rules
-            else f"{vuln['message']}\n{rules[vuln['code']]}",
+            description=(
+                vuln["message"]
+                if not rules
+                else f"{vuln['message']}\n{rules[vuln['code']]}"
+            ),
             line=int(vuln["location"]["row"]),
             char=int(vuln["location"]["column"]),
             code=LINTER_CODE,
-            severity=severities.get(vuln["code"], LintSeverity.ADVICE),
+            severity=severities.get(vuln["code"], get_issue_severity(vuln["code"])),
             original=None,
             replacement=None,
         )
@@ -97,7 +146,7 @@ def check_files(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"ruff wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"Ruff linter. Linter code: {LINTER_CODE}. Use with RUFF-FIX to auto-fix issues.",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

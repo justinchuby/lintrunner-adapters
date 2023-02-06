@@ -198,15 +198,19 @@ def check_files(
 ) -> list[LintMessage]:
     try:
         proc = run_command(
-            [sys.executable, "-mflake8", "--exit-zero"]
-            + ([f"--config={config}"] if config else [])
-            + ([f"--append-config={append_config}"] if append_config else [])
-            + (
-                ["--docstring-convention", docstring_convention]
-                if docstring_convention
-                else []
-            )
-            + filenames,
+            [
+                sys.executable,
+                "-mflake8",
+                "--exit-zero",
+                *([f"--config={config}"] if config else []),
+                *([f"--append-config={append_config}"] if append_config else []),
+                *(
+                    ["--docstring-convention", docstring_convention]
+                    if docstring_convention
+                    else []
+                ),
+                *filenames,
+            ],
             retries=retries,
         )
     except (OSError, subprocess.CalledProcessError) as err:
