@@ -76,7 +76,7 @@ def check_files(
 ) -> list[LintMessage]:
     try:
         proc = run_command(
-            [sys.executable, "-mmypy", f"--config={config}"] + filenames,
+            [sys.executable, "-mmypy", f"--config={config}", *filenames],
             retries=retries,
         )
     except OSError as err:

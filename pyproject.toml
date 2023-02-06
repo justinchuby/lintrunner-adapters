@@ -77,3 +77,34 @@ disable = [
 [tool.refurb]
 python_version = "3.7"
 disable = ["FURB101", "FURB150"] # disable suggestions using pathlib
+
+[tool.ruff]
+select = [
+    "D",
+    "E",
+    "F",
+    "W",
+    "B",
+    "N",
+    "UP",
+    "YTT",
+    "SIM",
+    "PL",
+    "PLR",
+    "RUF",
+]
+ignore = [
+    "D1",
+    "D202",
+    "D205",
+    "D212",
+    "D400",
+    "D401",
+    "D415",
+    "E501",
+    "PLR2004",
+]
+line-length = 120
+
+[tool.ruff.pydocstyle]
+convention = "google"
