@@ -30,6 +30,47 @@ def explain_rule(code: str) -> str:
     return f"\n{rule['linter']}: {rule['summary']}"
 
 
+def get_issue_severity(code: str) -> LintSeverity:
+    # "B901": `return x` inside a generator
+    # "B902": Invalid first argument to a method
+    # "B903": __slots__ efficiency
+    # "B950": Line too long
+    # "C4": Flake8 Comprehensions
+    # "C9": Cyclomatic complexity
+    # "E2": PEP8 horizontal whitespace "errors"
+    # "E3": PEP8 blank line "errors"
+    # "E5": PEP8 line length "errors"
+    # "T400": type checking Notes
+    # "T49": internal type checker errors or unmatched messages
+    if any(
+        code.startswith(x)
+        for x in (
+            "B9",
+            "C4",
+            "C9",
+            "E2",
+            "E3",
+            "E5",
+            "T400",
+            "T49",
+        )
+    ):
+        return LintSeverity.ADVICE
+
+    # "F821": Undefined name
+    # "E999": syntax error
+    if any(code.startswith(x) for x in ("F821", "E999")):
+        return LintSeverity.ERROR
+
+    # "F": PyFlakes Error
+    # "B": flake8-bugbear Error
+    # "E": PEP8 "Error"
+    # "W": PEP8 Warning
+    # possibly other plugins...
+    return LintSeverity.WARNING
+
+
+
 def check_file(
     filename: str,
     severities: dict[str, LintSeverity],
@@ -135,7 +176,7 @@ def check_file(
                 line=int(vuln["location"]["row"]),
                 char=int(vuln["location"]["column"]),
                 code=LINTER_CODE,
-                severity=severities.get(vuln["code"], LintSeverity.WARNING),
+                severity=severities.get(vuln["code"], get_issue_severity(vuln["code"])),
                 original=None,
                 replacement=None,
             )
