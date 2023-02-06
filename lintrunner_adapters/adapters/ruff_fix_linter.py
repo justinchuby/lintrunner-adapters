@@ -67,9 +67,7 @@ def check_file(
                     "--exit-zero",
                     "--quiet",
                     "--format=json",
-                ]
-                + ([f"--config={config}"] if config else [])
-                + [
+                    *([f"--config={config}"] if config else []),
                     "--stdin-filename",
                     filename,
                     "-",
