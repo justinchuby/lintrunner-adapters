@@ -92,7 +92,7 @@ def check_file(
                     path=filename,
                     line=line,
                     char=char,
-                    code="RUSTFMT",
+                    code=LINTER_CODE,
                     severity=LintSeverity.ERROR,
                     name="parsing-error",
                     original=None,
@@ -106,7 +106,7 @@ def check_file(
                 path=filename,
                 line=None,
                 char=None,
-                code="RUSTFMT",
+                code=LINTER_CODE,
                 severity=LintSeverity.ERROR,
                 name="command-failed",
                 original=None,
@@ -140,7 +140,7 @@ def check_file(
                 path=filename,
                 line=None,
                 char=None,
-                code="RUSTFMT",
+                code=LINTER_CODE,
                 severity=LintSeverity.WARNING,
                 name="rustfmt-bug",
                 original=None,
@@ -157,7 +157,7 @@ def check_file(
             path=filename,
             line=1,
             char=1,
-            code="RUSTFMT",
+            code=LINTER_CODE,
             severity=LintSeverity.WARNING,
             name="format",
             original=original.decode("utf-8"),
@@ -169,7 +169,7 @@ def check_file(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Format rust files with rustfmt.",
+        description="Format rust files with rustfmt. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
