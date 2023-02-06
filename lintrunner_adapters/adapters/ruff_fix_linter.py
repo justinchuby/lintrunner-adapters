@@ -59,23 +59,24 @@ def check_file(
                 timeout=timeout,
                 check=True,
             )
-        proc_lint = run_command(
-            [
-                sys.executable,
-                "-mruff",
-                "-e",
-                "-q",
-                "--format=json",
-                "--stdin-filename",
-                filename,
-                "-",
-            ]
-            + ([f"--config={config}"] if config else []),
-            input=proc_fix.stdout,
-            retries=retries,
-            timeout=timeout,
-            check=True,
-        )
+        with open(filename, "rb") as f:
+            proc_lint = run_command(
+                [
+                    sys.executable,
+                    "-mruff",
+                    "-e",
+                    "-q",
+                    "--format=json",
+                    "--stdin-filename",
+                    filename,
+                    "-",
+                ]
+                + ([f"--config={config}"] if config else []),
+                stdin=f,
+                retries=retries,
+                timeout=timeout,
+                check=True,
+            )
     except (OSError, subprocess.CalledProcessError) as err:
         return [
             LintMessage(
@@ -126,9 +127,11 @@ def check_file(
             LintMessage(
                 path=vuln["filename"],
                 name=vuln["code"],
-                description=vuln["message"]
-                if not rules
-                else f"{vuln['message']}\n{rules[vuln['code']]}",
+                description=(
+                    vuln["message"]
+                    if not rules
+                    else f"{vuln['message']}\n{rules[vuln['code']]}"
+                ),
                 line=int(vuln["location"]["row"]),
                 char=int(vuln["location"]["column"]),
                 code=LINTER_CODE,
