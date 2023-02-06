@@ -370,3 +370,4 @@ init_command = [
     '--dry-run={{DRYRUN}}',
     'ruff==0.0.241',
 ]
+is_formatter = true
