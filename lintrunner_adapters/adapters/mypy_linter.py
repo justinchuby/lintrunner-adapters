@@ -170,7 +170,7 @@ def main() -> None:
         show_disable=args.show_disable,
     )
 
-    all_files = set(str(pathlib.Path(path).resolve()) for path in filenames)
+    all_files = {str(pathlib.Path(path).resolve()) for path in filenames}
     for lint_message in lint_messages:
         if lint_message.severity == LintSeverity.ADVICE and not args.show_notes:
             continue
