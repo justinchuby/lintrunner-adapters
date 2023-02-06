@@ -21,15 +21,6 @@ from lintrunner_adapters import (
 LINTER_CODE = "RUFF-FIX"
 
 
-def explain_rule(code: str) -> str:
-    proc = run_command(
-        ["ruff", "rule", "--format=json", code],
-        check=True,
-    )
-    rule = json.loads(str(proc.stdout, "utf-8").strip())
-    return f"\n{rule['linter']}: {rule['summary']}"
-
-
 def check_file(
     filename: str,
     *,
