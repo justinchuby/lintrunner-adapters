@@ -9,11 +9,12 @@ import argparse
 import json
 import logging
 import pathlib
+import subprocess
 import sys
 from typing import Any, Collection
 
 import lintrunner_adapters
-from lintrunner_adapters import LintMessage, LintSeverity, run_command
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 LINTER_CODE = "CLIPPY"
 
@@ -76,11 +77,12 @@ def find_cargo_toml_files(filenames: Collection[pathlib.Path]) -> set[pathlib.Pa
 
 
 def check_cargo_toml(  # pylint: disable=too-many-branches
-    cargo_toml: pathlib.Path, filenames: set[str]
+    cargo_toml: pathlib.Path, filenames: set[str], retries: int
 ) -> list[LintMessage]:
     try:
         proc = run_command(
             ["cargo", "clippy", "--message-format=json"],
+            retries=retries,
             cwd=cargo_toml.parent,
         )
     except OSError as err:
@@ -95,6 +97,32 @@ def check_cargo_toml(  # pylint: disable=too-many-branches
                 original=None,
                 replacement=None,
                 description=(f"Failed due to {err.__class__.__name__}:\n{err}"),
+            )
+        ]
+    except subprocess.CalledProcessError as err:
+        return [
+            LintMessage(
+                path=str(cargo_toml),
+                line=None,
+                char=None,
+                code="RUSTFMT",
+                severity=LintSeverity.ERROR,
+                name="command-failed",
+                original=None,
+                replacement=None,
+                description=(
+                    (
+                        "COMMAND (exit code {returncode})\n"
+                        "{command}\n\n"
+                        "STDERR\n{stderr}\n\n"
+                        "STDOUT\n{stdout}"
+                    ).format(
+                        returncode=err.returncode,
+                        command=" ".join(as_posix(x) for x in err.cmd),
+                        stderr=err.stderr.decode("utf-8").strip() or "(empty)",
+                        stdout=err.stdout.decode("utf-8").strip() or "(empty)",
+                    )
+                ),
             )
         ]
 
@@ -162,9 +190,7 @@ def check_cargo_toml(  # pylint: disable=too-many-branches
     return lint_messages
 
 
-def check_files(
-    filenames: list[str],
-) -> list[LintMessage]:
+def check_files(filenames: list[str], retries: int) -> list[LintMessage]:
     """Run clippy on the files."""
     # Convert filenames to a set of absolute paths
     absolute_paths = [pathlib.Path(filename).resolve() for filename in filenames]
@@ -176,7 +202,9 @@ def check_files(
     lint_messages: list[LintMessage] = []
     for cargo_toml in all_cargo_tomls:
         logging.debug(f"Running clippy on {cargo_toml}")
-        lint_messages.extend(check_cargo_toml(cargo_toml, absolute_filenames))
+        lint_messages.extend(
+            check_cargo_toml(cargo_toml, absolute_filenames, retries=retries)
+        )
 
     return lint_messages
 
@@ -199,7 +227,7 @@ def main() -> None:
         stream=sys.stderr,
     )
 
-    lint_messages = check_files(args.filenames)
+    lint_messages = check_files(args.filenames, retries=args.retries)
     for lint_message in lint_messages:
         lint_message.display()
 

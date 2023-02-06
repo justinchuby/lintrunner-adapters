@@ -33,6 +33,7 @@ def explain_rule(code: str) -> str:
 def check_file(
     filename: str,
     severities: dict[str, LintSeverity],
+    *,
     config: str | None,
     explain: bool,
     retries: int,
@@ -197,10 +198,10 @@ def main() -> None:
                 check_file,
                 x,
                 severities,
-                args.config,
-                args.explain,
-                args.retries,
-                args.timeout,
+                config=args.config,
+                explain=args.explain,
+                retries=args.retries,
+                timeout=args.timeout,
             ): x
             for x in args.filenames
         }
