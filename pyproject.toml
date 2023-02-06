@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lintrunner-adapters"
-version = "0.6.0"
+version = "0.6.1"
 description = "Adapters and tools for lintrunner"
 authors = ["Justin Chu <justinchu@microsoft.com>"]
 license = "MIT"
@@ -104,7 +104,6 @@ ignore = [
     "D401",
     "D415",
     "E501",
-    "PLR2004",
 ]
 line-length = 120
 
