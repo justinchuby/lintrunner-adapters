@@ -132,7 +132,7 @@ def check_file(
                 line=int(vuln["location"]["row"]),
                 char=int(vuln["location"]["column"]),
                 code=LINTER_CODE,
-                severity=severities.get(vuln["code"], LintSeverity.ADVICE),
+                severity=severities.get(vuln["code"], LintSeverity.WARNING),
                 original=None,
                 replacement=None,
             )
