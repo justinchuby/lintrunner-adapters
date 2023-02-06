@@ -128,9 +128,11 @@ def check_files(
         LintMessage(
             path=vuln["filename"],
             name=vuln["code"],
-            description=(vuln["message"]
-            if not rules
-            else f"{vuln['message']}\n{rules[vuln['code']]}"),
+            description=(
+                vuln["message"]
+                if not rules
+                else f"{vuln['message']}\n{rules[vuln['code']]}"
+            ),
             line=int(vuln["location"]["row"]),
             char=int(vuln["location"]["column"]),
             code=LINTER_CODE,
