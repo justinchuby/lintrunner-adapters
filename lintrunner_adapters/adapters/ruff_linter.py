@@ -39,9 +39,15 @@ def check_files(
 ) -> list[LintMessage]:
     try:
         proc = run_command(
-            [sys.executable, "-mruff", "-e", "-q", "--format=json"]
-            + ([f"--config={config}"] if config else [])
-            + filenames,
+            [
+                sys.executable,
+                "-mruff",
+                "--exit-zero",
+                "--quiet",
+                "--format=json",
+                *([f"--config={config}"] if config else []),
+                *filenames,
+            ],
             retries=retries,
             timeout=timeout,
             check=True,

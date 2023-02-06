@@ -47,13 +47,13 @@ def check_file(
                 [
                     sys.executable,
                     "-mruff",
-                    "--fix",
-                    "-e",
+                    "--fix-only",
+                    "--exit-zero",
+                    *([f"--config={config}"] if config else []),
                     "--stdin-filename",
                     filename,
                     "-",
-                ]
-                + ([f"--config={config}"] if config else []),
+                ],
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
