@@ -32,6 +32,7 @@ def format_error_message(filename: str, err: Exception) -> LintMessage:
 
 def check_file(
     filename: str,
+    *,
     min_version: tuple[int, ...],
     keep_percent_format: bool,
     keep_mock: bool,
@@ -146,10 +147,10 @@ def main() -> None:
             executor.submit(
                 check_file,
                 x,
-                args.min_version,
-                args.keep_percent_format,
-                args.keep_mock,
-                args.keep_runtime_typing,
+                min_version=args.min_version,
+                keep_percent_format=args.keep_percent_format,
+                keep_mock=args.keep_mock,
+                keep_runtime_typing=args.keep_runtime_typing,
             ): x
             for x in args.filenames
         }

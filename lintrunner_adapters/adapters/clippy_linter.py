@@ -9,11 +9,12 @@ import argparse
 import json
 import logging
 import pathlib
+import subprocess
 import sys
 from typing import Any, Collection
 
 import lintrunner_adapters
-from lintrunner_adapters import LintMessage, LintSeverity, run_command
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 LINTER_CODE = "CLIPPY"
 
@@ -95,6 +96,32 @@ def check_cargo_toml(  # pylint: disable=too-many-branches
                 original=None,
                 replacement=None,
                 description=(f"Failed due to {err.__class__.__name__}:\n{err}"),
+            )
+        ]
+    except subprocess.CalledProcessError as err:
+        return [
+            LintMessage(
+                path=str(cargo_toml),
+                line=None,
+                char=None,
+                code="RUSTFMT",
+                severity=LintSeverity.ERROR,
+                name="command-failed",
+                original=None,
+                replacement=None,
+                description=(
+                    (
+                        "COMMAND (exit code {returncode})\n"
+                        "{command}\n\n"
+                        "STDERR\n{stderr}\n\n"
+                        "STDOUT\n{stdout}"
+                    ).format(
+                        returncode=err.returncode,
+                        command=" ".join(as_posix(x) for x in err.cmd),
+                        stderr=err.stderr.decode("utf-8").strip() or "(empty)",
+                        stdout=err.stdout.decode("utf-8").strip() or "(empty)",
+                    )
+                ),
             )
         ]
 
