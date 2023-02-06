@@ -21,7 +21,7 @@ LINTER_CODE = "RUFF"
 
 def explain_rule(code: str) -> str:
     proc = run_command(
-        [sys.executable, "-mruff", "rule", "--format=json", code],
+        ["ruff", "rule", "--format=json", code],
         check=True,
     )
     rule = json.loads(str(proc.stdout, "utf-8").strip())
@@ -80,8 +80,7 @@ def check_files(
     try:
         proc = run_command(
             [
-                sys.executable,
-                "-mruff",
+                "ruff",
                 "--exit-zero",
                 "--quiet",
                 "--format=json",

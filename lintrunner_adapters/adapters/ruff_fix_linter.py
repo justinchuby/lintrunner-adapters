@@ -23,7 +23,7 @@ LINTER_CODE = "RUFF-FIX"
 
 def explain_rule(code: str) -> str:
     proc = run_command(
-        [sys.executable, "-mruff", "rule", "--format=json", code],
+        ["ruff", "rule", "--format=json", code],
         check=True,
     )
     rule = json.loads(str(proc.stdout, "utf-8").strip())
@@ -86,8 +86,7 @@ def check_file(
         with open(filename, "rb") as f:
             proc_fix = run_command(
                 [
-                    sys.executable,
-                    "-mruff",
+                    "ruff",
                     "--fix-only",
                     "--exit-zero",
                     *([f"--config={config}"] if config else []),
@@ -103,8 +102,7 @@ def check_file(
         with open(filename, "rb") as f:
             proc_lint = run_command(
                 [
-                    sys.executable,
-                    "-mruff",
+                    "ruff",
                     "--exit-zero",
                     "--quiet",
                     "--format=json",
@@ -187,7 +185,7 @@ def check_file(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"ruff wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"ruff wrapper linter with autofix. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
