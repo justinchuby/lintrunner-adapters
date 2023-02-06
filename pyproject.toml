@@ -79,6 +79,7 @@ python_version = "3.7"
 disable = ["FURB101", "FURB150"] # disable suggestions using pathlib
 
 [tool.ruff]
+target-version = "py37"
 select = [
     "D",
     "E",
@@ -89,8 +90,9 @@ select = [
     "UP",
     "YTT",
     "SIM",
-    "PL",
-    "PLR",
+    "PLE",
+    "PLC",
+    "PLW",
     "RUF",
 ]
 ignore = [

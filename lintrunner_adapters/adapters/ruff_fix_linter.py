@@ -30,53 +30,10 @@ def explain_rule(code: str) -> str:
     return f"\n{rule['linter']}: {rule['summary']}"
 
 
-def get_issue_severity(code: str) -> LintSeverity:
-    # "B901": `return x` inside a generator
-    # "B902": Invalid first argument to a method
-    # "B903": __slots__ efficiency
-    # "B950": Line too long
-    # "C4": Flake8 Comprehensions
-    # "C9": Cyclomatic complexity
-    # "E2": PEP8 horizontal whitespace "errors"
-    # "E3": PEP8 blank line "errors"
-    # "E5": PEP8 line length "errors"
-    # "T400": type checking Notes
-    # "T49": internal type checker errors or unmatched messages
-    if any(
-        code.startswith(x)
-        for x in (
-            "B9",
-            "C4",
-            "C9",
-            "E2",
-            "E3",
-            "E5",
-            "T400",
-            "T49",
-        )
-    ):
-        return LintSeverity.ADVICE
-
-    # "F821": Undefined name
-    # "E999": syntax error
-    if any(code.startswith(x) for x in ("F821", "E999")):
-        return LintSeverity.ERROR
-
-    # "F": PyFlakes Error
-    # "B": flake8-bugbear Error
-    # "E": PEP8 "Error"
-    # "W": PEP8 Warning
-    # possibly other plugins...
-    return LintSeverity.WARNING
-
-
-
 def check_file(
     filename: str,
-    severities: dict[str, LintSeverity],
     *,
     config: str | None,
-    explain: bool,
     retries: int,
     timeout: int,
 ) -> list[LintMessage]:
@@ -89,23 +46,6 @@ def check_file(
                     "ruff",
                     "--fix-only",
                     "--exit-zero",
-                    *([f"--config={config}"] if config else []),
-                    "--stdin-filename",
-                    filename,
-                    "-",
-                ],
-                stdin=f,
-                retries=retries,
-                timeout=timeout,
-                check=True,
-            )
-        with open(filename, "rb") as f:
-            proc_lint = run_command(
-                [
-                    "ruff",
-                    "--exit-zero",
-                    "--quiet",
-                    "--format=json",
                     *([f"--config={config}"] if config else []),
                     "--stdin-filename",
                     filename,
@@ -143,12 +83,6 @@ def check_file(
     replacement = proc_fix.stdout
     if original == replacement:
         return []
-    vulnerabilities = json.loads(str(proc_lint.stdout, "utf-8").strip())
-    rules = (
-        {code: explain_rule(code) for code in {v["code"] for v in vulnerabilities}}
-        if explain
-        else None
-    )
 
     return [
         LintMessage(
@@ -161,31 +95,13 @@ def check_file(
             severity=LintSeverity.WARNING,
             original=original.decode("utf-8"),
             replacement=replacement.decode("utf-8"),
-        ),
-        *[
-            LintMessage(
-                path=vuln["filename"],
-                name=vuln["code"],
-                description=(
-                    vuln["message"]
-                    if not rules
-                    else f"{vuln['message']}\n{rules[vuln['code']]}"
-                ),
-                line=int(vuln["location"]["row"]),
-                char=int(vuln["location"]["column"]),
-                code=LINTER_CODE,
-                severity=severities.get(vuln["code"], get_issue_severity(vuln["code"])),
-                original=None,
-                replacement=None,
-            )
-            for vuln in vulnerabilities
-        ],
+        )
     ]
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"ruff wrapper linter with autofix. Linter code: {LINTER_CODE}",
+        description=f"Ruff autofix formatter. Linter code: {LINTER_CODE}. Use with RUFF to get lint messages.",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
@@ -195,21 +111,10 @@ def main() -> None:
         "or `ruff.toml` file to use for configuration",
     )
     parser.add_argument(
-        "--explain",
-        action="store_true",
-        help="Explain a rule",
-    )
-    parser.add_argument(
         "--timeout",
         default=90,
         type=int,
         help="Seconds to wait for ruff",
-    )
-    parser.add_argument(
-        "--severity",
-        action="append",
-        help="map code to severity (e.g. `F401:advice`). "
-        "This option can be used multiple times.",
     )
     add_default_options(parser)
     args = parser.parse_args()
@@ -224,13 +129,6 @@ def main() -> None:
         stream=sys.stderr,
     )
 
-    severities: dict[str, LintSeverity] = {}
-    if args.severity:
-        for severity in args.severity:
-            parts = severity.split(":", 1)
-            assert len(parts) == 2, f"invalid severity `{severity}`"
-            severities[parts[0]] = LintSeverity(parts[1])
-
     with concurrent.futures.ThreadPoolExecutor(
         max_workers=os.cpu_count(),
         thread_name_prefix="Thread",
@@ -239,9 +137,7 @@ def main() -> None:
             executor.submit(
                 check_file,
                 x,
-                severities,
                 config=args.config,
-                explain=args.explain,
                 retries=args.retries,
                 timeout=args.timeout,
             ): x

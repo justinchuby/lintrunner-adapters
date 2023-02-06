@@ -51,13 +51,15 @@ def get_issue_severity(code: str) -> LintSeverity:
             "E5",
             "T400",
             "T49",
+            "PLC",
+            "PLR",
         )
     ):
         return LintSeverity.ADVICE
 
     # "F821": Undefined name
     # "E999": syntax error
-    if any(code.startswith(x) for x in ("F821", "E999")):
+    if any(code.startswith(x) for x in ("F821", "E999", "PLE")):
         return LintSeverity.ERROR
 
     # "F": PyFlakes Error
@@ -142,7 +144,7 @@ def check_files(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"ruff wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"Ruff linter. Linter code: {LINTER_CODE}. Use with RUFF-FIX to auto-fix issues.",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
