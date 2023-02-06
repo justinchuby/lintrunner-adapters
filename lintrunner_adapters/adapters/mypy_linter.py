@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import pathlib
 import re
 import sys
 from pathlib import Path
@@ -168,9 +169,23 @@ def main() -> None:
         retries=args.retries,
         show_disable=args.show_disable,
     )
+
+    all_files = set(str(pathlib.Path(path).resolve()) for path in filenames)
     for lint_message in lint_messages:
         if lint_message.severity == LintSeverity.ADVICE and not args.show_notes:
             continue
+
+        # Filter out messages for files not being linted because mypy sometimes
+        # picks up files imported by the files being linted.
+        if lint_message.path is not None:
+            path = str(pathlib.Path(lint_message.path).resolve())
+            if path not in all_files:
+                logging.warning(
+                    "Lint message %s is for a file '%s' not being linted",
+                    lint_message,
+                    lint_message.path,
+                )
+                continue
         lint_message.display()
 
 
