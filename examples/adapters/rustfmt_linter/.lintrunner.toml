@@ -1,0 +1,14 @@
+[[linter]]
+code = 'RUSTFMT'
+include_patterns = ['**/*.rs']
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'rustfmt_linter',
+    '--binary=rustfmt',
+    '--config-path=rustfmt.toml',
+    '--',
+    '@{{PATHSFILE}}'
+]
