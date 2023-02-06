@@ -86,7 +86,7 @@ def check_file(
             if match:
                 line = int(match["line"])
                 char = int(match["column"])
-                description = strip_path_from_error(description)
+                description = f"```\n{strip_path_from_error(description)}\n```"
             return [
                 LintMessage(
                     path=filename,
