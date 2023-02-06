@@ -58,7 +58,7 @@ def check_file(
 ) -> list[LintMessage]:
     try:
         with open(filename, "rb") as f:
-            original = f.read()
+            original = pathlib.Path(filename).read_bytes()
         with open(filename, "rb") as f:
             proc = run_command(
                 [
