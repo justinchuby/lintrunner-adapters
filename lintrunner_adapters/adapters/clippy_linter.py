@@ -135,7 +135,8 @@ def check_cargo_toml(  # pylint: disable=too-many-branches
         line_num = first_span.get("line_start")
         char = first_span.get("column_start")
 
-        src_path: str = str(pathlib.Path(first_span["file_name"]).resolve())
+        # The src_path is relative to the Cargo.toml file
+        src_path: str = str((cargo_toml.parent / first_span["file_name"]).resolve())
         # Filter the lint messages to only include the files that are in filenames
         if src_path not in filenames:
             logging.debug(
