@@ -64,14 +64,16 @@ def check_file(
                 [
                     sys.executable,
                     "-mruff",
-                    "-e",
-                    "-q",
+                    "--exit-zero",
+                    "--quiet",
                     "--format=json",
+                ]
+                + ([f"--config={config}"] if config else [])
+                + [
                     "--stdin-filename",
                     filename,
                     "-",
-                ]
-                + ([f"--config={config}"] if config else []),
+                ],
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
