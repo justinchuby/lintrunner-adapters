@@ -80,6 +80,7 @@ disable = ["FURB101", "FURB150"] # disable suggestions using pathlib
 
 [tool.ruff]
 target-version = "py37"
+ignore-init-module-imports = true
 select = [
     "D",
     "E",
@@ -89,7 +90,6 @@ select = [
     "N",
     "UP",
     "YTT",
-    "SIM",
     "PLE",
     "PLC",
     "PLW",
