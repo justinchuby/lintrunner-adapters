@@ -35,9 +35,7 @@ if __name__ == "__main__":
         help="verbose logging",
     )
     parser.add_argument(
-        "--dry-run",
-        help="do not install anything, just print what would be done.",
-        action="store_true",
+        "--dry-run", help="do not install anything, just print what would be done."
     )
     parser.add_argument(
         "--no-black-binary",
@@ -84,7 +82,8 @@ if __name__ == "__main__":
         if args.no_black_binary and "black" in package_name:
             pip_args.append(f"--no-binary={package_name}")
 
-    if args.dry_run:
+    dry_run = args.dry_run == "1"
+    if dry_run:
         print(f"Would have run: {pip_args}")
         sys.exit(0)
 
