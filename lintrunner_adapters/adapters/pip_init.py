@@ -44,7 +44,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--user",
-        help="use the --user for pip install",
+        help="use the --user option for pip install",
         action="store_true",
     )
 
