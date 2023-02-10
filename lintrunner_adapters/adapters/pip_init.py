@@ -42,6 +42,11 @@ if __name__ == "__main__":
         help="do not use pre-compiled binaries from pip for black.",
         action="store_true",
     )
+    parser.add_argument(
+        "--user",
+        help="use the --user option for pip install",
+        action="store_true",
+    )
 
     args = parser.parse_args()
 
@@ -53,7 +58,8 @@ if __name__ == "__main__":
 
     pip_args = [sys.executable, "-m", "pip", "install"]
 
-    # If we are in a global install, use `--user` to install so that you do not
+    # If we are in a global install and `--user` is specified,
+    # use `--user` to install so that you do not
     # need root access in order to initialize linters.
     #
     # However, `pip install --user` interacts poorly with virtualenvs (see:
@@ -61,7 +67,7 @@ if __name__ == "__main__":
     # these cases perform a regular installation.
     in_conda = os.environ.get("CONDA_PREFIX") is not None
     in_virtualenv = os.environ.get("VIRTUAL_ENV") is not None
-    if not in_conda and not in_virtualenv:
+    if args.user and not in_conda and not in_virtualenv:
         pip_args.append("--user")
 
     pip_args.extend(args.packages)
