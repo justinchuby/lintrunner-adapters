@@ -74,7 +74,7 @@ if __name__ == "__main__":
     in_virtualenv = os.environ.get("VIRTUAL_ENV") is not None
     if args.force_venv and not in_virtualenv and not in_conda:
         raise RuntimeError(
-            "Fails to init because no virtualenv is found with `force_venv=True`. "
+            "Fails to init because no virtualenv is found with 'force_venv=True'. "
             "Activate virtualenv to install packages."
         )
     if args.user and not in_conda and not in_virtualenv:
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         package_name, _, version = package.partition("=")
         if version == "":
             raise RuntimeError(
-                "Package {package_name} did not have a version specified. "
+                f"Package '{package_name}' did not have a version specified. "
                 "Please specify a version to produce a consistent linting experience."
             )
         if args.no_black_binary and "black" in package_name:
@@ -94,7 +94,7 @@ if __name__ == "__main__":
 
     dry_run = args.dry_run == "1"
     if dry_run:
-        print(f"Would have run: {pip_args}")
+        print(f"Would have run: '{pip_args}'")
         sys.exit(0)
 
     run_command(pip_args)
