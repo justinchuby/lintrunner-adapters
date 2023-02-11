@@ -33,6 +33,8 @@ def check_file(
         with open(filename, "rb") as f:
             proc_fix = run_command(
                 [
+                    sys.executable,
+                    "-m",
                     "ruff",
                     "--fix-only",
                     "--exit-zero",
