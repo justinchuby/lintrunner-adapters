@@ -24,5 +24,5 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'ruff==0.0.237',
+    'ruff==0.0.244',
 ]

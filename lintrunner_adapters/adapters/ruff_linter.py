@@ -82,6 +82,8 @@ def check_files(
     try:
         proc = run_command(
             [
+                sys.executable,
+                "-m",
                 "ruff",
                 "--exit-zero",
                 "--quiet",
