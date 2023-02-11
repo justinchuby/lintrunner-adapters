@@ -72,8 +72,11 @@ if __name__ == "__main__":
     # these cases perform a regular installation.
     in_conda = os.environ.get("CONDA_PREFIX") is not None
     in_virtualenv = os.environ.get("VIRTUAL_ENV") is not None
-    if args.force_venv and not in_virtualenv:
-        raise RuntimeError("Activate virtualenv to install packages.")
+    if args.force_venv and not in_virtualenv and not in_conda:
+        raise RuntimeError(
+            "Fails to init because no virtualenv is found with `force_venv=True`. "
+            "Activate virtualenv to install packages."
+        )
     if args.user and not in_conda and not in_virtualenv:
         pip_args.append("--user")
 
