@@ -155,6 +155,7 @@ command = [
     'lintrunner_adapters',
     'run',
     'black_isort_linter',
+    '--fast',
     '--',
     '@{{PATHSFILE}}'
 ]

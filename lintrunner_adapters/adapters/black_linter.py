@@ -19,13 +19,24 @@ def check_file(
     filename: str,
     retries: int,
     timeout: int,
+    *,
+    fast: bool = False,
 ) -> list[LintMessage]:
     try:
         with open(filename, "rb") as f:
             original = f.read()
         with open(filename, "rb") as f:
             proc = run_command(
-                [sys.executable, "-mblack", "--stdin-filename", filename, "-"],
+                [
+                    sys.executable,
+                    "-mblack",
+                    *(("--pyi",) if filename.endswith(".pyi") else ()),
+                    *(("--ipynb",) if filename.endswith(".ipynb") else ()),
+                    *(("--fast",) if fast else ()),
+                    "--stdin-filename",
+                    filename,
+                    "-",
+                ],
                 stdin=f,
                 retries=retries,
                 timeout=timeout,
@@ -101,6 +112,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description=f"Format files with black. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
+    )
+    parser.add_argument(
+        "--fast",
+        action="store_true",
+        help="If --fast given, skip temporary sanity checks.",
     )
     parser.add_argument(
         "--timeout",
