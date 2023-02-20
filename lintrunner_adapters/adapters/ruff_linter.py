@@ -70,7 +70,9 @@ def get_issue_severity(code: str) -> LintSeverity:
     return LintSeverity.WARNING
 
 
-def format_lint_message(message: str, code: str, rules: dict[str, str], show_disable: bool) -> str:
+def format_lint_message(
+    message: str, code: str, rules: dict[str, str], show_disable: bool
+) -> str:
     if rules:
         message += f".\n{rules.get(code) or ''}"
     if show_disable:
