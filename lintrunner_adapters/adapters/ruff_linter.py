@@ -70,6 +70,12 @@ def get_issue_severity(code: str) -> LintSeverity:
     return LintSeverity.WARNING
 
 
+def format_lint_message(message: str, code: str, show_disable: bool) -> str:
+    if show_disable:
+        message += f"\n\nTo disable, use `  # noqa: {code}`"
+    return message
+
+
 def check_files(
     filenames: list[str],
     severities: dict[str, LintSeverity],
@@ -78,6 +84,7 @@ def check_files(
     retries: int,
     timeout: int,
     explain: bool,
+    show_disable: bool,
 ) -> list[LintMessage]:
     try:
         proc = run_command(
@@ -131,9 +138,14 @@ def check_files(
             path=vuln["filename"],
             name=vuln["code"],
             description=(
-                vuln["message"]
+                format_lint_message(
+                                    vuln["message"]
                 if not rules
-                else f"{vuln['message']}\n{rules[vuln['code']]}"
+                else f"{vuln['message']}\n{rules[vuln['code']]}",
+                vuln["code"],
+                show_disable,
+                )
+
             ),
             line=int(vuln["location"]["row"]),
             char=int(vuln["location"]["column"]),
@@ -161,6 +173,11 @@ def main() -> None:
         "--explain",
         action="store_true",
         help="Explain a rule",
+    )
+    parser.add_argument(
+        "--show-disable",
+        action="store_true",
+        help="Show how to disable a lint message",
     )
     parser.add_argument(
         "--timeout",
@@ -201,6 +218,7 @@ def main() -> None:
         retries=args.retries,
         timeout=args.timeout,
         explain=args.explain,
+        show_disable=args.show_disable,
     )
     for lint_message in lint_messages:
         lint_message.display()
