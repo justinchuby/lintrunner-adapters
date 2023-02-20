@@ -334,6 +334,7 @@ command = [
     'run',
     'ruff_linter',
     '--config=pyproject.toml',
+    '--show-disable',
     '@{{PATHSFILE}}'
 ]
 init_command = [
