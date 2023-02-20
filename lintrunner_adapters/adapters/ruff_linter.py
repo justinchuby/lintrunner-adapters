@@ -72,7 +72,7 @@ def get_issue_severity(code: str) -> LintSeverity:
 
 def format_lint_message(message: str, code: str, show_disable: bool) -> str:
     if show_disable:
-        message += f"\n\nTo disable, use `  # noqa: {code}`"
+        message += f".\n\nTo disable, use `  # noqa: {code}`."
     return message
 
 
@@ -139,13 +139,12 @@ def check_files(
             name=vuln["code"],
             description=(
                 format_lint_message(
-                                    vuln["message"]
-                if not rules
-                else f"{vuln['message']}\n{rules[vuln['code']]}",
-                vuln["code"],
-                show_disable,
+                    vuln["message"]
+                    if not rules
+                    else f"{vuln['message']}\n{rules[vuln['code']]}",
+                    vuln["code"],
+                    show_disable,
                 )
-
             ),
             line=int(vuln["location"]["row"]),
             char=int(vuln["location"]["column"]),
