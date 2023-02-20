@@ -70,7 +70,11 @@ def get_issue_severity(code: str) -> LintSeverity:
     return LintSeverity.WARNING
 
 
-def format_lint_message(message: str, code: str, show_disable: bool) -> str:
+def format_lint_message(
+    message: str, code: str, rules: dict[str, str], show_disable: bool
+) -> str:
+    if rules:
+        message += f".\n{rules.get(code) or ''}"
     if show_disable:
         message += f".\n\nTo disable, use `  # noqa: {code}`"
     return message
@@ -128,21 +132,22 @@ def check_files(
 
     stdout = str(proc.stdout, "utf-8").strip()
     vulnerabilities = json.loads(stdout)
-    rules = (
-        {code: explain_rule(code) for code in {v["code"] for v in vulnerabilities}}
-        if explain
-        else None
-    )
+
+    if explain:
+        all_codes = {v["code"] for v in vulnerabilities}
+        rules = {code: explain_rule(code) for code in all_codes}
+    else:
+        rules = {}
+
     return [
         LintMessage(
             path=vuln["filename"],
             name=vuln["code"],
             description=(
                 format_lint_message(
-                    vuln["message"]
-                    if not rules
-                    else f"{vuln['message']}\n{rules[vuln['code']]}",
+                    vuln["message"],
                     vuln["code"],
+                    rules,
                     show_disable,
                 )
             ),
