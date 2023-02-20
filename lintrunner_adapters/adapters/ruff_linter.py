@@ -72,7 +72,7 @@ def get_issue_severity(code: str) -> LintSeverity:
 
 def format_lint_message(message: str, code: str, show_disable: bool) -> str:
     if show_disable:
-        message += f".\n\nTo disable, use `  # noqa: {code}`."
+        message += f".\n\nTo disable, use `  # noqa: {code}`"
     return message
 
 
