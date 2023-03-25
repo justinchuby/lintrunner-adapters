@@ -6,7 +6,7 @@ authors = ["Justin Chu <justinchu@microsoft.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/justinchuby/lintrunner-adapters"
-keywords = ["lintrunner", "lint", "cli", "sarif"]
+keywords = ["lintrunner", "lint", "cli", "sarif", "linting", "ci", "linter", "flake8", "clippy", "ruff", "rustfmt", "github-code-scanning"]
 classifiers = [
     "Topic :: Software Development :: Testing",
     "Topic :: Software Development :: Quality Assurance",
