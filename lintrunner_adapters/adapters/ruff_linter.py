@@ -75,6 +75,7 @@ def format_lint_message(
 ) -> str:
     if rules:
         message += f".\n{rules.get(code) or ''}"
+    message += ".\nSee https://beta.ruff.rs/docs/rules/"
     if show_disable:
         message += f".\n\nTo disable, use `  # noqa: {code}`"
     return message
