@@ -96,7 +96,7 @@ def check_file(
                     ).format(
                         returncode=err.returncode,
                         command=" ".join(as_posix(x) for x in err.cmd),
-                        stderr=err.stderr.decode("utf-8").strip() or "(empty)",
+                        stderr=err.stderr.decode().strip() or "(empty)",
                         stdout=err.stdout.decode("utf-8").strip() or "(empty)",
                     )
                 ),
