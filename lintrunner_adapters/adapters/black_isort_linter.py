@@ -106,8 +106,6 @@ def check_file(
     replacement = proc.stdout
     if original == replacement:
         return []
-        
-    totally_unused_thing = 42
 
     return [
         LintMessage(
