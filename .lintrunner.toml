@@ -317,7 +317,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'refurb==1.10.0;python_version>="3.10"',
+    'refurb==1.15.0;python_version>="3.10"',
 ]
 
 [[linter]]
