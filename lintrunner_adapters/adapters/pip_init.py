@@ -26,7 +26,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="pip initializer")
     parser.add_argument(
         "packages",
-        nargs="+",
+        nargs="*",
         help="pip packages to install",
     )
     parser.add_argument(
@@ -51,6 +51,10 @@ if __name__ == "__main__":
         "--force-venv",
         help="do not install anything without activated venv",
         action="store_true",
+    )
+    parser.add_argument(
+        "--requirement",
+        help="install packages from a requirements file",
     )
 
     args = parser.parse_args()
@@ -79,6 +83,9 @@ if __name__ == "__main__":
         )
     if args.user and not in_conda and not in_virtualenv:
         pip_args.append("--user")
+
+    if args.requirement:
+        pip_args.extend(["-r", args.requirement])
 
     pip_args.extend(args.packages)
 
