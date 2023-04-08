@@ -38,7 +38,12 @@ def cli() -> None:
     "adapter", type=click.Choice(list(lintrunner_adapters.available_adapters().keys()))
 )
 def run(adapter: str) -> None:
-    """Run an adapter."""
+    """Run an adapter.
+
+    \u001b[35mIf you get an error like \u001b[1m"Error: Invalid value"\u001b[0m\u001b[35m,
+    a new adapter may have been added to a newer version of lintrunner_adapters.
+    Try upgrading by running "pip install --upgrade lintrunner_adapters".\u001b[0m
+    """
     adapters = lintrunner_adapters.available_adapters()
     try:
         subprocess.run(
