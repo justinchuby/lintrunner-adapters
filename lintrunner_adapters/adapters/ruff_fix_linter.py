@@ -128,12 +128,12 @@ def main() -> None:
         futures = {
             executor.submit(
                 check_file,
-                x,
+                path,
                 config=args.config,
                 retries=args.retries,
                 timeout=args.timeout,
-            ): x
-            for x in args.filenames
+            ): path
+            for path in args.filenames
         }
         for future in concurrent.futures.as_completed(futures):
             try:
