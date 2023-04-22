@@ -344,32 +344,6 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'ruff==0.0.244',
-]
-
-[[linter]]
-code = 'RUFF-FIX'
-include_patterns = [
-    'lintrunner_adapters/**/*.py',
-    'lintrunner_adapters/**/*.pyi',
-]
-exclude_patterns = []
-command = [
-    'python',
-    '-m',
-    'lintrunner_adapters',
-    'run',
-    'ruff_fix_linter',
-    '--config=pyproject.toml',
-    '@{{PATHSFILE}}'
-]
-init_command = [
-    'python',
-    '-m',
-    'lintrunner_adapters',
-    'run',
-    'pip_init',
-    '--dry-run={{DRYRUN}}',
-    'ruff==0.0.244',
+    'ruff==0.0.262',
 ]
 is_formatter = true
