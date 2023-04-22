@@ -60,13 +60,13 @@ def find_cargo_toml_files(filenames: Collection[pathlib.Path]) -> set[pathlib.Pa
             for cargo_toml in all_cargo_tomls
         ):
             logging.debug(
-                f"Skipping finding Cargo.toml from '{filename}' because it is in a known "
-                "Cargo.toml directory"
+                "Skipping finding Cargo.toml from '%s' because it is in a known Cargo.toml directory",
+                filename,
             )
             continue
         cargo_toml = find_cargo_root(filename)
         if cargo_toml is None:
-            logging.debug(f"No Cargo.toml found in parents of {filename}")
+            logging.debug("No Cargo.toml found in parents of %s", filename)
             continue
         all_cargo_tomls.add(cargo_toml)
 
@@ -201,7 +201,7 @@ def check_files(filenames: list[str], retries: int) -> list[LintMessage]:
     # Run clippy on each Cargo.toml file
     lint_messages: list[LintMessage] = []
     for cargo_toml in all_cargo_tomls:
-        logging.debug(f"Running clippy on {cargo_toml}")
+        logging.debug("Running clippy on %s", cargo_toml)
         lint_messages.extend(
             check_cargo_toml(cargo_toml, absolute_filenames, retries=retries)
         )
