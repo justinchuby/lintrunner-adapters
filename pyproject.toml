@@ -82,18 +82,24 @@ disable = ["FURB101", "FURB150"] # disable suggestions using pathlib
 target-version = "py37"
 ignore-init-module-imports = true
 select = [
+    "B",
+    "C4",
     "D",
     "E",
     "F",
-    "W",
-    "B",
+    "G",
+    "ISC",
     "N",
-    "UP",
-    "YTT",
-    "PLE",
+    "NPY",
     "PLC",
+    "PLE",
     "PLW",
     "RUF",
+    "SIM",
+    "TID252",
+    "UP",
+    "W",
+    "YTT",
 ]
 ignore = [
     "D1",

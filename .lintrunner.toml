@@ -344,6 +344,6 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'ruff==0.0.244',
+    'ruff==0.0.262',
 ]
 is_formatter = true
