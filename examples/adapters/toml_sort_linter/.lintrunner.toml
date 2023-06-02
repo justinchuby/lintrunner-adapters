@@ -1,0 +1,21 @@
+[[linter]]
+code = 'TOML-SORT'
+include_patterns = ['**/*.toml']
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'toml_sort_linter',
+    '@{{PATHSFILE}}'
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'toml-sort==0.23.1',
+]
