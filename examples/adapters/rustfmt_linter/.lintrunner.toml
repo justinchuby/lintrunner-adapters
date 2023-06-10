@@ -10,5 +10,6 @@ command = [
     '--binary=rustfmt',
     '--config-path=rustfmt.toml',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
+is_formatter = true

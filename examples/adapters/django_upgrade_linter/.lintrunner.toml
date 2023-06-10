@@ -13,7 +13,7 @@ command = [
     'run',
     'django_upgrade_linter',
     '--target-version=4.1',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',

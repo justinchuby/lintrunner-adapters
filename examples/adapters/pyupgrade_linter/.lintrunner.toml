@@ -16,7 +16,7 @@ command = [
     '--keep-mock',
     '--keep-percent-format',
     '--keep-runtime-typing',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',

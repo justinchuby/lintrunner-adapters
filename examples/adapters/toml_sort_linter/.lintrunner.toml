@@ -1,5 +1,6 @@
 [[linter]]
 code = 'TOML-SORT'
+is_formatter = true
 include_patterns = ['**/*.toml']
 exclude_patterns = []
 command = [
@@ -8,7 +9,7 @@ command = [
     'lintrunner_adapters',
     'run',
     'toml_sort_linter',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',

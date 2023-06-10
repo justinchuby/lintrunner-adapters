@@ -15,7 +15,7 @@ command = [
     'flake8_linter',
     '--show-disable',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -50,7 +50,7 @@ command = [
     '--show-notes',
     '--show-disable',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -80,13 +80,13 @@ command = [
         please convert it to `noqa: XXXX`\
     """,
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 
 [[linter]]
 code = 'NEWLINE'
-include_patterns=['**']
-exclude_patterns=[]
+include_patterns = ['**']
+exclude_patterns = []
 command = [
     'python',
     '-m',
@@ -116,7 +116,7 @@ command = [
         This line has trailing spaces; please remove them.\
     """,
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 
 [[linter]]
@@ -140,7 +140,7 @@ command = [
         This line has tabs; please replace them with spaces.\
     """,
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 
 [[linter]]
@@ -157,7 +157,7 @@ command = [
     'black_isort_linter',
     '--fast',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -188,7 +188,7 @@ command = [
     '--jobs=0',
     '--show-disable',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -211,13 +211,13 @@ include_patterns = [
 exclude_patterns = [
 ]
 # init_command = [
-#     'python',
-#     'examples/pytorch/s3_init.py',
-#     '--config-json=examples/pytorch/s3_init_config.json',
-#     '--linter=clang-format',
-#     '--dry-run={{DRYRUN}}',
-#     '--output-dir=.lintbin',
-#     '--output-name=clang-format',
+# 'python',
+# 'examples/pytorch/s3_init.py',
+# '--config-json=examples/pytorch/s3_init_config.json',
+# '--linter=clang-format',
+# '--dry-run={{DRYRUN}}',
+# '--output-dir=.lintbin',
+# '--output-name=clang-format',
 # ]
 init_command = [
     'python',
@@ -235,9 +235,9 @@ command = [
     'run',
     'clangformat_linter',
     '--binary=.lintbin/clang-format',
-    '--fallback',  # Use system clang-format as a fallback
+    '--fallback', # Use system clang-format as a fallback
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 is_formatter = true
 
@@ -255,7 +255,7 @@ command = [
     'run',
     'editorconfig_checker_linter',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -282,7 +282,7 @@ command = [
     'run',
     'pyupgrade_linter',
     '--py37-plus',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -308,7 +308,7 @@ command = [
     'run',
     'refurb_linter',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -335,7 +335,7 @@ command = [
     'ruff_linter',
     '--config=pyproject.toml',
     '--show-disable',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
@@ -347,3 +347,26 @@ init_command = [
     'ruff==0.0.262',
 ]
 is_formatter = true
+
+[[linter]]
+code = 'TOML-SORT'
+is_formatter = true
+include_patterns = ['**/*.toml']
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'toml_sort_linter',
+    '@{{PATHSFILE}}',
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'toml-sort==0.23.1',
+]

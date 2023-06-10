@@ -12,7 +12,7 @@ command = [
     'run',
     'ruff_fix_linter',
     '--config=pyproject.toml',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',

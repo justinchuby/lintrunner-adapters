@@ -13,7 +13,7 @@ command = [
     'run',
     'add_trailing_comma_linter',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',
