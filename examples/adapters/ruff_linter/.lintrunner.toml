@@ -15,7 +15,7 @@ command = [
     '--config=pyproject.toml',
     '--explain',
     '--severity=F401:advice',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',

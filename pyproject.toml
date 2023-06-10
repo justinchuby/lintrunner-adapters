@@ -1,3 +1,20 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+strict = true
+show_error_codes = true
+show_column_numbers = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "lintrunner_adapters.adapters.*"
+warn_unused_ignores = false
+
 [tool.poetry]
 name = "lintrunner-adapters"
 version = "0.8.0"
@@ -11,11 +28,8 @@ classifiers = [
     "Topic :: Software Development :: Testing",
     "Topic :: Software Development :: Quality Assurance",
 ]
-packages = [{ include = "lintrunner_adapters" }]
+packages = [{include = "lintrunner_adapters"}]
 include = ["LICENSE"]
-
-[tool.poetry.scripts]
-lintrunner_adapters = 'lintrunner_adapters.__main__:cli'
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -26,25 +40,8 @@ lintrunner = "^0.10.0"
 pytest = "^7.2.0"
 types-pyyaml = "^6.0.12.2"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.pytest.ini_options]
-addopts = "--doctest-modules"
-
-[tool.mypy]
-strict = true
-show_error_codes = true
-show_column_numbers = true
-ignore_missing_imports = true
-
-[[tool.mypy.overrides]]
-module = "lintrunner_adapters.adapters.*"
-warn_unused_ignores = false
-
-[tool.isort]
-profile = "black"
+[tool.poetry.scripts]
+lintrunner_adapters = 'lintrunner_adapters.__main__:cli'
 
 [tool.pylint.messages_control]
 disable = [
@@ -73,6 +70,9 @@ disable = [
     "unused-argument",
     "unused-import",
 ]
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules"
 
 [tool.refurb]
 python_version = "3.7"
@@ -116,3 +116,7 @@ line-length = 120
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.tomlsort]
+spaces_indent_inline_array = 4
+trailing_comma_inline_array = true

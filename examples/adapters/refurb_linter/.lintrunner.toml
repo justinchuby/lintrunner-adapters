@@ -15,7 +15,7 @@ command = [
     '--severity=FURB101:advice',
     '--severity=FURB102:warning',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
 init_command = [
     'python',

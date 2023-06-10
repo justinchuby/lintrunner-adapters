@@ -8,5 +8,5 @@ command = [
     'run',
     'clippy_linter',
     '--',
-    '@{{PATHSFILE}}'
+    '@{{PATHSFILE}}',
 ]
