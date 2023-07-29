@@ -30,6 +30,10 @@ Commands:
 
 Use `lintrunner_adapters run` to see a list of adapters available.
 
+## GitHub action
+
+https://github.com/justinchuby/lintrunner-action
+
 ## How to
 
 ### Write lint config in `.lintrunner.toml`
