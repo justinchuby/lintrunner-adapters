@@ -36,6 +36,10 @@ https://github.com/justinchuby/lintrunner-action
 
 ## How to
 
+### Use `lintrunner_adapters` with `lintrunner` in your project
+
+Refer to the [`.lintrunner.toml`](https://github.com/justinchuby/lintrunner-adapters/blob/main/.lintrunner.toml) config file in this repo and example configs for each adapter under [`examples/adapters`](https://github.com/justinchuby/lintrunner-adapters/tree/main/examples/adapters).
+
 ### Write lint config in `.lintrunner.toml`
 
 See https://docs.rs/lintrunner/latest/lintrunner/lint_config/struct.LintConfig.html.
@@ -44,10 +48,12 @@ See https://docs.rs/lintrunner/latest/lintrunner/lint_config/struct.LintConfig.h
 
 Use [`lintrunner_adapters/adapters/pylint_linter.py`](https://github.com/justinchuby/lintrunner-adapters/blob/main/lintrunner_adapters/adapters/pylint_linter.py) as an example.
 
-### Use `lintrunner_adapters` with `lintrunner` in your project
-
-Refer to the [`.lintrunner.toml`](https://github.com/justinchuby/lintrunner-adapters/blob/main/.lintrunner.toml) config file in this repo and example configs for each adapter under [`examples/adapters`](https://github.com/justinchuby/lintrunner-adapters/tree/main/examples/adapters).
-
 ### Run lintrunner in CI and get Github code scanning messages in your PRs
 
-See [`.github/workflows/ci.yml`](https://github.com/justinchuby/lintrunner-adapters/blob/main/.github/workflows/ci.yml).
+#### Option 1
+
+Use a GitHub Action: [lintrunner-action](https://github.com/justinchuby/lintrunner-action)
+
+#### Option 2
+
+Run it directly in the workflow. See [`.github/workflows/ci.yml`](https://github.com/justinchuby/lintrunner-adapters/blob/main/.github/workflows/ci.yml).
