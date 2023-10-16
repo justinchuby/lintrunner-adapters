@@ -23,7 +23,7 @@ LINTER_CODE = "RUFF"
 
 def explain_rule(code: str) -> str:
     proc = run_command(
-        ["ruff", "rule", "--format=json", code],
+        ["ruff", "rule", "--output-format=json", code],
         check=True,
     )
     rule = json.loads(str(proc.stdout, "utf-8").strip())
@@ -238,7 +238,7 @@ def check_file_for_fixes(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"Ruff linter. Linter code: {LINTER_CODE}. Use with RUFF-FIX to auto-fix issues.",
+        description=f"Ruff linter with auto-fix support. Linter code: {LINTER_CODE}.",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(
