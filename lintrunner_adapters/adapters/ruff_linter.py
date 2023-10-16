@@ -27,7 +27,10 @@ def explain_rule(code: str) -> str:
         check=True,
     )
     rule = json.loads(str(proc.stdout, "utf-8").strip())
-    return f"\n{rule['linter']}: {rule['summary']}"
+    text = f"\n{rule['linter']}: {rule['summary']}"
+    if "explanation" in rule:
+        text += f"\n\n{rule['explanation']}"
+    return
 
 
 def get_issue_severity(code: str) -> LintSeverity:
