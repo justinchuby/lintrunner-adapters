@@ -101,7 +101,7 @@ def check_files(
                 "ruff",
                 "--exit-zero",
                 "--quiet",
-                "--format=json",
+                "--output-format=json",
                 *([f"--config={config}"] if config else []),
                 *filenames,
             ],
