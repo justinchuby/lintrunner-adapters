@@ -101,7 +101,7 @@ def check_files(
                 "ruff",
                 "--exit-zero",
                 "--quiet",
-                "--format=json",
+                "--output-format=json",
                 *([f"--config={config}"] if config else []),
                 *filenames,
             ],
@@ -238,7 +238,7 @@ def check_file_for_fixes(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"Ruff linter. Linter code: {LINTER_CODE}. Use with RUFF-FIX to auto-fix issues.",
+        description=f"Ruff linter with auto-fix support. Linter code: {LINTER_CODE}.",
         fromfile_prefix_chars="@",
     )
     parser.add_argument(

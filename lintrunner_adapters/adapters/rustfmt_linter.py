@@ -147,8 +147,8 @@ def check_file(
                 replacement=None,
                 description=(
                     "Possible rustfmt bug. "
-                    "rustfmt returned error output but didn't fail:\n{}"
-                ).format(clean_err),
+                    f"rustfmt returned error output but didn't fail:\n{clean_err}"
+                ),
             )
         ]
 
