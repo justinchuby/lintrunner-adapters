@@ -30,7 +30,7 @@ def explain_rule(code: str) -> str:
     text = f"\n{rule['linter']}: {rule['summary']}"
     if "explanation" in rule:
         text += f"\n\n{rule['explanation']}"
-    return
+    return text
 
 
 def get_issue_severity(code: str) -> LintSeverity:
