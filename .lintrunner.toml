@@ -371,7 +371,6 @@ init_command = [
     'toml-sort==0.23.1',
 ]
 
-
 [[linter]]
 code = 'REQUIREMENTS-TXT'
 is_formatter = true
