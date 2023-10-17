@@ -45,10 +45,9 @@ class Requirement:
         assert self.value is not None, self.value
         if self.value == b"\n":
             return True
-        elif requirement.value == b"\n":
+        if requirement.value == b"\n":
             return False
-        else:
-            return self.name < requirement.name
+        return self.name < requirement.name
 
     def is_complete(self) -> bool:
         return self.value is not None and not self.value.rstrip(b"\r\n").endswith(b"\\")
@@ -80,7 +79,7 @@ def fix_requirements(f: IO[bytes]) -> bytes:
         # If the most recent requirement object has a value, then it's
         # time to start building the next requirement object.
 
-        if not len(requirements) or requirements[-1].is_complete():
+        if not requirements or requirements[-1].is_complete():
             requirements.append(Requirement())
 
         requirement = requirements[-1]
