@@ -163,7 +163,7 @@ def check_file(filename: str) -> list[LintMessage]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description=f"add-trailing-comma wrapper linter. Linter code: {LINTER_CODE}",
+        description=f"Format Python requirements.txt files. Linter code: {LINTER_CODE}",
         fromfile_prefix_chars="@",
     )
     add_default_options(parser)
