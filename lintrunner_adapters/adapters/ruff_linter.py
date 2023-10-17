@@ -17,7 +17,6 @@ from lintrunner_adapters import (
     as_posix,
     run_command,
 )
-import contextlib
 
 LINTER_CODE = "RUFF"
 
@@ -114,7 +113,7 @@ def check_files(
             check=True,
         )
     except (OSError, subprocess.CalledProcessError) as err:
-        with contextlib.suppress(OSError, subprocess.CalledProcessError):
+        try:
             # ruff<0.0.291 has the option --format instead of --output-format
             # If --output-format fails, try --format
             # if it still fails, raise the original error
@@ -133,28 +132,29 @@ def check_files(
                 timeout=timeout,
                 check=True,
             )
-        return [
-            LintMessage(
-                path=None,
-                line=None,
-                char=None,
-                code=LINTER_CODE,
-                severity=LintSeverity.ERROR,
-                name="command-failed",
-                original=None,
-                replacement=None,
-                description=(
-                    f"Failed due to {err.__class__.__name__}:\n{err}"
-                    if not isinstance(err, subprocess.CalledProcessError)
-                    else (
-                        f"COMMAND (exit code {err.returncode})\n"
-                        f"{' '.join(as_posix(x) for x in err.cmd)}\n\n"
-                        f"STDERR\n{err.stderr.decode('utf-8').strip() or '(empty)'}\n\n"
-                        f"STDOUT\n{err.stdout.decode('utf-8').strip() or '(empty)'}"
-                    )
-                ),
-            )
-        ]
+        except (OSError, subprocess.CalledProcessError):
+            return [
+                LintMessage(
+                    path=None,
+                    line=None,
+                    char=None,
+                    code=LINTER_CODE,
+                    severity=LintSeverity.ERROR,
+                    name="command-failed",
+                    original=None,
+                    replacement=None,
+                    description=(
+                        f"Failed due to {err.__class__.__name__}:\n{err}"
+                        if not isinstance(err, subprocess.CalledProcessError)
+                        else (
+                            f"COMMAND (exit code {err.returncode})\n"
+                            f"{' '.join(as_posix(x) for x in err.cmd)}\n\n"
+                            f"STDERR\n{err.stderr.decode('utf-8').strip() or '(empty)'}\n\n"
+                            f"STDOUT\n{err.stdout.decode('utf-8').strip() or '(empty)'}"
+                        )
+                    ),
+                )
+            ]
 
     stdout = str(proc.stdout, "utf-8").strip()
     vulnerabilities = json.loads(stdout)
