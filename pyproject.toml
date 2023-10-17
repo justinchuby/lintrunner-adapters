@@ -17,7 +17,7 @@ warn_unused_ignores = false
 
 [tool.poetry]
 name = "lintrunner-adapters"
-version = "0.10.0"
+version = "0.11.0"
 description = "Adapters and tools for lintrunner"
 authors = ["Justin Chu <justinchu@microsoft.com>"]
 license = "MIT"
