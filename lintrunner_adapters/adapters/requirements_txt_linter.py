@@ -1,19 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import logging
 import os
 import re
 import sys
 from typing import IO
-import concurrent.futures
 
-from lintrunner_adapters import (
-    LintMessage,
-    LintSeverity,
-    add_default_options,
-)
-
+from lintrunner_adapters import LintMessage, LintSeverity, add_default_options
 
 LINTER_CODE = "REQUIREMENTS-TXT"
 
@@ -79,7 +74,7 @@ def fix_requirements(f: IO[bytes]) -> bytes:
 
     # If the file is empty (i.e. only whitespace/newlines) exit early
     if before_string.strip() == b"":
-        return PASS
+        return before_string
 
     for line in before:
         # If the most recent requirement object has a value, then it's
@@ -103,10 +98,7 @@ def fix_requirements(f: IO[bytes]) -> bytes:
             requirement.append_value(line)
 
     # if a file ends in a comment, preserve it at the end
-    if requirements[-1].value is None:
-        rest = requirements.pop().comments
-    else:
-        rest = []
+    rest = requirements.pop().comments if requirements[-1].value is None else []
 
     # find and remove pkg-resources==0.0.0
     # which is automatically added by broken pip package under Debian
@@ -125,9 +117,7 @@ def fix_requirements(f: IO[bytes]) -> bytes:
     return after_string
 
 
-def check_file(
-    filename: str
-) -> list[LintMessage]:
+def check_file(filename: str) -> list[LintMessage]:
     with open(filename, "rb") as f:
         original = f.read()
     with open(filename, "rb") as f:
@@ -149,6 +139,7 @@ def check_file(
             description="Run `lintrunner -a` to apply this patch.",
         )
     ]
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -172,10 +163,7 @@ def main() -> None:
         max_workers=os.cpu_count(),
         thread_name_prefix="Thread",
     ) as executor:
-        futures = {
-            executor.submit(check_file, x): x
-            for x in args.filenames
-        }
+        futures = {executor.submit(check_file, x): x for x in args.filenames}
         for future in concurrent.futures.as_completed(futures):
             try:
                 for lint_message in future.result():
