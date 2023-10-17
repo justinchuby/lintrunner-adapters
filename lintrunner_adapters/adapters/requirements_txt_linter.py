@@ -173,7 +173,7 @@ def main() -> None:
         thread_name_prefix="Thread",
     ) as executor:
         futures = {
-            executor.submit(check_file, x, args.retries, args.timeout): x
+            executor.submit(check_file, x): x
             for x in args.filenames
         }
         for future in concurrent.futures.as_completed(futures):
