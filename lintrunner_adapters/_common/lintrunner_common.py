@@ -120,7 +120,7 @@ def run_command(
             time.sleep(1)
 
 
-def add_default_options(parser: argparse.ArgumentParser) -> None:
+def add_default_options(parser: argparse.ArgumentParser, retries: int = 3) -> None:
     """Add default options to a parser.
 
     This should be called the last in the chain of add_argument calls.
@@ -128,7 +128,7 @@ def add_default_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--retries",
         type=int,
-        default=3,
+        default=retries,
         help="number of times to retry if the linter times out.",
     )
     parser.add_argument(
