@@ -282,6 +282,7 @@ command = [
     'run',
     'pyupgrade_linter',
     '--py37-plus',
+    '--',
     '@{{PATHSFILE}}',
 ]
 init_command = [
@@ -335,6 +336,7 @@ command = [
     'ruff_linter',
     '--config=pyproject.toml',
     '--show-disable',
+    '--',
     '@{{PATHSFILE}}',
 ]
 init_command = [
@@ -359,6 +361,7 @@ command = [
     'lintrunner_adapters',
     'run',
     'toml_sort_linter',
+    '--',
     '@{{PATHSFILE}}',
 ]
 init_command = [
@@ -378,6 +381,10 @@ include_patterns = ['requirements*.txt']
 exclude_patterns = []
 command = [
     'python',
-    'lintrunner_adapters/adapters/requirements_txt_linter.py',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'requirements_txt_linter',
+    '--',
     '@{{PATHSFILE}}',
 ]
