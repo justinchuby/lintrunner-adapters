@@ -17,6 +17,7 @@ from lintrunner_adapters import (
     as_posix,
     run_command,
 )
+import contextlib
 
 LINTER_CODE = "RUFF"
 
@@ -113,6 +114,25 @@ def check_files(
             check=True,
         )
     except (OSError, subprocess.CalledProcessError) as err:
+        with contextlib.suppress(OSError, subprocess.CalledProcessError):
+            # ruff<0.0.291 has the option --format instead of --output-format
+            # If --output-format fails, try --format
+            # if it still fails, raise the original error
+            proc = run_command(
+                [
+                    sys.executable,
+                    "-m",
+                    "ruff",
+                    "--exit-zero",
+                    "--quiet",
+                    "--format=json",
+                    *([f"--config={config}"] if config else []),
+                    *filenames,
+                ],
+                retries=retries,
+                timeout=timeout,
+                check=True,
+            )
         return [
             LintMessage(
                 path=None,
@@ -275,7 +295,7 @@ def main() -> None:
         action="store_true",
         help="Do not suggest fixes",
     )
-    add_default_options(parser)
+    add_default_options(parser, retries=1)
     args = parser.parse_args()
 
     logging.basicConfig(
