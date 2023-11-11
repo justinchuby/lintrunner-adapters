@@ -87,13 +87,17 @@ select = [
     "D",
     "E",
     "F",
+    "FURB",
     "G",
+    "I",
     "ISC",
+    "LOG",
     "N",
     "NPY",
     "PLC",
     "PLE",
     "PLW",
+    "PYI",
     "RUF",
     "SIM",
     "TID252",
@@ -112,7 +116,8 @@ ignore = [
     "D415",
     "E501",
 ]
-line-length = 120
+line-length = 88
+indent-width = 4
 
 [tool.ruff.pydocstyle]
 convention = "google"
