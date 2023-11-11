@@ -152,7 +152,7 @@ def check_file(
         proc = run_command(
             [binary, f"-p={build_dir}", *include_args, filename],
         )
-    except (OSError) as err:
+    except OSError as err:
         return [
             LintMessage(
                 path=filename,
