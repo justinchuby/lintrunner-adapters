@@ -346,15 +346,14 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'ruff==0.1.4',
+    'ruff==0.1.5',
 ]
 is_formatter = true
 
 [[linter]]
 code = 'RUFF-FORMAT'
 include_patterns = [
-    'lintrunner_adapters/**/*.py',
-    'lintrunner_adapters/**/*.pyi',
+    '**/*.py',
 ]
 exclude_patterns = []
 command = [
@@ -374,7 +373,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'ruff==0.1.4',
+    'ruff==0.1.5',
 ]
 is_formatter = true
 
