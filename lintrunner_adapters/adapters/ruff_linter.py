@@ -113,26 +113,6 @@ def check_files(
             check=True,
         )
     except (OSError, subprocess.CalledProcessError) as err:
-        try:
-            # ruff<0.0.291 has the option --format instead of --output-format
-            # If --output-format fails, try --format
-            # if it still fails, raise the original error
-            proc = run_command(
-                [
-                    sys.executable,
-                    "-m",
-                    "ruff",
-                    "--exit-zero",
-                    "--quiet",
-                    "--format=json",
-                    *([f"--config={config}"] if config else []),
-                    *filenames,
-                ],
-                retries=retries,
-                timeout=timeout,
-                check=True,
-            )
-        except (OSError, subprocess.CalledProcessError):
             return [
                 LintMessage(
                     path=None,
