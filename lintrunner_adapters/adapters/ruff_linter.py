@@ -76,13 +76,14 @@ def get_issue_severity(code: str) -> LintSeverity:
 
 
 def format_lint_message(
-    message: str, code: str, rules: dict[str, str], show_disable: bool
+    message: str, code: str, rules: dict[str, str], show_disable: bool, url: str | None
 ) -> str:
-    if rules:
-        message += f".\n{rules.get(code) or ''}"
-    message += ".\nSee https://beta.ruff.rs/docs/rules/"
+    if url is not None:
+        message += f".\nSee {url}"
     if show_disable:
         message += f".\n\nTo disable, use `  # noqa: {code}`"
+    if rules:
+        message += f".\n{rules.get(code) or ''}"
     return message
 
 
@@ -155,6 +156,7 @@ def check_files(
                     vuln["code"],
                     rules,
                     show_disable,
+                    vuln.get("url"),
                 )
             ),
             line=int(vuln["location"]["row"]),
