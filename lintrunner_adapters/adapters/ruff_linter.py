@@ -76,13 +76,14 @@ def get_issue_severity(code: str) -> LintSeverity:
 
 
 def format_lint_message(
-    message: str, code: str, rules: dict[str, str], show_disable: bool
+    message: str, code: str, rules: dict[str, str], show_disable: bool, url: str | None
 ) -> str:
-    if rules:
-        message += f".\n{rules.get(code) or ''}"
-    message += ".\nSee https://beta.ruff.rs/docs/rules/"
+    if url is not None:
+        message += f".\nSee {url}"
     if show_disable:
         message += f".\n\nTo disable, use `  # noqa: {code}`"
+    if rules:
+        message += f".\n{rules.get(code) or ''}"
     return message
 
 
@@ -113,48 +114,28 @@ def check_files(
             check=True,
         )
     except (OSError, subprocess.CalledProcessError) as err:
-        try:
-            # ruff<0.0.291 has the option --format instead of --output-format
-            # If --output-format fails, try --format
-            # if it still fails, raise the original error
-            proc = run_command(
-                [
-                    sys.executable,
-                    "-m",
-                    "ruff",
-                    "--exit-zero",
-                    "--quiet",
-                    "--format=json",
-                    *([f"--config={config}"] if config else []),
-                    *filenames,
-                ],
-                retries=retries,
-                timeout=timeout,
-                check=True,
+        return [
+            LintMessage(
+                path=None,
+                line=None,
+                char=None,
+                code=LINTER_CODE,
+                severity=LintSeverity.ERROR,
+                name="command-failed",
+                original=None,
+                replacement=None,
+                description=(
+                    f"Failed due to {err.__class__.__name__}:\n{err}"
+                    if not isinstance(err, subprocess.CalledProcessError)
+                    else (
+                        f"COMMAND (exit code {err.returncode})\n"
+                        f"{' '.join(as_posix(x) for x in err.cmd)}\n\n"
+                        f"STDERR\n{err.stderr.decode('utf-8').strip() or '(empty)'}\n\n"
+                        f"STDOUT\n{err.stdout.decode('utf-8').strip() or '(empty)'}"
+                    )
+                ),
             )
-        except (OSError, subprocess.CalledProcessError):
-            return [
-                LintMessage(
-                    path=None,
-                    line=None,
-                    char=None,
-                    code=LINTER_CODE,
-                    severity=LintSeverity.ERROR,
-                    name="command-failed",
-                    original=None,
-                    replacement=None,
-                    description=(
-                        f"Failed due to {err.__class__.__name__}:\n{err}"
-                        if not isinstance(err, subprocess.CalledProcessError)
-                        else (
-                            f"COMMAND (exit code {err.returncode})\n"
-                            f"{' '.join(as_posix(x) for x in err.cmd)}\n\n"
-                            f"STDERR\n{err.stderr.decode('utf-8').strip() or '(empty)'}\n\n"
-                            f"STDOUT\n{err.stdout.decode('utf-8').strip() or '(empty)'}"
-                        )
-                    ),
-                )
-            ]
+        ]
 
     stdout = str(proc.stdout, "utf-8").strip()
     vulnerabilities = json.loads(stdout)
@@ -175,6 +156,7 @@ def check_files(
                     vuln["code"],
                     rules,
                     show_disable,
+                    vuln.get("url"),
                 )
             ),
             line=int(vuln["location"]["row"]),
