@@ -43,9 +43,6 @@ types-pyyaml = "^6.0.12.2"
 [tool.poetry.scripts]
 lintrunner_adapters = 'lintrunner_adapters.__main__:cli'
 
-[tool.pylint.main]
-ignore-paths = ["examples/directml/llama_v2/chat_app/**"]
-
 [tool.pylint.messages_control]
 disable = [
     "duplicate-code",

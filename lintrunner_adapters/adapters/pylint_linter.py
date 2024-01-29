@@ -110,6 +110,7 @@ def check_files(
                 sys.executable,
                 "-mpylint",
                 "--score=n",
+                "--exit-zero",
                 *([f"--rcfile={rcfile}"] if rcfile else []),
                 f"--jobs={jobs}",
                 *filenames,
