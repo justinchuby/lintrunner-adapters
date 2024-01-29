@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import logging
 import re
+import subprocess
 import sys
 from typing import Pattern
 
@@ -114,6 +115,7 @@ def check_files(
                 *filenames,
             ],
             retries=retries,
+            check=True,
         )
     except OSError as err:
         return [
@@ -127,6 +129,24 @@ def check_files(
                 original=None,
                 replacement=None,
                 description=(f"Failed due to {err.__class__.__name__}:\n{err}"),
+            )
+        ]
+    except subprocess.CalledProcessError as err:
+        return [
+            LintMessage(
+                path=None,
+                line=None,
+                char=None,
+                code=LINTER_CODE,
+                severity=LintSeverity.ERROR,
+                name="command-failed",
+                original=None,
+                replacement=None,
+                description=(
+                    f"Linter exited with return code {err.returncode}.\n"
+                    f"STDOUT: {err.output.decode('utf-8')}\n\n"
+                    f"STDERR: {err.stderr.decode('utf-8')}"
+                ),
             )
         ]
     stdout = str(proc.stdout, "utf-8").strip()

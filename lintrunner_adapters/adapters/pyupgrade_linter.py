@@ -41,6 +41,8 @@ def check_file(
     with open(filename, "rb") as fb:
         contents_bytes = fb.read()
 
+    foo = 1
+
     try:
         original = replacement = contents_bytes.decode("utf-8")
         replacement = _fix_plugins(
