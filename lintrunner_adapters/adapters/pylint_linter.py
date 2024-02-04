@@ -159,9 +159,11 @@ def check_files(
                 match["message"], match["code"], match["string_code"], show_disable
             ),
             line=int(match["line"]),
-            char=int(match["column"])
-            if match["column"] is not None and not match["column"].startswith("-")
-            else None,
+            char=(
+                int(match["column"])
+                if match["column"] is not None and not match["column"].startswith("-")
+                else None
+            ),
             code=LINTER_CODE,
             severity=SEVERITIES.get(match["code"][0], LintSeverity.ERROR),
             original=None,
@@ -198,11 +200,11 @@ def main() -> None:
 
     logging.basicConfig(
         format="<%(threadName)s:%(levelname)s> %(message)s",
-        level=logging.NOTSET
-        if args.verbose
-        else logging.DEBUG
-        if len(args.filenames) < 1000
-        else logging.INFO,
+        level=(
+            logging.NOTSET
+            if args.verbose
+            else logging.DEBUG if len(args.filenames) < 1000 else logging.INFO
+        ),
         stream=sys.stderr,
     )
 
