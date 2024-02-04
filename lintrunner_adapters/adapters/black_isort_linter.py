@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 import lintrunner_adapters
-from lintrunner_adapters import LintMessage, LintSeverity, as_posix
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
 
 LINTER_CODE = "BLACK-ISORT"
 
@@ -24,38 +24,36 @@ def check_file(
     *,
     fast: bool = False,
 ) -> list[LintMessage]:
-    del retries  # Unused
-
     try:
         with open(filename, "rb") as f:
             original = f.read()
-        with open(filename, "rb") as f:  # noqa: SIM117
-            # Run isort first then black so we get consistent result
-            # even if isort is not using the black profile
-            with subprocess.Popen(
-                [sys.executable, "-misort", "-"],
+        with open(filename, "rb") as f:
+            # Use black first because black >24.1 sees an empty stdin with
+            # Python 3.8/3.9 running with lintrunner on Windows
+            # https://github.com/justinchuby/lintrunner-adapters/issues/93
+            proc = run_command(
+                [
+                    sys.executable,
+                    "-mblack",
+                    *(("--pyi",) if filename.endswith(".pyi") else ()),
+                    *(("--ipynb",) if filename.endswith(".ipynb") else ()),
+                    *(("--fast",) if fast else ()),
+                    "--stdin-filename",
+                    filename,
+                    "-",
+                ],
                 stdin=f,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            ) as proc:
-                # Launch second process and connect it to the first one
-                with subprocess.Popen(
-                    [
-                        sys.executable,
-                        "-mblack",
-                        *(("--pyi",) if filename.endswith(".pyi") else ()),
-                        *(("--ipynb",) if filename.endswith(".ipynb") else ()),
-                        *(("--fast",) if fast else ()),
-                        "--stdin-filename",
-                        filename,
-                        "-",
-                    ],
-                    stdin=proc.stdout,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                ) as black_proc:
-                    # Let stream flow between them
-                    replacement, _ = black_proc.communicate(timeout=timeout)
+                retries=retries,
+                timeout=timeout,
+                check=True,
+            )
+            proc = run_command(
+                [sys.executable, "-misort", "-"],
+                input=proc.stdout,
+                retries=retries,
+                timeout=timeout,
+                check=True,
+            )
 
     except subprocess.TimeoutExpired:
         return [
@@ -82,7 +80,7 @@ def check_file(
                 line=None,
                 char=None,
                 code=LINTER_CODE,
-                severity=LintSeverity.ERROR,
+                severity=LintSeverity.ADVICE,
                 name="command-failed",
                 original=None,
                 replacement=None,
@@ -104,6 +102,7 @@ def check_file(
             )
         ]
 
+    replacement = proc.stdout
     if original == replacement:
         return []
 
