@@ -37,10 +37,8 @@ def check_file(
                 timeout=timeout,
                 check=True,
             )
-            import_sorted = proc.stdout
             # Pipe isort's result to black
-            proc = run_command(
-                [
+            replacement = subprocess.check_output([
                     sys.executable,
                     "-mblack",
                     *(("--pyi",) if filename.endswith(".pyi") else ()),
@@ -50,11 +48,8 @@ def check_file(
                     filename,
                     "-",
                 ],
-                stdin=None,
-                input=import_sorted,
-                retries=retries,
+                stdin=proc.stdout,
                 timeout=timeout,
-                check=True,
             )
     except subprocess.TimeoutExpired:
         return [
@@ -103,7 +98,6 @@ def check_file(
             )
         ]
 
-    replacement = proc.stdout
     if original == replacement:
         return []
 
