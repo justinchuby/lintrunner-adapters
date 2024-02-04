@@ -29,34 +29,33 @@ def check_file(
     try:
         with open(filename, "rb") as f:
             original = f.read()
-        with open(filename, "rb") as f:
+        with open(filename, "rb") as f:  # noqa: SIM117
             # Run isort first then black so we get consistent result
             # even if isort is not using the black profile
-            proc = subprocess.Popen(
+            with subprocess.Popen(
                 [sys.executable, "-misort", "-"],
                 stdin=f,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-            )
-            # Launch second process and connect it to the first one
-            black_proc = subprocess.Popen(
-                [
-                    sys.executable,
-                    "-mblack",
-                    *(("--pyi",) if filename.endswith(".pyi") else ()),
-                    *(("--ipynb",) if filename.endswith(".ipynb") else ()),
-                    *(("--fast",) if fast else ()),
-                    "--stdin-filename",
-                    filename,
-                    "-",
-                ],
-                stdin=proc.stdout,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-
-            # Let stream flow between them
-            replacement, _ = black_proc.communicate(timeout=timeout)
+            ) as proc:
+                # Launch second process and connect it to the first one
+                with subprocess.Popen(
+                    [
+                        sys.executable,
+                        "-mblack",
+                        *(("--pyi",) if filename.endswith(".pyi") else ()),
+                        *(("--ipynb",) if filename.endswith(".ipynb") else ()),
+                        *(("--fast",) if fast else ()),
+                        "--stdin-filename",
+                        filename,
+                        "-",
+                    ],
+                    stdin=proc.stdout,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                ) as black_proc:
+                    # Let stream flow between them
+                    replacement, _ = black_proc.communicate(timeout=timeout)
 
     except subprocess.TimeoutExpired:
         return [
