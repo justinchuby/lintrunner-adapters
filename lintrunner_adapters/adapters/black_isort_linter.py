@@ -24,6 +24,8 @@ def check_file(
     *,
     fast: bool = False,
 ) -> list[LintMessage]:
+    del retries  # Unused
+
     try:
         with open(filename, "rb") as f:
             original = f.read()
