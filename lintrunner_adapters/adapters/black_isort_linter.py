@@ -6,14 +6,13 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
-import io
 import logging
 import os
 import subprocess
 import sys
 
 import lintrunner_adapters
-from lintrunner_adapters import LintMessage, LintSeverity, as_posix, run_command
+from lintrunner_adapters import LintMessage, LintSeverity, as_posix
 
 LINTER_CODE = "BLACK-ISORT"
 
@@ -31,16 +30,14 @@ def check_file(
         with open(filename, "rb") as f:
             # Run isort first then black so we get consistent result
             # even if isort is not using the black profile
-            proc = run_command(
+            proc = subprocess.Popen(
                 [sys.executable, "-misort", "-"],
                 stdin=f,
-                retries=retries,
-                timeout=timeout,
-                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
-            import_sorted_file = io.BytesIO(proc.stdout)
-            # Pipe isort's result to black
-            proc = run_command(
+            # Launch second process and connect it to the first one
+            black_proc = subprocess.Popen(
                 [
                     sys.executable,
                     "-mblack",
@@ -51,11 +48,14 @@ def check_file(
                     filename,
                     "-",
                 ],
-                stdin=import_sorted_file,
-                retries=retries,
-                timeout=timeout,
-                check=True,
+                stdin=proc.stdout,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
             )
+
+            # Let stream flow between them
+            replacement, _ = black_proc.communicate(timeout=timeout)
+
     except subprocess.TimeoutExpired:
         return [
             LintMessage(
@@ -81,7 +81,7 @@ def check_file(
                 line=None,
                 char=None,
                 code=LINTER_CODE,
-                severity=LintSeverity.ADVICE,
+                severity=LintSeverity.ERROR,
                 name="command-failed",
                 original=None,
                 replacement=None,
@@ -103,7 +103,6 @@ def check_file(
             )
         ]
 
-    replacement = proc.stdout
     if original == replacement:
         return []
 
