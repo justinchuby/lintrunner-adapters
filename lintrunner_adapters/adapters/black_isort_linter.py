@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import io
 import logging
 import os
 import subprocess
@@ -37,8 +38,10 @@ def check_file(
                 timeout=timeout,
                 check=True,
             )
+            import_sorted_file = io.BytesIO(proc.stdout)
             # Pipe isort's result to black
-            replacement = subprocess.check_output([
+            proc = run_command(
+                [
                     sys.executable,
                     "-mblack",
                     *(("--pyi",) if filename.endswith(".pyi") else ()),
@@ -48,8 +51,10 @@ def check_file(
                     filename,
                     "-",
                 ],
-                stdin=proc.stdout,
+                stdin=import_sorted_file,
+                retries=retries,
                 timeout=timeout,
+                check=True,
             )
     except subprocess.TimeoutExpired:
         return [
@@ -98,6 +103,7 @@ def check_file(
             )
         ]
 
+    replacement = proc.stdout
     if original == replacement:
         return []
 
