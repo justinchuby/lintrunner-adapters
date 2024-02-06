@@ -8,6 +8,7 @@ import argparse
 import concurrent.futures
 import logging
 import os
+import pathlib
 import subprocess
 import sys
 
@@ -42,7 +43,7 @@ def check_file(
 
             # Resolve the file path to get around errors with Python 3.8/3.9 on Windows
             # https://github.com/psf/black/issues/4209
-            resolved_filename = os.path.realpath(filename)
+            resolved_filename = str(pathlib.Path(filename).resolve())
             proc = run_command(
                 [
                     sys.executable,
