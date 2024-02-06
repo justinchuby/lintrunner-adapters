@@ -42,7 +42,7 @@ def check_file(
 
             # Resolve the file path to get around errors with Python 3.8/3.9 on Windows
             # https://github.com/psf/black/issues/4209
-            filename = os.path.realpath(filename)
+            resolved_filename = os.path.realpath(filename)
             proc = run_command(
                 [
                     sys.executable,
@@ -51,7 +51,7 @@ def check_file(
                     *(("--ipynb",) if filename.endswith(".ipynb") else ()),
                     *(("--fast",) if fast else ()),
                     "--stdin-filename",
-                    filename,
+                    resolved_filename,
                     "-",
                 ],
                 stdin=None,
