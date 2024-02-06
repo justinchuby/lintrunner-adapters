@@ -30,7 +30,7 @@ def cli() -> None:
 
 
 @cli.command(
-    context_settings=dict(
+    context_settings=dict(  # pylint: disable=use-dict-literal
         ignore_unknown_options=True,
         allow_extra_args=True,
     ),
