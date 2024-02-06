@@ -166,7 +166,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'black==24.1.1',
+    'black==23.12.1',  # Use 24.x when ruff styles are updated
     'isort==5.10.1',
 ]
 is_formatter = true
