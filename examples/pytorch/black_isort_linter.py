@@ -113,6 +113,9 @@ def check_file(
         with open(filename, "rb") as f:
             original = f.read()
         with open(filename, "rb") as f:
+            # Resolve the file path to get around errors with Python 3.8/3.9
+            # https://github.com/psf/black/issues/4209
+            filename = os.path.realpath(filename)
             proc = run_command(
                 [sys.executable, "-mblack", "--stdin-filename", filename, "-"],
                 stdin=f,
