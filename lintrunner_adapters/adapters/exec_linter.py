@@ -53,7 +53,9 @@ def main() -> None:
         level=(
             logging.NOTSET
             if args.verbose
-            else logging.DEBUG if len(args.filenames) < 1000 else logging.INFO
+            else logging.DEBUG
+            if len(args.filenames) < 1000
+            else logging.INFO
         ),
         stream=sys.stderr,
     )
