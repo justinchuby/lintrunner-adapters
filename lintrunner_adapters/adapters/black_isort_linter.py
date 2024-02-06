@@ -8,6 +8,7 @@ import argparse
 import concurrent.futures
 import logging
 import os
+import pathlib
 import subprocess
 import sys
 
@@ -39,6 +40,10 @@ def check_file(
             )
             import_sorted = proc.stdout
             # Pipe isort's result to black
+
+            # Resolve the file path to get around errors with Python 3.8/3.9 on Windows
+            # https://github.com/psf/black/issues/4209
+            resolved_filename = str(pathlib.Path(filename).resolve())
             proc = run_command(
                 [
                     sys.executable,
@@ -47,7 +52,7 @@ def check_file(
                     *(("--ipynb",) if filename.endswith(".ipynb") else ()),
                     *(("--fast",) if fast else ()),
                     "--stdin-filename",
-                    filename,
+                    resolved_filename,
                     "-",
                 ],
                 stdin=None,
@@ -143,11 +148,13 @@ def main() -> None:
 
     logging.basicConfig(
         format="<%(threadName)s:%(levelname)s> %(message)s",
-        level=logging.NOTSET
-        if args.verbose
-        else logging.DEBUG
-        if len(args.filenames) < 1000
-        else logging.INFO,
+        level=(
+            logging.NOTSET
+            if args.verbose
+            else logging.DEBUG
+            if len(args.filenames) < 1000
+            else logging.INFO
+        ),
         stream=sys.stderr,
     )
 

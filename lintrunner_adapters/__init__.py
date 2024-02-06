@@ -1,4 +1,5 @@
 """Adapters and tools for lintrunner."""
+
 from __future__ import annotations
 
 __all__ = [
