@@ -346,7 +346,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'ruff==0.1.5',
+    'ruff==0.2.1',
 ]
 is_formatter = true
 
@@ -373,7 +373,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'ruff==0.1.5',
+    'ruff==0.2.1',
 ]
 is_formatter = true
 
