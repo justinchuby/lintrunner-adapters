@@ -3,7 +3,7 @@
 [![CI](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/ci.yml/badge.svg)](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/lintrunner-adapters.svg)](https://badge.fury.io/py/lintrunner-adapters)
 
-Adapters and tools for [lintrunner](https://github.com/pytorch/test-infra/tree/main/tools/lintrunner)([original repo](https://github.com/suo/lintrunner)).
+Adapters and tools for [lintrunner](https://github.com/pytorch/test-infra/tree/main/tools/lintrunner).
 
 `lintrunner-adapters` currently supports popular Python / Rust / C++ linters and formatters like `flake8`, `pylint`, `mypy`, `black`, `ruff`(with auto-fix support), `rustfmt`, `clippy`, `clang-format` and many more - and the list is growing. Contribution is welcome!
 
