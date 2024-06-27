@@ -36,6 +36,7 @@ def check_file(
                     sys.executable,
                     "-m",
                     "ruff",
+                    "check",
                     "--fix-only",
                     "--exit-zero",
                     *([f"--config={config}"] if config else []),
