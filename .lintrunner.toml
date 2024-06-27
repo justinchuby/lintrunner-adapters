@@ -226,7 +226,7 @@ init_command = [
     'run',
     'pip_init',
     '--dry-run={{DRYRUN}}',
-    'clang-format==15.0.4',
+    'clang-format==18.1.7',
 ]
 command = [
     'python',
