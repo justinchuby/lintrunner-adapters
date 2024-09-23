@@ -117,4 +117,4 @@ jobs:
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@897895f1e160c830e369f9779632ebc134688e1b
         with:
-          password: ${{ secrets.PYPI_API_TOKEN }}
+          attestations: true
