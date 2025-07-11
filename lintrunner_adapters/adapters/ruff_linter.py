@@ -21,6 +21,9 @@ from lintrunner_adapters import (
 LINTER_CODE = "RUFF"
 
 
+logger = logging.getLogger(__name__)
+
+
 def explain_rule(code: str) -> str:
     proc = run_command(
         ["ruff", "rule", "--format=json", code],
@@ -34,6 +37,10 @@ def explain_rule(code: str) -> str:
 
 
 def get_issue_severity(code: str) -> LintSeverity:
+    if not code:
+        # Handle rare cases of empty / None code
+        return LintSeverity.WARNING
+
     # "B901": `return x` inside a generator
     # "B902": Invalid first argument to a method
     # "B903": __slots__ efficiency
@@ -337,7 +344,7 @@ def main() -> None:
                 for lint_message in future.result():
                     lint_message.display()
             except Exception:
-                logging.critical('Failed at "%s".', futures[future])
+                logger.critical('Failed at "%s".', futures[future])
                 raise
 
 
