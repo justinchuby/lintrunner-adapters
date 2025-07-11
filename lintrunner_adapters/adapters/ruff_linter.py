@@ -36,10 +36,10 @@ def explain_rule(code: str) -> str:
     return text
 
 
-def get_issue_severity(code: str) -> LintSeverity:
+def get_issue_severity(code: str | None) -> LintSeverity:
     if not code:
         # Handle rare cases of empty / None code
-        return LintSeverity.WARNING
+        return LintSeverity.ERROR
 
     # "B901": `return x` inside a generator
     # "B902": Invalid first argument to a method
@@ -83,11 +83,11 @@ def get_issue_severity(code: str) -> LintSeverity:
 
 
 def format_lint_message(
-    message: str, code: str, rules: dict[str, str], show_disable: bool, url: str | None
+    message: str, code: str | None, rules: dict[str | None, str], show_disable: bool, url: str | None
 ) -> str:
     if url is not None:
         message += f".\nSee {url}"
-    if show_disable:
+    if show_disable and code:
         message += f".\n\nTo disable, use `  # noqa: {code}`"
     if rules:
         message += f".\n{rules.get(code) or ''}"
@@ -157,7 +157,7 @@ def check_files(
     return [
         LintMessage(
             path=vuln["filename"],
-            name=vuln["code"],
+            name=vuln["code"] or "ERROR",
             description=(
                 format_lint_message(
                     vuln["message"],
