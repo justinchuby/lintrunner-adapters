@@ -83,7 +83,11 @@ def get_issue_severity(code: str | None) -> LintSeverity:
 
 
 def format_lint_message(
-    message: str, code: str | None, rules: dict[str | None, str], show_disable: bool, url: str | None
+    message: str,
+    code: str | None,
+    rules: dict[str | None, str],
+    show_disable: bool,
+    url: str | None,
 ) -> str:
     if url is not None:
         message += f".\nSee {url}"
