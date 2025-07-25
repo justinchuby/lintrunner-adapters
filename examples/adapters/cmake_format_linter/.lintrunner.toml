@@ -1,0 +1,27 @@
+[[linter]]
+code = 'CMAKE-FORMAT'
+is_formatter = true
+include_patterns = [
+    '**/CMakeLists.txt',
+    '**/*.cmake',
+    '**/*.cmake.in',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'cmake_format_linter',
+    '--',
+    '@{{PATHSFILE}}',
+]
+init_command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'pip_init',
+    '--dry-run={{DRYRUN}}',
+    'cmakelang==0.6.13',
+]
