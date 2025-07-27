@@ -6,7 +6,7 @@
 
 Adapters and tools for [lintrunner](https://github.com/suo/lintrunner).
 
-`lintrunner-adapters` currently supports popular Python / Rust / C++ linters and formatters like `flake8`, `pylint`, `mypy`, `black`, `ruff`(with auto-fix support), `rustfmt`, `clippy`, `clang-format` and many more - and the list is growing. Contribution is welcome!
+`lintrunner-adapters` currently supports popular Python / Rust / C++ linters and formatters like `flake8`, `pylint`, `mypy`, `black`, `ruff`(with auto-fix support), `rustfmt`, `clippy`, `clang-format` and many more - and the list is growing. Contributions welcome!
 
 To see the list of supported linters and formatters, run `lintrunner_adapters run`.
 
