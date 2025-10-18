@@ -30,7 +30,7 @@ jobs:
           python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
-          pip install .
+          pip install .[dev]
           pip install -r requirements-test.txt
           lintrunner init
       - name: Run lintrunner on all files - Linux
