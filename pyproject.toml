@@ -1,6 +1,6 @@
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [tool.isort]
 profile = "black"
@@ -15,33 +15,35 @@ ignore_missing_imports = true
 module = "lintrunner_adapters.adapters.*"
 warn_unused_ignores = false
 
-[tool.poetry]
+[project]
 name = "lintrunner-adapters"
 version = "0.12.6"
 description = "Adapters and tools for lintrunner"
-authors = ["Justin Chu <justinchu@microsoft.com>"]
-license = "MIT"
+authors = [{name = "Justin Chu", email = "justinchu@microsoft.com"}]
 readme = "README.md"
-repository = "https://github.com/justinchuby/lintrunner-adapters"
+license = {text = "MIT"}
+requires-python = ">=3.7"
 keywords = ["lintrunner", "lint", "cli", "sarif", "linting", "ci", "linter", "flake8", "clippy", "ruff", "rustfmt", "github-code-scanning"]
 classifiers = [
     "Topic :: Software Development :: Testing",
     "Topic :: Software Development :: Quality Assurance",
 ]
-packages = [{include = "lintrunner_adapters"}]
-include = ["LICENSE"]
+dependencies = [
+    "click>=8.1.3",
+]
 
-[tool.poetry.dependencies]
-python = "^3.7"
-click = "^8.1.3"
+[project.optional-dependencies]
+dev = [
+    "lintrunner>=0.10.0",
+    "pytest>=7.2.0",
+    "types-pyyaml>=6.0.12.2",
+]
 
-[tool.poetry.group.dev.dependencies]
-lintrunner = "^0.10.0"
-pytest = "^7.2.0"
-types-pyyaml = "^6.0.12.2"
+[project.scripts]
+lintrunner_adapters = "lintrunner_adapters.__main__:cli"
 
-[tool.poetry.scripts]
-lintrunner_adapters = 'lintrunner_adapters.__main__:cli'
+[project.urls]
+Repository = "https://github.com/justinchuby/lintrunner-adapters"
 
 [tool.pylint.messages_control]
 disable = [
