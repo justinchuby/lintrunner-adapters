@@ -23,7 +23,7 @@ LINTER_CODE = "DOCFORMATTER"
 def check_file(
     filename: str,
     retries: int,
-    config: str,
+    config: str | None,
 ) -> list[LintMessage]:
     try:
         path = Path(filename)
