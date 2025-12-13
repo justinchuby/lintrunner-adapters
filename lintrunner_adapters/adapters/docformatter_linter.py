@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright 2025 Arm Limited and/or its affiliates <open-source-office@arm.com>
 # SPDX-License-Identifier: MIT
 """Adapter for https://github.com/PyCQA/docformatter"""
+from __future__ import annotations
 
 import argparse
 import concurrent.futures
