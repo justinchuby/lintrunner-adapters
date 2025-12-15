@@ -15,6 +15,7 @@ from lintrunner_adapters import (
     LintMessage,
     LintSeverity,
     add_default_options,
+    as_posix,
     run_command,
 )
 
@@ -24,6 +25,7 @@ LINTER_CODE = "DOCFORMATTER"
 def check_file(
     filename: str,
     retries: int,
+    timeout: int,
     config: str | None,
 ) -> list[LintMessage]:
     try:
@@ -35,7 +37,7 @@ def check_file(
             args += ["--config", config]
         args += ["--diff", str(path)]
 
-        proc = run_command(args, retries=retries, check=False)
+        proc = run_command(args, retries=retries, timeout=timeout, check=False)
         # 0 means no change, 3 means there was reformatting.
         if proc.returncode not in (0, 3):
             raise subprocess.CalledProcessError(
@@ -50,18 +52,46 @@ def check_file(
         )
 
         replacement = patch_proc.stdout.decode("utf-8")
-    except Exception as err:
+    except subprocess.TimeoutExpired:
         return [
             LintMessage(
-                path=None,
+                path=filename,
                 line=None,
                 char=None,
                 code=LINTER_CODE,
                 severity=LintSeverity.ERROR,
+                name="timeout",
+                original=None,
+                replacement=None,
+                description=f"docformatter timed out while processing {filename}.",
+            )
+        ]
+    except (OSError, subprocess.CalledProcessError) as err:
+        return [
+            LintMessage(
+                path=filename,
+                line=None,
+                char=None,
+                code=LINTER_CODE,
+                severity=LintSeverity.ADVICE,
                 name="command-failed",
                 original=None,
                 replacement=None,
-                description=(f"Failed due to {err.__class__.__name__}:\n{err}"),
+                description=(
+                    f"Failed due to {err.__class__.__name__}:\n{err}"
+                    if not isinstance(err, subprocess.CalledProcessError)
+                    else (
+                        "COMMAND (exit code {returncode})\n"
+                        "{command}\n\n"
+                        "STDERR\n{stderr}\n\n"
+                        "STDOUT\n{stdout}"
+                    ).format(
+                        returncode=err.returncode,
+                        command=" ".join(as_posix(x) for x in err.cmd),
+                        stderr=err.stderr.decode("utf-8").strip() or "(empty)",
+                        stdout=err.stdout.decode("utf-8").strip() or "(empty)",
+                    )
+                ),
             )
         ]
 
@@ -93,6 +123,12 @@ def main() -> None:
         required=False,
         help="location of docformatter config",
     )
+    parser.add_argument(
+        "--timeout",
+        default=90,
+        type=int,
+        help="seconds to wait for docformatter",
+    )
     add_default_options(parser)
     args = parser.parse_args()
 
@@ -113,7 +149,7 @@ def main() -> None:
         thread_name_prefix="Thread",
     ) as executor:
         futures = {
-            executor.submit(check_file, x, args.retries, args.config): x
+            executor.submit(check_file, x, args.retries, args.timeout, args.config): x
             for x in args.filenames
         }
         for future in concurrent.futures.as_completed(futures):
