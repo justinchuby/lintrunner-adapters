@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright 2025 Arm Limited and/or its affiliates <open-source-office@arm.com>
+# SPDX-FileCopyrightText: Copyright 2025-2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
 # SPDX-License-Identifier: MIT
 """Adapter for https://github.com/PyCQA/docformatter"""
 from __future__ import annotations
@@ -30,28 +30,29 @@ def check_file(
 ) -> list[LintMessage]:
     try:
         path = Path(filename)
-        original = path.read_text(encoding="utf-8")
+        original = path.read_bytes()
 
         args = ["docformatter"]
         if config is not None:
             args += ["--config", config]
-        args += ["--diff", str(path)]
+        args.append("-")
 
-        proc = run_command(args, retries=retries, timeout=timeout, check=False)
-        # 0 means no change, 3 means there was reformatting.
-        if proc.returncode not in (0, 3):
+        proc = run_command(
+            args,
+            retries=retries,
+            timeout=timeout,
+            input=original,
+            check=False,
+        )
+
+        replacement = proc.stdout
+        if not replacement:
             raise subprocess.CalledProcessError(
                 proc.returncode,
                 proc.args,
                 output=proc.stdout,
                 stderr=proc.stderr,
             )
-
-        patch_proc = run_command(
-            ["patch", filename, "-o", "-"], input=proc.stdout, check=True
-        )
-
-        replacement = patch_proc.stdout.decode("utf-8")
     except subprocess.TimeoutExpired:
         return [
             LintMessage(
@@ -95,7 +96,25 @@ def check_file(
             )
         ]
 
-    if original == replacement:
+    try:
+        original_decoded = original.decode("utf-8")
+        replacement_decoded = replacement.decode("utf-8")
+    except UnicodeDecodeError as err:
+        return [
+            LintMessage(
+                path=filename,
+                line=None,
+                char=None,
+                code=LINTER_CODE,
+                severity=LintSeverity.ERROR,
+                name="decode-failed",
+                original=None,
+                replacement=None,
+                description=f"utf-8 decoding failed due to {err.__class__.__name__}:\n{err}",
+            )
+        ]
+
+    if original_decoded == replacement_decoded:
         return []
 
     return [
@@ -105,8 +124,8 @@ def check_file(
             char=None,
             code=LINTER_CODE,
             name="format",
-            original=original,
-            replacement=replacement,
+            original=original_decoded,
+            replacement=replacement_decoded,
             severity=LintSeverity.WARNING,
             description="Run `lintrunner -a` to apply this patch.",
         )
