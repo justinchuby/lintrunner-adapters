@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/ci.yml/badge.svg)](https://github.com/justinchuby/lintrunner-adapters/actions/workflows/ci.yml)
 [![PyPI - Version](https://img.shields.io/pypi/v/lintrunner-adapters)](https://pypi.org/project/lintrunner-adapters)
-[![PyPI - Downloads](https://img.shields.io/pypi/dm/lintrunner-adapters)](https://pypistats.org/packages/lintrunner-adapters)
+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/lintrunner-adapters?period=monthly&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/lintrunner-adapters)
 
 Adapters and tools for [lintrunner](https://github.com/suo/lintrunner).
 
