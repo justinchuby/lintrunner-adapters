@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 [[linter]]
-code = 'BANNED_FUNCTIONS'
+code = 'CPP_BANNED_FUNCTIONS'
 include_patterns = [
     '**/*.c',
     '**/*.cc',

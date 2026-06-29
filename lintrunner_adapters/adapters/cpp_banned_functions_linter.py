@@ -12,8 +12,8 @@ from typing import Any, Iterator, Sequence
 
 from lintrunner_adapters import LintMessage, LintSeverity, add_default_options
 
-LINTER_CODE = "BANNED_FUNCTIONS"
-ERROR_NAME = "banned-function"
+LINTER_CODE = "CPP_BANNED_FUNCTIONS"
+ERROR_NAME = "cpp-banned-function"
 ERROR_DESCRIPTION = "Scans for banned functions and errors when one is encountered."
 
 
@@ -113,7 +113,7 @@ def format_replacements(replacements: list[str]) -> str:
     if not replacements:
         return ""
 
-    replacement_text = ", ".join(f"`{name}()`" for name in replacements)
+    replacement_text = ", ".join(f"`{name}`" for name in replacements)
     if len(replacements) == 1:
         return f" Suggested replacement: {replacement_text}."
     return f" Suggested replacements: {replacement_text}."
@@ -123,9 +123,9 @@ def _test_format_replacements() -> None:
     r"""Doctests.
 
     >>> format_replacements(["memcpy_s"])
-    ' Suggested replacement: `memcpy_s()`.'
+    ' Suggested replacement: `memcpy_s`.'
     >>> format_replacements(["strcpy_s", "strncpy_s"])
-    ' Suggested replacements: `strcpy_s()`, `strncpy_s()`.'
+    ' Suggested replacements: `strcpy_s`, `strncpy_s`.'
     >>> format_replacements([])
     ''
     """
@@ -178,7 +178,22 @@ def lint_banned_functions_in_files(
         path = Path(filename)
         if not path.is_file():
             continue
-        messages.extend(lint_file(path, pattern, banned_functions))
+        try:
+            messages.extend(lint_file(path, pattern, banned_functions))
+        except Exception as err:
+            messages.append(
+                LintMessage(
+                    path=filename,
+                    line=None,
+                    char=None,
+                    code=LINTER_CODE,
+                    severity=LintSeverity.ERROR,
+                    name="read-error",
+                    original=None,
+                    replacement=None,
+                    description=f"Failed to read file: {err}",
+                )
+            )
     return messages
 
 
