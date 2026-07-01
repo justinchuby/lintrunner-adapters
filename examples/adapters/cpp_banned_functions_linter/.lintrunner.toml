@@ -16,8 +16,8 @@ command = [
     '-m',
     'lintrunner_adapters',
     'run',
-    'banned_functions_linter',
-    '--config=examples/adapters/banned_functions_linter/example_banned_functions.json',
+    'cpp_banned_functions_linter',
+    '--config=examples/adapters/cpp_banned_functions_linter/example_banned_functions.json',
     '--',
     '@{{PATHSFILE}}',
 ]

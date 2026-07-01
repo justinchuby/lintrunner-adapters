@@ -17,8 +17,26 @@ ERROR_NAME = "cpp-banned-function"
 ERROR_DESCRIPTION = "Scans for banned functions and errors when one is encountered."
 
 
-_NOISE_RE = re.compile(  # noqa: DUO138, RUF100
-    r"""//[^\n]*|/\*.*?\*/|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'""",
+_LINE_COMMENT_RE = r"//[^\n]*"
+_BLOCK_COMMENT_RE = r"/\*.*?\*/"
+_RAW_STRING_LITERAL_RE = (
+    r'(?:u8|[uUL])?R"'
+    r"(?P<raw_delimiter>[^\s()\\]{0,16})"
+    r'\(.*?\)(?P=raw_delimiter)"'
+)
+_STRING_LITERAL_RE = r'"(?:\\.|[^"\\])*"'
+_CHAR_LITERAL_RE = r"'(?:\\.|[^'\\])*'"
+
+_NOISE_RE = re.compile(
+    "|".join(
+        [
+            _LINE_COMMENT_RE,
+            _BLOCK_COMMENT_RE,
+            _RAW_STRING_LITERAL_RE,
+            _STRING_LITERAL_RE,
+            _CHAR_LITERAL_RE,
+        ]
+    ),
     re.DOTALL,
 )
 _NOLINT_RE = re.compile(r"//\s*NOLINT\(([^)]+)\)")
@@ -229,6 +247,18 @@ def _test_lint_banned_functions_in_files() -> None:
     ...     config = parse_config({"banned_functions": [{"names": ["memcpy", "printf"]}]})
     ...     lint_banned_functions_in_files([str(path)], config)
     []
+    >>> with TemporaryDirectory() as directory:
+    ...     path = Path(directory) / "runtime.cpp"
+    ...     source = '''void f() {
+    ...   const char* text = u8R"raw(quote " then memcpy(dst, src, 4);)raw";
+    ...   memcpy(dst, src, 4);
+    ... }
+    ... '''
+    ...     _ = path.write_text(source, encoding="utf-8")
+    ...     config = parse_config({"banned_functions": [{"names": ["memcpy"]}]})
+    ...     messages = lint_banned_functions_in_files([str(path)], config)
+    ...     [(message.line, message.char) for message in messages]
+    [(3, 3)]
     """
     pass
 
