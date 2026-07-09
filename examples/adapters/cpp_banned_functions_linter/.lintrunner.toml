@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: Copyright 2026 Arm Limited and/or its affiliates <open-source-office@arm.com>
+# SPDX-License-Identifier: MIT
+
+[[linter]]
+code = 'CPP_BANNED_FUNCTIONS'
+include_patterns = [
+    '**/*.c',
+    '**/*.cc',
+    '**/*.cpp',
+    '**/*.h',
+    '**/*.hpp',
+]
+exclude_patterns = []
+command = [
+    'python',
+    '-m',
+    'lintrunner_adapters',
+    'run',
+    'cpp_banned_functions_linter',
+    '--config=examples/adapters/cpp_banned_functions_linter/example_banned_functions.json',
+    '--',
+    '@{{PATHSFILE}}',
+]
